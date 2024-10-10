@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Architect Coders</string>
+
+    <string name="go_back">Go back</string>
 </resources>
