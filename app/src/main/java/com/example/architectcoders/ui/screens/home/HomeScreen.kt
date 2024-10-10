@@ -1,6 +1,6 @@
 package com.example.architectcoders.ui.screens.home
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.architectcoders.Book
@@ -30,10 +29,8 @@ import com.example.architectcoders.books
 import com.example.architectcoders.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onClick: (Book) -> Unit) {
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
@@ -56,7 +53,7 @@ fun HomeScreen() {
                 contentPadding = padding,
             ) {
                 items(books) { book ->
-                    BookItem(book = book)
+                    BookItem(book = book, onClick = { onClick(book) })
                 }
             }
         }
@@ -64,8 +61,10 @@ fun HomeScreen() {
 }
 
 @Composable
-private fun BookItem(book: Book) {
-    Column {
+private fun BookItem(book: Book, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier.clickable(onClick = onClick),
+    ) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
