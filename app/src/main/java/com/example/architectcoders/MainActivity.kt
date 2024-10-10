@@ -45,35 +45,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ArchitectCodersTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-                    Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                title = { Text(text = "Books") },
-                                scrollBehavior = scrollBehavior,
-                            )
-                        },
-                        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    ) { padding ->
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-                            columns = GridCells.Adaptive(120.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                            contentPadding = padding,
-                        ) {
-                            items(books) { book ->
-                                BookItem(book = book)
-                            }
-                        }
-                    }
-                }
-            }
+
         }
     }
 }
@@ -83,26 +55,6 @@ fun App(
     modifier: Modifier = Modifier,
 ) {
 
-}
-
-@Composable
-fun BookItem(book: Book) {
-    Column {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2 / 3F)
-                .clip(MaterialTheme.shapes.small),
-            model = book.coverUrl,
-            contentDescription = book.title,
-        )
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = book.title,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-        )
-    }
 }
 
 @Preview
