@@ -2,18 +2,21 @@ package com.example.architectcoders.ui.screens.camera
 
 import android.Manifest
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeGestures
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -21,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,10 +34,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.compose.AsyncImage
 import com.example.architectcoders.Book
 import com.example.architectcoders.R
 import com.example.architectcoders.books
@@ -47,22 +51,15 @@ fun CameraScreen(
     onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
 ) {
-    var cameraPermissionGranted by remember { mutableStateOf(false) }
+    var permissionGranted by remember { mutableStateOf(false) }
 
-    PermissionRequestEffect(permission = Manifest.permission.CAMERA) { isGranted ->
-        cameraPermissionGranted = isGranted
-        if (isGranted) {
-            println("Camera permission granted")
-        } else {
-            println("Camera permission denied")
-        }
-    }
+    PermissionRequestEffect(permission = Manifest.permission.CAMERA) { permissionGranted = it }
 
     Screen {
         Scaffold(
             contentWindowInsets = WindowInsets.safeGestures,
         ) { padding ->
-            if (cameraPermissionGranted) {
+            if (permissionGranted) {
                 ScanningScreen(
                     onBack = onBack,
                     onBookClick = onBookClick,
@@ -116,8 +113,7 @@ private fun ScanningScreen(
                     this.resume()
                 }
             },
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
         IconButton(
             onClick = onBack,
@@ -125,31 +121,75 @@ private fun ScanningScreen(
                 .padding(padding)
                 .padding(start = 16.dp)
                 .align(Alignment.TopStart)
-                .background(colorResource(id = R.color.white_alpha_50), shape = RoundedCornerShape(100))
+                .background(
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(100)
+                )
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                 contentDescription = stringResource(R.string.go_back),
             )
         }
-        if (showResult) {
-            lastReadBarcode?.let {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxSize()
-                        .clickable(onClick = {
-                            showResult = false
-                            onBookClick(books.first())
-                        })
-                ) {
-                    Text(
-                        text = lastReadBarcode ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
+        AnimatedVisibility(
+            visible = showResult,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            BookResult(
+                book = books.first(),
+                onBookClick = {
+                    showResult = false
+                    onBookClick(books.first())
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun BookResult(
+    book: Book,
+    onBookClick: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 32.dp,
+            )
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onBookClick),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .width(60.dp)
+                    .aspectRatio(2 / 3F)
+                    .clip(MaterialTheme.shapes.medium),
+                model = book.coverUrl,
+                contentDescription = book.title,
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = book.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    maxLines = 1,
+                )
+                Text(
+                    text = book.author,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                )
             }
         }
     }
