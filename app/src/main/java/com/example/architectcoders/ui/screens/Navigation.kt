@@ -29,7 +29,8 @@ fun Navigation() {
             val bookId = backStackEntry.arguments?.getInt("bookId")
             DetailScreen(
                 book = books.first { it.id == bookId },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onBookmarked = { book -> /* TODO: Save book */ }
             )
         }
         composable("camera") {
