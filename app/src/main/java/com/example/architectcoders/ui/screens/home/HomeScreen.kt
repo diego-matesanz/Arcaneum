@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -113,9 +111,9 @@ private fun BookItem(book: Book, onClick: (Book) -> Unit) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(2 / 3F)
-                .clip(MaterialTheme.shapes.small),
-            model = book.coverUrl,
+                .aspectRatio(1 / 1.5F)
+                .clip(MaterialTheme.shapes.medium),
+            model = book.coverImage,
             contentDescription = book.title,
         )
         Text(

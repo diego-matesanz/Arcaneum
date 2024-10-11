@@ -1,9 +1,16 @@
 package com.example.architectcoders.ui.screens.detail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,10 +22,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.architectcoders.Book
@@ -32,7 +44,7 @@ fun DetailScreen(book: Book, onBack: () -> Unit) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = book.title) },
+                    title = { Text("") },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(
@@ -40,7 +52,12 @@ fun DetailScreen(book: Book, onBack: () -> Unit) {
                                 contentDescription = stringResource(id = R.string.go_back),
                             )
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
                 )
             }
         ) { padding ->
@@ -57,22 +74,146 @@ private fun BookDetail(
     book: Book,
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize()
+            .verticalScroll(scrollState),
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(16 / 9F),
-            model = book.coverUrl,
-            contentDescription = book.title,
-            contentScale = ContentScale.Crop
+        Box {
+            Box(
+                modifier = Modifier
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        val height = (scrollState.value / 3F).toInt()
+                        layout(placeable.width, placeable.height) {
+                            placeable.place(0, height)
+                        }
+                    }
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .align(Alignment.TopCenter)
+            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .width(180.dp)
+                        .aspectRatio(1 / 1.5F)
+                        .clip(MaterialTheme.shapes.medium),
+                    model = book.coverImage,
+                    contentDescription = book.title,
+                    contentScale = ContentScale.Crop
+                )
+                TitleSection(
+                    title = book.title,
+                    author = book.author
+                )
+                InfoSection(
+                    rating = book.rating,
+                    pages = book.pages,
+                    language = book.language
+                )
+                SynopsisSection(book.synopsis)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TitleSection(
+    title: String,
+    author: String,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
         )
         Text(
-            modifier = Modifier.padding(16.dp),
-            text = book.title,
-            style = MaterialTheme.typography.headlineMedium
+            text = author,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun InfoSection(
+    rating: Float,
+    pages: Int,
+    language: String,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+    ) {
+        InfoItem(
+            title = stringResource(id = R.string.rating),
+            description = rating.toString()
+        )
+        InfoItem(
+            title = stringResource(id = R.string.pages),
+            description = pages.toString()
+        )
+        InfoItem(
+            title = stringResource(id = R.string.language),
+            description = language
+        )
+    }
+}
+
+@Composable
+private fun InfoItem(
+    title: String,
+    description: String,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun SynopsisSection(synopsis: String) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = stringResource(id = R.string.synopsis),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Start,
+        )
+        Text(
+            text = synopsis,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            textAlign = TextAlign.Start,
         )
     }
 }

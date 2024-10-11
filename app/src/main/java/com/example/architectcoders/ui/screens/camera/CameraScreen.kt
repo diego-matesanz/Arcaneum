@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,6 +50,7 @@ import com.example.architectcoders.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(
     onBack: () -> Unit,
@@ -57,6 +62,27 @@ fun CameraScreen(
 
     Screen {
         Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("") },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                                    shape = RoundedCornerShape(100)
+                                )
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.go_back),
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                )
+            },
             contentWindowInsets = WindowInsets.safeGestures,
         ) { padding ->
             if (permissionGranted) {
@@ -115,22 +141,6 @@ private fun ScanningScreen(
             },
             modifier = Modifier.fillMaxSize(),
         )
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier
-                .padding(padding)
-                .padding(start = 16.dp)
-                .align(Alignment.TopStart)
-                .background(
-                    MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(100)
-                )
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = stringResource(R.string.go_back),
-            )
-        }
         AnimatedVisibility(
             visible = showResult,
             modifier = Modifier.align(Alignment.BottomCenter)
@@ -173,7 +183,7 @@ private fun BookResult(
                     .width(60.dp)
                     .aspectRatio(2 / 3F)
                     .clip(MaterialTheme.shapes.medium),
-                model = book.coverUrl,
+                model = book.coverImage,
                 contentDescription = book.title,
             )
             Column(
