@@ -34,6 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.architectcoders.Book
@@ -89,10 +91,10 @@ fun HomeScreen(
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = 16.dp),
                 columns = GridCells.Adaptive(180.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
                 contentPadding = padding,
             ) {
                 items(books) { book ->
@@ -107,6 +109,7 @@ fun HomeScreen(
 private fun BookItem(book: Book, onClick: (Book) -> Unit) {
     Column(
         modifier = Modifier.clickable(onClick = { onClick(book) }),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         AsyncImage(
             modifier = Modifier
@@ -116,11 +119,35 @@ private fun BookItem(book: Book, onClick: (Book) -> Unit) {
             model = book.coverImage,
             contentDescription = book.title,
         )
+        BookInfo(
+            title = book.title,
+            author = book.author,
+        )
+    }
+}
+
+@Composable
+private fun BookInfo(
+    title: String,
+    author: String,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Text(
-            modifier = Modifier.padding(8.dp),
-            text = book.title,
-            style = MaterialTheme.typography.bodySmall,
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
+        )
+        Text(
+            text = author,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.typography.bodyMedium.color.copy(alpha = 0.5F),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
         )
     }
 }
