@@ -13,7 +13,13 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,14 +48,17 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onClick: (Book) -> Unit) {
+fun HomeScreen(
+    onBookClick: (Book) -> Unit,
+    onCamClick: () -> Unit,
+) {
     val context = LocalContext.current
     val appName = stringResource(id = R.string.app_name)
     var appBarTitle by remember { mutableStateOf(appName) }
     val coroutineScope = rememberCoroutineScope()
 
-    PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) { granted ->
-        if (granted) {
+    PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) { isGranted ->
+        if (isGranted) {
             coroutineScope.launch {
                 val region = context.getRegion()
                 appBarTitle = "$appName - ($region)"
@@ -57,8 +66,8 @@ fun HomeScreen(onClick: (Book) -> Unit) {
         } else {
             appBarTitle = "$appName - (Permission denied)"
         }
-
     }
+
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
@@ -66,6 +75,14 @@ fun HomeScreen(onClick: (Book) -> Unit) {
                 TopAppBar(
                     title = { Text(text = appBarTitle) },
                     scrollBehavior = scrollBehavior,
+                    actions = {
+                        IconButton(onClick = onCamClick) {
+                            Icon(
+                                imageVector = Icons.Default.QrCodeScanner,
+                                contentDescription = stringResource(id = R.string.open_camera),
+                            )
+                        }
+                    }
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -75,13 +92,13 @@ fun HomeScreen(onClick: (Book) -> Unit) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 4.dp),
-                columns = GridCells.Adaptive(120.dp),
+                columns = GridCells.Adaptive(180.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = padding,
             ) {
                 items(books) { book ->
-                    BookItem(book = book, onClick = { onClick(book) })
+                    BookItem(book = book, onClick = onBookClick)
                 }
             }
         }
@@ -89,9 +106,9 @@ fun HomeScreen(onClick: (Book) -> Unit) {
 }
 
 @Composable
-private fun BookItem(book: Book, onClick: () -> Unit) {
+private fun BookItem(book: Book, onClick: (Book) -> Unit) {
     Column(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier.clickable(onClick = { onClick(book) }),
     ) {
         AsyncImage(
             modifier = Modifier
