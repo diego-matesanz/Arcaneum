@@ -3,10 +3,12 @@
 
     <string name="go_back">Go back</string>
     <string name="open_camera">Open camera</string>
+    <string name="search">Search</string>
     <string name="need_camera_permission_to_scan">Need camera permission to scan</string>
     <string name="rating">Rating</string>
     <string name="pages">Pages</string>
     <string name="language">Language</string>
     <string name="synopsis">Synopsis</string>
     <string name="bookmark">Bookmark</string>
+    <string name="search_label">Titles, authors or topics</string>
 </resources>

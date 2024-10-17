@@ -11,16 +11,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -34,6 +38,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -75,14 +81,6 @@ fun HomeScreen(
                 TopAppBar(
                     title = { Text(text = appBarTitle) },
                     scrollBehavior = scrollBehavior,
-                    actions = {
-                        IconButton(onClick = onCamClick) {
-                            Icon(
-                                imageVector = Icons.Default.QrCodeScanner,
-                                contentDescription = stringResource(id = R.string.open_camera),
-                            )
-                        }
-                    }
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -97,12 +95,51 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 contentPadding = padding,
             ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    SearchBar(onCamClick = onCamClick)
+                }
                 items(books) { book ->
                     BookItem(book = book, onClick = onBookClick)
                 }
             }
         }
     }
+}
+
+@Composable
+private fun SearchBar(onCamClick: () -> Unit) {
+    var textSearch by remember { mutableStateOf("") }
+    TextField(
+        value = textSearch,
+        onValueChange = { textSearch = it },
+        label = { Text(text = stringResource(id = R.string.search_label)) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Search,
+        ),
+        singleLine = true,
+        leadingIcon = {
+            IconButton(onClick = {
+                // TODO search
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = stringResource(id = R.string.search),
+                )
+            }
+        },
+        trailingIcon = {
+            IconButton(onClick = onCamClick) {
+                Icon(
+                    imageVector = Icons.Default.QrCodeScanner,
+                    contentDescription = stringResource(id = R.string.open_camera),
+                )
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium),
+    )
 }
 
 @Composable
