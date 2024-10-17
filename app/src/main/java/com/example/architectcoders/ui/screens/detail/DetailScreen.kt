@@ -175,7 +175,7 @@ private fun TitleSection(
         Text(
             text = author,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            color = MaterialTheme.typography.bodyLarge.color.copy(alpha = 0.5F),
             textAlign = TextAlign.Center,
         )
     }
@@ -218,7 +218,7 @@ private fun InfoItem(
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            color = MaterialTheme.typography.bodyLarge.color.copy(alpha = 0.5F),
             textAlign = TextAlign.Center,
         )
         Text(
@@ -244,7 +244,7 @@ private fun SynopsisSection(synopsis: String) {
         Text(
             text = synopsis,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8F),
+            color = MaterialTheme.typography.bodyMedium.color.copy(alpha = 0.5F),
             textAlign = TextAlign.Start,
         )
     }
