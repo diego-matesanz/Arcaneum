@@ -1,6 +1,5 @@
 package com.example.architectcoders.ui.screens.home
 
-import android.Manifest
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,12 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,10 +44,7 @@ import coil.compose.AsyncImage
 import com.example.architectcoders.Book
 import com.example.architectcoders.R
 import com.example.architectcoders.books
-import com.example.architectcoders.ui.common.PermissionRequestEffect
-import com.example.architectcoders.ui.common.getRegion
 import com.example.architectcoders.ui.screens.Screen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,28 +52,12 @@ fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val appName = stringResource(id = R.string.app_name)
-    var appBarTitle by remember { mutableStateOf(appName) }
-    val coroutineScope = rememberCoroutineScope()
-
-    PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) { isGranted ->
-        if (isGranted) {
-            coroutineScope.launch {
-                val region = context.getRegion()
-                appBarTitle = "$appName - ($region)"
-            }
-        } else {
-            appBarTitle = "$appName - (Permission denied)"
-        }
-    }
-
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = appBarTitle) },
+                    title = { Text(text = stringResource(id = R.string.app_name)) },
                     scrollBehavior = scrollBehavior,
                 )
             },
