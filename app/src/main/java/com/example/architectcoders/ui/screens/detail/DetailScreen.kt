@@ -1,5 +1,6 @@
 package com.example.architectcoders.ui.screens.detail
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -246,6 +247,7 @@ private fun SynopsisSection(synopsis: String) {
 
         var isExpanded by remember { mutableStateOf(false) }
         Text(
+            modifier = Modifier.animateContentSize(),
             text = synopsis,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Start,
@@ -258,7 +260,7 @@ private fun SynopsisSection(synopsis: String) {
             textAlign = TextAlign.End,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
-                .fillMaxWidth()
+                .align(Alignment.End)
                 .clickable { isExpanded = !isExpanded }
         )
     }

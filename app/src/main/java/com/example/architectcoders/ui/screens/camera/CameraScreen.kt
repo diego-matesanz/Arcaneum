@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
@@ -87,7 +88,6 @@ fun CameraScreen(
         ) { padding ->
             if (permissionGranted) {
                 ScanningScreen(
-                    onBack = onBack,
                     onBookClick = onBookClick,
                     padding = padding,
                 )
@@ -109,7 +109,6 @@ fun CameraScreen(
 
 @Composable
 private fun ScanningScreen(
-    onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
     padding: PaddingValues,
 ) {
@@ -151,6 +150,7 @@ private fun ScanningScreen(
                     showResult = false
                     onBookClick(books.first())
                 },
+                padding = padding,
             )
         }
     }
@@ -160,6 +160,7 @@ private fun ScanningScreen(
 private fun BookResult(
     book: Book,
     onBookClick: () -> Unit,
+    padding: PaddingValues,
 ) {
     Surface(
         modifier = Modifier
@@ -167,6 +168,7 @@ private fun BookResult(
                 horizontal = 16.dp,
                 vertical = 32.dp,
             )
+            .padding(padding)
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onBookClick),
@@ -194,11 +196,13 @@ private fun BookResult(
                     text = book.title,
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = book.author,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
