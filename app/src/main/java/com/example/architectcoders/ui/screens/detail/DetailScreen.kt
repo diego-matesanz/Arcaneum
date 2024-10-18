@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -174,8 +175,7 @@ private fun TitleSection(
         )
         Text(
             text = author,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.typography.bodyLarge.color.copy(alpha = 0.5F),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Center,
         )
     }
@@ -217,8 +217,7 @@ private fun InfoItem(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.typography.bodyLarge.color.copy(alpha = 0.5F),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Center,
         )
         Text(
@@ -243,8 +242,7 @@ private fun SynopsisSection(synopsis: String) {
         )
         Text(
             text = synopsis,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.typography.bodyMedium.color.copy(alpha = 0.5F),
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Start,
         )
     }

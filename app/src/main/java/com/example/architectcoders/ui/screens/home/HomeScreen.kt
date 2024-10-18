@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +58,12 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.app_name)) },
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
+                        )
+                    },
                     scrollBehavior = scrollBehavior,
                 )
             },
@@ -158,8 +164,7 @@ private fun BookInfo(
         )
         Text(
             text = author,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.typography.bodyMedium.color.copy(alpha = 0.5F),
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
