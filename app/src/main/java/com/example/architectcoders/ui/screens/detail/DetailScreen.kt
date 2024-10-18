@@ -1,6 +1,7 @@
 package com.example.architectcoders.ui.screens.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,8 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.architectcoders.Book
@@ -240,10 +243,23 @@ private fun SynopsisSection(synopsis: String) {
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Start,
         )
+
+        var isExpanded by remember { mutableStateOf(false) }
         Text(
             text = synopsis,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Start,
+            maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+            overflow = if (isExpanded) TextOverflow.Clip else TextOverflow.Ellipsis,
+        )
+        Text(
+            text = if (isExpanded) stringResource(id = R.string.read_less) else stringResource(id = R.string.read_more),
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
+            textAlign = TextAlign.End,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isExpanded = !isExpanded }
         )
     }
 }
