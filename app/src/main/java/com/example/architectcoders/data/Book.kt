@@ -1,4 +1,4 @@
-package com.example.architectcoders
+package com.example.architectcoders.data
 
 data class Book(
     val id: Int,
