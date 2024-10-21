@@ -1,10 +1,10 @@
-package com.example.architectcoders.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.architectcoders.data.Book
-import com.example.architectcoders.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.BooksRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {

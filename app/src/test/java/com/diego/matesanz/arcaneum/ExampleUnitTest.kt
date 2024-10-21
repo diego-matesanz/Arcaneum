@@ -1,4 +1,4 @@
-package com.example.architectcoders
+package com.diego.matesanz.arcaneum
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.screens
+package com.diego.matesanz.arcaneum.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.architectcoders.data.books
-import com.example.architectcoders.ui.screens.camera.CameraScreen
-import com.example.architectcoders.ui.screens.detail.DetailScreen
-import com.example.architectcoders.ui.screens.home.HomeScreen
+import com.diego.matesanz.arcaneum.data.books
+import com.diego.matesanz.arcaneum.ui.screens.camera.CameraScreen
+import com.diego.matesanz.arcaneum.ui.screens.detail.DetailScreen
+import com.diego.matesanz.arcaneum.ui.screens.home.HomeScreen
 
 @Composable
 fun Navigation() {

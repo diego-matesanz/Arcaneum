@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.theme
+package com.diego.matesanz.arcaneum.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

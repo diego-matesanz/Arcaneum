@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.architectcoders"
+    namespace = "com.diego.matesanz.arcaneum"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.architectcoders"
+        applicationId = "com.diego.matesanz.arcaneum"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
