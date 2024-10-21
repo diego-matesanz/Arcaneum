@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.architectcoders.Book
+import com.example.architectcoders.data.Book
 import com.example.architectcoders.R
 import com.example.architectcoders.ui.screens.Screen
 

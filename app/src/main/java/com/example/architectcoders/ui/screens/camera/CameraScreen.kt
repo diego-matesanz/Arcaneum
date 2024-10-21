@@ -42,9 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
-import com.example.architectcoders.Book
+import com.example.architectcoders.data.Book
 import com.example.architectcoders.R
-import com.example.architectcoders.books
+import com.example.architectcoders.data.books
 import com.example.architectcoders.ui.common.PermissionRequestEffect
 import com.example.architectcoders.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager

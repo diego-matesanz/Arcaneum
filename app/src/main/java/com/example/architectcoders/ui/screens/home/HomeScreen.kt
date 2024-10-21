@@ -2,6 +2,7 @@ package com.example.architectcoders.ui.screens.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,10 +29,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -41,10 +45,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.architectcoders.Book
+import com.example.architectcoders.data.Book
 import com.example.architectcoders.R
-import com.example.architectcoders.books
 import com.example.architectcoders.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +56,14 @@ import com.example.architectcoders.ui.screens.Screen
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
+    viewModel: HomeViewModel = viewModel(),
 ) {
+    val state = viewModel.state.value
+
+    LaunchedEffect(Unit) {
+        viewModel.onUiReady()
+    }
+
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
@@ -70,20 +81,31 @@ fun HomeScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing
         ) { padding ->
-            LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                columns = GridCells.Adaptive(180.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = padding,
-            ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    SearchBar(onCamClick = onCamClick)
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
                 }
-                items(books) { book ->
-                    BookItem(book = book, onClick = onBookClick)
+            } else {
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    columns = GridCells.Adaptive(180.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    contentPadding = padding,
+                ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        SearchBar(onCamClick = onCamClick)
+                    }
+                    items(state.books) { book ->
+                        BookItem(book = book, onClick = onBookClick)
+                    }
                 }
             }
         }
