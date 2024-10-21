@@ -3,7 +3,6 @@ package com.example.architectcoders.ui.screens.camera
 import android.Manifest
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGestures
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
@@ -49,6 +49,8 @@ import com.example.architectcoders.ui.common.PermissionRequestEffect
 import com.example.architectcoders.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,17 +68,11 @@ fun CameraScreen(
                 TopAppBar(
                     title = { Text("") },
                     navigationIcon = {
-                        IconButton(
-                            onClick = onBack,
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                                    shape = RoundedCornerShape(100)
-                                )
-                        ) {
+                        IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.go_back),
+                                tint = MaterialTheme.colorScheme.surface,
                             )
                         }
                     },
@@ -87,7 +83,6 @@ fun CameraScreen(
         ) { padding ->
             if (permissionGranted) {
                 ScanningScreen(
-                    onBack = onBack,
                     onBookClick = onBookClick,
                     padding = padding,
                 )
@@ -109,7 +104,6 @@ fun CameraScreen(
 
 @Composable
 private fun ScanningScreen(
-    onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
     padding: PaddingValues,
 ) {
@@ -141,6 +135,12 @@ private fun ScanningScreen(
             },
             modifier = Modifier.fillMaxSize(),
         )
+        LaunchedEffect(true) {
+            withContext(Dispatchers.Default) {
+                Thread.sleep(3000)
+                showResult = true
+            }
+        }
         AnimatedVisibility(
             visible = showResult,
             modifier = Modifier.align(Alignment.BottomCenter)
@@ -151,6 +151,7 @@ private fun ScanningScreen(
                     showResult = false
                     onBookClick(books.first())
                 },
+                padding = padding,
             )
         }
     }
@@ -160,6 +161,7 @@ private fun ScanningScreen(
 private fun BookResult(
     book: Book,
     onBookClick: () -> Unit,
+    padding: PaddingValues,
 ) {
     Surface(
         modifier = Modifier
@@ -167,6 +169,7 @@ private fun BookResult(
                 horizontal = 16.dp,
                 vertical = 32.dp,
             )
+            .padding(padding)
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onBookClick),
@@ -194,11 +197,13 @@ private fun BookResult(
                     text = book.title,
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = book.author,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
