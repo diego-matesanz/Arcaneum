@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.theme
+package com.diego.matesanz.arcaneum.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.architectcoders.R
+import com.diego.matesanz.arcaneum.R
 
 private val outfitFamily = FontFamily(
     Font(R.font.outfit_black, FontWeight.Black),

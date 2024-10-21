@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.common
+package com.diego.matesanz.arcaneum.ui.common
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

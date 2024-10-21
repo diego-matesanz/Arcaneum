@@ -1,4 +1,4 @@
-package com.example.architectcoders.data
+package com.diego.matesanz.arcaneum.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

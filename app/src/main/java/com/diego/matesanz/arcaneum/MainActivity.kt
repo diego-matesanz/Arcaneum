@@ -1,10 +1,10 @@
-package com.example.architectcoders
+package com.diego.matesanz.arcaneum
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.architectcoders.ui.screens.Navigation
+import com.diego.matesanz.arcaneum.ui.screens.Navigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.example.architectcoders.data
+package com.diego.matesanz.arcaneum.data
 
 data class Book(
     val id: Int,

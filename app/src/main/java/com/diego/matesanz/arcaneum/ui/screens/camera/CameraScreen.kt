@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.screens.camera
+package com.diego.matesanz.arcaneum.ui.screens.camera
 
 import android.Manifest
 import android.app.Activity
@@ -42,11 +42,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
-import com.example.architectcoders.data.Book
-import com.example.architectcoders.R
-import com.example.architectcoders.data.books
-import com.example.architectcoders.ui.common.PermissionRequestEffect
-import com.example.architectcoders.ui.screens.Screen
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.books
+import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
+import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.R
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,9 +47,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.architectcoders.data.Book
-import com.example.architectcoders.R
-import com.example.architectcoders.ui.screens.Screen
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

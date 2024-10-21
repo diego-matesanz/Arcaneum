@@ -1,4 +1,4 @@
-package com.example.architectcoders.ui.screens.detail
+package com.diego.matesanz.arcaneum.ui.screens.detail
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -45,9 +45,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.architectcoders.data.Book
-import com.example.architectcoders.R
-import com.example.architectcoders.ui.screens.Screen
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
