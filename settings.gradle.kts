@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Architect Coders"
+rootProject.name = "Arcaneum"
 include(":app")
  
