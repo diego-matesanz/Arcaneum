@@ -1,5 +1,6 @@
 package com.diego.matesanz.arcaneum.ui.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -37,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,9 +50,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +64,7 @@ fun HomeScreen(
     val state = viewModel.state.value
 
     LaunchedEffect(Unit) {
-        viewModel.onUiReady()
+        viewModel.searchBooks("Brandon Sanderson")
     }
 
     Screen {
@@ -101,7 +104,10 @@ fun HomeScreen(
                     contentPadding = padding,
                 ) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        SearchBar(onCamClick = onCamClick)
+                        SearchBar(
+                            onCamClick = onCamClick,
+                            onSearch = viewModel::searchBooks,
+                        )
                     }
                     items(state.books) { book ->
                         BookItem(book = book, onClick = onBookClick)
@@ -113,7 +119,10 @@ fun HomeScreen(
 }
 
 @Composable
-private fun SearchBar(onCamClick: () -> Unit) {
+private fun SearchBar(
+    onCamClick: () -> Unit,
+    onSearch: (String) -> Unit,
+) {
     var textSearch by remember { mutableStateOf("") }
     TextField(
         value = textSearch,
@@ -123,10 +132,13 @@ private fun SearchBar(onCamClick: () -> Unit) {
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Search,
         ),
+        keyboardActions = KeyboardActions(
+            onSearch = { onSearch(textSearch) }
+        ),
         singleLine = true,
         leadingIcon = {
             IconButton(onClick = {
-                // TODO search
+                onSearch(textSearch)
             }) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -158,13 +170,14 @@ private fun BookItem(book: Book, onClick: (Book) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1 / 1.5F)
-                .clip(MaterialTheme.shapes.medium),
+                .clip(MaterialTheme.shapes.medium)
+                .background(Color.Gray),
             model = book.coverImage,
             contentDescription = book.title,
         )
         BookInfo(
             title = book.title,
-            author = book.author,
+            author = book.authors.firstOrNull() ?: "",
         )
     }
 }

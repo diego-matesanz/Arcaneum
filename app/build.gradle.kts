@@ -1,7 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 android {
@@ -16,6 +19,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").readText().byteInputStream())
+
+        val googleBooksApiKey = properties.getProperty("GOOGLE_BOOKS_API_KEY", "")
+        buildConfigField("String", "GOOGLE_BOOKS_API_KEY", "\"$googleBooksApiKey\"")
     }
 
     buildTypes {
@@ -39,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -55,9 +65,12 @@ dependencies {
     implementation(libs.zxing.android.embedded)
     implementation(libs.zxing.core)
     implementation(libs.androidx.material.icons.extended)
-    testImplementation(libs.junit)
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -150,14 +150,14 @@ private fun BookDetail(
                 )
                 TitleSection(
                     title = book.title,
-                    author = book.author
+                    author = book.authors.first()
                 )
                 InfoSection(
-                    rating = book.rating,
-                    pages = book.pages,
+                    rating = book.averageRating,
+                    pages = book.pageCount,
                     language = book.language
                 )
-                SynopsisSection(book.synopsis)
+                SynopsisSection(book.description)
             }
         }
     }
@@ -187,7 +187,7 @@ private fun TitleSection(
 
 @Composable
 private fun InfoSection(
-    rating: Float,
+    rating: Double,
     pages: Int,
     language: String,
 ) {

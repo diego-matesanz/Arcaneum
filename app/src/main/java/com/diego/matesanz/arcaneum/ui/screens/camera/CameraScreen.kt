@@ -200,7 +200,7 @@ private fun BookResult(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = book.author,
+                    text = book.authors.first(),
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
