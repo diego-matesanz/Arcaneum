@@ -14,10 +14,10 @@ class HomeViewModel : ViewModel() {
 
     private val repository = BooksRepository()
 
-    fun onUiReady() {
+    fun searchBooks(search: String) {
         viewModelScope.launch {
             state.value = UiState(isLoading = true)
-            state.value = UiState(isLoading = false, books = repository.fetchPopularBooks())
+            state.value = UiState(isLoading = false, books = repository.fetchBooksBySearchText(search))
         }
     }
 

@@ -26,7 +26,7 @@ fun Navigation() {
             route = "detail/{bookId}",
             arguments = listOf(navArgument("bookId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val bookId = backStackEntry.arguments?.getInt("bookId")
+            val bookId = backStackEntry.arguments?.getString("bookId")
             DetailScreen(
                 book = books.first { it.id == bookId },
                 onBack = { navController.popBackStack() },

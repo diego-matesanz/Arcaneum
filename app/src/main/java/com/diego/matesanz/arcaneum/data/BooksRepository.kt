@@ -1,14 +1,25 @@
 package com.diego.matesanz.arcaneum.data
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.diego.matesanz.arcaneum.data.RemoteResult.RemoteBook
 
 class BooksRepository {
 
-    suspend fun fetchPopularBooks(): List<Book> =
-        withContext(Dispatchers.IO) {
-            delay(2000)
-            books
-        }
+    suspend fun fetchBooksBySearchText(search: String): List<Book> =
+        BooksClient
+            .instance
+            .fetchBooksBySearchText(search)
+            .items
+            .map { it.toDomainModel() }
 }
+
+private fun RemoteBook.toDomainModel(): Book =
+    Book(
+        id = id ?: "",
+        title = volumeInfo?.title ?: "",
+        authors = volumeInfo?.authors ?: emptyList(),
+        coverImage = volumeInfo?.imageLinks?.thumbnail ?: "",
+        pageCount = volumeInfo?.pageCount ?: 0,
+        description = volumeInfo?.description ?: "",
+        language = volumeInfo?.language ?: "",
+        averageRating = volumeInfo?.averageRating ?: 0.0,
+    )
