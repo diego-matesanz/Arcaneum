@@ -36,23 +36,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.R
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.HtmlText
+import com.diego.matesanz.arcaneum.ui.common.Loader
+import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    book: Book,
+    viewModel: DetailViewModel,
     onBack: () -> Unit,
     onBookmarked: (Book) -> Unit,
 ) {
@@ -60,7 +62,7 @@ fun DetailScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("") },
+                    title = {},
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(
@@ -77,28 +79,35 @@ fun DetailScreen(
                 )
             }
         ) { padding ->
-            Box {
-                BookDetail(
-                    book = book,
-                    modifier = Modifier.padding(padding)
-                )
+            val state = viewModel.state
 
-                var bookSaved by remember { mutableStateOf(false) }
-                FloatingActionButton(
-                    onClick = {
-                        bookSaved = !bookSaved
-                        onBookmarked(book)
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(32.dp),
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(id = R.string.bookmark),
+            if (state.isLoading) {
+                Loader()
+            }
+            state.book?.let { book ->
+                Box {
+                    BookDetail(
+                        book = book,
+                        modifier = Modifier.padding(padding)
                     )
+
+                    var bookSaved by remember { mutableStateOf(false) }
+                    FloatingActionButton(
+                        onClick = {
+                            bookSaved = !bookSaved
+                            onBookmarked(book)
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(32.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                            contentDescription = stringResource(id = R.string.bookmark),
+                        )
+                    }
                 }
             }
         }
@@ -143,7 +152,8 @@ private fun BookDetail(
                     modifier = Modifier
                         .width(180.dp)
                         .aspectRatio(1 / 1.5F)
-                        .clip(MaterialTheme.shapes.medium),
+                        .clip(MaterialTheme.shapes.small)
+                        .background(Color.Gray),
                     model = book.coverImage,
                     contentDescription = book.title,
                     contentScale = ContentScale.Crop
@@ -157,7 +167,9 @@ private fun BookDetail(
                     pages = book.pageCount,
                     language = book.language
                 )
-                SynopsisSection(book.description)
+                if (book.description.isNotEmpty()) {
+                    DescriptionSection(book.description)
+                }
             }
         }
     }
@@ -195,18 +207,24 @@ private fun InfoSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
     ) {
-        InfoItem(
-            title = stringResource(id = R.string.rating),
-            description = rating.toString()
-        )
-        InfoItem(
-            title = stringResource(id = R.string.pages),
-            description = pages.toString()
-        )
-        InfoItem(
-            title = stringResource(id = R.string.language),
-            description = language
-        )
+        if (rating > 0) {
+            InfoItem(
+                title = stringResource(id = R.string.rating),
+                description = rating.toString()
+            )
+        }
+        if (pages > 0) {
+            InfoItem(
+                title = stringResource(id = R.string.pages),
+                description = pages.toString()
+            )
+        }
+        if (language.isNotEmpty()) {
+            InfoItem(
+                title = stringResource(id = R.string.language),
+                description = language
+            )
+        }
     }
 }
 
@@ -233,26 +251,25 @@ private fun InfoItem(
 }
 
 @Composable
-private fun SynopsisSection(synopsis: String) {
+private fun DescriptionSection(description: String) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = stringResource(id = R.string.synopsis),
+            text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Start,
         )
 
         var isExpanded by remember { mutableStateOf(false) }
-        Text(
+        HtmlText(
             modifier = Modifier.animateContentSize(),
-            text = synopsis,
+            text = description,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
-            textAlign = TextAlign.Start,
             maxLines = if (isExpanded) Int.MAX_VALUE else 5,
-            overflow = if (isExpanded) TextOverflow.Clip else TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
         )
         Text(
             text = if (isExpanded) stringResource(id = R.string.read_less) else stringResource(id = R.string.read_more),

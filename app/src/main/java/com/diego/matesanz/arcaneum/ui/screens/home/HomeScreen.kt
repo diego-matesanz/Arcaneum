@@ -3,25 +3,28 @@ package com.diego.matesanz.arcaneum.ui.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -52,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.Loader
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,9 +64,10 @@ import com.diego.matesanz.arcaneum.ui.screens.Screen
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
+    onBookmarked: (Book) -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
-    val state = viewModel.state.value
+    val state = viewModel.state
 
     LaunchedEffect(Unit) {
         viewModel.searchBooks("Brandon Sanderson")
@@ -84,33 +90,37 @@ fun HomeScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing
         ) { padding ->
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = padding,
+            ) {
+                item {
+                    SearchBar(
+                        onCamClick = onCamClick,
+                        onSearch = viewModel::searchBooks,
+                    )
                 }
-            } else {
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    columns = GridCells.Adaptive(180.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    contentPadding = padding,
-                ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        SearchBar(
-                            onCamClick = onCamClick,
-                            onSearch = viewModel::searchBooks,
-                        )
+                if (state.isLoading) {
+                    item {
+                        Loader()
                     }
-                    items(state.books) { book ->
-                        BookItem(book = book, onClick = onBookClick)
+                } else {
+                    itemsIndexed(state.books) { index, book ->
+                        BookItem(
+                            book = book,
+                            onClick = onBookClick,
+                            onBookmarked = onBookmarked
+                        )
+                        if (index < state.books.lastIndex) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(top = 24.dp)
+                                    .padding(horizontal = 16.dp),
+                            )
+                        }
                     }
                 }
             }
@@ -124,6 +134,7 @@ private fun SearchBar(
     onSearch: (String) -> Unit,
 ) {
     var textSearch by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
     TextField(
         value = textSearch,
         onValueChange = { textSearch = it },
@@ -133,12 +144,16 @@ private fun SearchBar(
             imeAction = ImeAction.Search,
         ),
         keyboardActions = KeyboardActions(
-            onSearch = { onSearch(textSearch) }
+            onSearch = {
+                onSearch(textSearch)
+                keyboardController?.hide()
+            }
         ),
         singleLine = true,
         leadingIcon = {
             IconButton(onClick = {
                 onSearch(textSearch)
+                keyboardController?.hide()
             }) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -156,36 +171,103 @@ private fun SearchBar(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium),
+            .clip(MaterialTheme.shapes.small),
     )
 }
 
 @Composable
-private fun BookItem(book: Book, onClick: (Book) -> Unit) {
-    Column(
-        modifier = Modifier.clickable(onClick = { onClick(book) }),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+private fun BookItem(
+    book: Book,
+    onClick: (Book) -> Unit,
+    onBookmarked: (Book) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .height(IntrinsicSize.Max)
+            .clickable(onClick = { onClick(book) }),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         AsyncImage(
             modifier = Modifier
-                .fillMaxWidth()
+                .height(180.dp)
                 .aspectRatio(1 / 1.5F)
-                .clip(MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.small)
                 .background(Color.Gray),
             model = book.coverImage,
             contentDescription = book.title,
         )
-        BookInfo(
-            title = book.title,
-            author = book.authors.firstOrNull() ?: "",
-        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(vertical = 4.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            TitleAndAuthorsSection(
+                title = book.title,
+                authors = book.authors,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ){
+                RatingSection(
+                    averageRating = book.averageRating,
+                    ratingsCount = book.ratingsCount,
+                )
+
+                var bookSaved by remember { mutableStateOf(false) }
+                IconButton(
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .background(MaterialTheme.colorScheme.secondaryContainer),
+                    onClick = {
+                        bookSaved = !bookSaved
+                        onBookmarked(book)
+                    },
+                ) {
+                    Icon(
+                        imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                        contentDescription = stringResource(id = R.string.bookmark),
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun BookInfo(
+private fun RatingSection(
+    averageRating: Double,
+    ratingsCount: Int,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        if (averageRating > 0) {
+            Text(
+                text = "${stringResource(R.string.rating)}: $averageRating",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Start,
+            )
+        }
+        if (ratingsCount > 0) {
+            Text(
+                text = "$ratingsCount ${stringResource(R.string.ratings)}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Start,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TitleAndAuthorsSection(
     title: String,
-    author: String,
+    authors: List<String>,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -193,14 +275,22 @@ private fun BookInfo(
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
         )
+
+        var authorsText = StringBuilder()
+        authors.forEachIndexed { index, author ->
+            authorsText.append(author)
+            if (index < authors.size - 1) {
+                authorsText.append(", ")
+            }
+        }
         Text(
-            text = author,
+            text = authorsText.toString(),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
         )

@@ -6,9 +6,10 @@
     <string name="search">Search</string>
     <string name="need_camera_permission_to_scan">Need camera permission to scan</string>
     <string name="rating">Rating</string>
+    <string name="ratings">ratings</string>
     <string name="pages">Pages</string>
     <string name="language">Language</string>
-    <string name="synopsis">Synopsis</string>
+    <string name="description">Description</string>
     <string name="bookmark">Bookmark</string>
     <string name="search_label">Titles, authors or topics</string>
     <string name="read_more">Read more</string>

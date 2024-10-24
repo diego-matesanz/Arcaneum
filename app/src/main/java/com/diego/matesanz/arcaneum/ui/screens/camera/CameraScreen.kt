@@ -171,7 +171,7 @@ private fun BookResult(
             )
             .padding(padding)
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.small)
             .clickable(onClick = onBookClick),
     ) {
         Row(
@@ -185,7 +185,7 @@ private fun BookResult(
                 modifier = Modifier
                     .width(60.dp)
                     .aspectRatio(2 / 3F)
-                    .clip(MaterialTheme.shapes.medium),
+                    .clip(MaterialTheme.shapes.small),
                 model = book.coverImage,
                 contentDescription = book.title,
             )
