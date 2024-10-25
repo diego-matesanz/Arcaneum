@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -57,6 +58,7 @@ import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.Loader
+import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +72,7 @@ fun HomeScreen(
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.searchBooks("Brandon Sanderson")
+        viewModel.fetchBooksBySearch("Brandon Sanderson")
     }
 
     Screen {
@@ -100,12 +102,16 @@ fun HomeScreen(
                 item {
                     SearchBar(
                         onCamClick = onCamClick,
-                        onSearch = viewModel::searchBooks,
+                        onSearch = viewModel::fetchBooksBySearch,
                     )
                 }
-                if (state.isLoading) {
+                if (true) {
                     item {
-                        Loader()
+                        LoadingSkeleton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                        )
                     }
                 } else {
                     itemsIndexed(state.books) { index, book ->
@@ -283,7 +289,7 @@ private fun TitleAndAuthorsSection(
         var authorsText = StringBuilder()
         authors.forEachIndexed { index, author ->
             authorsText.append(author)
-            if (index < authors.size - 1) {
+            if (index < authors.lastIndex) {
                 authorsText.append(", ")
             }
         }

@@ -14,4 +14,5 @@
     <string name="search_label">Titles, authors or topics</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
+    <string name="error_scanning_book">Oops! Seems like we don\'t have that one.</string>
 </resources>

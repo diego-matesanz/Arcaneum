@@ -18,6 +18,14 @@ class BooksRepository {
             .instance
             .fetchBookById(id)
             .toDomainModel()
+
+    suspend fun fetchBookByIsbn(isbn: String): Book =
+        BooksClient
+            .instance
+            .fetchBooksBySearchText("isbn:$isbn")
+            .items
+            .first()
+            .toDomainModel()
 }
 
 private fun RemoteBook.toDomainModel(): Book =

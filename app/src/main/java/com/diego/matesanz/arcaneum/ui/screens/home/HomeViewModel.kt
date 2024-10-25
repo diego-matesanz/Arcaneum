@@ -16,7 +16,7 @@ class HomeViewModel : ViewModel() {
 
     private val repository = BooksRepository()
 
-    fun searchBooks(search: String) {
+    fun fetchBooksBySearch(search: String) {
         viewModelScope.launch {
             state = UiState(isLoading = true)
             state = UiState(isLoading = false, books = repository.fetchBooksBySearchText(search))
