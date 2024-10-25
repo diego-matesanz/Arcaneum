@@ -3,6 +3,7 @@ package com.diego.matesanz.arcaneum.ui.screens.camera
 import android.Manifest
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,9 +14,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGestures
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,16 +39,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.books
+import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.R
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +62,9 @@ import kotlinx.coroutines.withContext
 fun CameraScreen(
     onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
+    viewModel: CameraViewModel = viewModel(),
 ) {
+    val state = viewModel.state
     var permissionGranted by remember { mutableStateOf(false) }
 
     PermissionRequestEffect(permission = Manifest.permission.CAMERA) { permissionGranted = it }
@@ -83,6 +90,10 @@ fun CameraScreen(
         ) { padding ->
             if (permissionGranted) {
                 ScanningScreen(
+                    book = state.book,
+                    isLoading = state.isLoading,
+                    isError = state.isError,
+                    onBookScanned = viewModel::fetchBookByIsbn,
                     onBookClick = onBookClick,
                     padding = padding,
                 )
@@ -104,6 +115,10 @@ fun CameraScreen(
 
 @Composable
 private fun ScanningScreen(
+    book: Book?,
+    isLoading: Boolean,
+    isError: Boolean,
+    onBookScanned: (String) -> Unit,
     onBookClick: (Book) -> Unit,
     padding: PaddingValues,
 ) {
@@ -124,10 +139,11 @@ private fun ScanningScreen(
                             return@decodeContinuous
                         }
                         scanFlag = true
-                        result.text?.let { barCodeOrQr ->
+                        result.text?.let {
                             lastReadBarcode = result.text
                             scanFlag = true
                             showResult = true
+                            onBookScanned(it)
                         }
                     }
                     this.resume()
@@ -135,23 +151,61 @@ private fun ScanningScreen(
             },
             modifier = Modifier.fillMaxSize(),
         )
-        LaunchedEffect(true) {
-            withContext(Dispatchers.Default) {
-                Thread.sleep(3000)
-                showResult = true
-            }
-        }
+
         AnimatedVisibility(
             visible = showResult,
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-            BookResult(
-                book = books.first(),
-                onBookClick = {
-                    showResult = false
-                    onBookClick(books.first())
-                },
-                padding = padding,
+            when {
+                isLoading -> BookResultLoader(modifier = Modifier.padding(padding))
+                isError -> ErrorResult(padding)
+                else -> {
+                    book?.let {
+                        BookResult(
+                            book = it,
+                            onBookClick = {
+                                showResult = false
+                                onBookClick(book)
+                            },
+                            padding = padding,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ErrorResult(
+    padding: PaddingValues,
+) {
+    Surface(
+        modifier = Modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 32.dp,
+            )
+            .padding(padding)
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                modifier = Modifier.size(90.dp),
+                painter = painterResource(R.drawable.ic_error),
+                contentDescription = null,
+            )
+            Text(
+                text = stringResource(R.string.error_scanning_book),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -171,7 +225,7 @@ private fun BookResult(
             )
             .padding(padding)
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.small)
             .clickable(onClick = onBookClick),
     ) {
         Row(
@@ -181,13 +235,12 @@ private fun BookResult(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .width(60.dp)
-                    .aspectRatio(2 / 3F)
-                    .clip(MaterialTheme.shapes.medium),
+            CustomAsyncImage(
                 model = book.coverImage,
                 contentDescription = book.title,
+                modifier = Modifier
+                    .height(90.dp)
+                    .aspectRatio(1 / 1.5F),
             )
             Column(
                 modifier = Modifier.weight(1f),
@@ -199,8 +252,16 @@ private fun BookResult(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
+                var authorsText = StringBuilder()
+                book.authors.forEachIndexed { index, author ->
+                    authorsText.append(author)
+                    if (index < book.authors.lastIndex) {
+                        authorsText.append(", ")
+                    }
+                }
                 Text(
-                    text = book.authors.first(),
+                    text = authorsText.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

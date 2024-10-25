@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,37 +29,39 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.R
+import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.HtmlText
+import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    book: Book,
+    viewModel: DetailViewModel,
     onBack: () -> Unit,
     onBookmarked: (Book) -> Unit,
 ) {
+    val state = viewModel.state
+
     Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("") },
+                    title = {},
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(
@@ -70,35 +71,42 @@ fun DetailScreen(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = if (state.dominantColor != 0) Color(state.dominantColor) else Color.Transparent,
                         navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 )
             }
         ) { padding ->
-            Box {
-                BookDetail(
-                    book = book,
-                    modifier = Modifier.padding(padding)
-                )
+            if (state.isLoading) {
+                DetailLoader(padding = padding)
+            } else {
+                state.book?.let { book ->
+                    Box {
+                        BookDetail(
+                            book = book,
+                            dominantColor = state.dominantColor,
+                            onDominantColor = viewModel::onDominantColor,
+                            modifier = Modifier.padding(padding),
+                        )
 
-                var bookSaved by remember { mutableStateOf(false) }
-                FloatingActionButton(
-                    onClick = {
-                        bookSaved = !bookSaved
-                        onBookmarked(book)
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(32.dp),
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(id = R.string.bookmark),
-                    )
+                        var bookSaved by remember { mutableStateOf(false) }
+                        FloatingActionButton(
+                            onClick = {
+                                bookSaved = !bookSaved
+                                onBookmarked(book)
+                            },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                                contentDescription = stringResource(id = R.string.bookmark),
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -108,6 +116,8 @@ fun DetailScreen(
 @Composable
 private fun BookDetail(
     book: Book,
+    dominantColor: Int,
+    onDominantColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -128,7 +138,7 @@ private fun BookDetail(
                     }
                     .fillMaxWidth()
                     .height(180.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(if (dominantColor != 0) Color(dominantColor) else Color.Transparent)
                     .align(Alignment.TopCenter)
             )
             Column(
@@ -139,15 +149,15 @@ private fun BookDetail(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .aspectRatio(1 / 1.5F)
-                        .clip(MaterialTheme.shapes.medium),
+                CustomAsyncImage(
                     model = book.coverImage,
                     contentDescription = book.title,
-                    contentScale = ContentScale.Crop
-                )
+                    modifier = Modifier
+                        .height(270.dp)
+                        .aspectRatio(1 / 1.5F),
+                ) { color ->
+                    onDominantColor(color)
+                }
                 TitleSection(
                     title = book.title,
                     author = book.authors.first()
@@ -157,7 +167,9 @@ private fun BookDetail(
                     pages = book.pageCount,
                     language = book.language
                 )
-                SynopsisSection(book.description)
+                if (book.description.isNotEmpty()) {
+                    DescriptionSection(book.description)
+                }
             }
         }
     }
@@ -195,18 +207,24 @@ private fun InfoSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
     ) {
-        InfoItem(
-            title = stringResource(id = R.string.rating),
-            description = rating.toString()
-        )
-        InfoItem(
-            title = stringResource(id = R.string.pages),
-            description = pages.toString()
-        )
-        InfoItem(
-            title = stringResource(id = R.string.language),
-            description = language
-        )
+        if (rating > 0) {
+            InfoItem(
+                title = stringResource(id = R.string.rating),
+                description = rating.toString()
+            )
+        }
+        if (pages > 0) {
+            InfoItem(
+                title = stringResource(id = R.string.pages),
+                description = pages.toString()
+            )
+        }
+        if (language.isNotEmpty()) {
+            InfoItem(
+                title = stringResource(id = R.string.language),
+                description = language
+            )
+        }
     }
 }
 
@@ -233,26 +251,25 @@ private fun InfoItem(
 }
 
 @Composable
-private fun SynopsisSection(synopsis: String) {
+private fun DescriptionSection(description: String) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = stringResource(id = R.string.synopsis),
+            text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Start,
         )
 
         var isExpanded by remember { mutableStateOf(false) }
-        Text(
+        HtmlText(
             modifier = Modifier.animateContentSize(),
-            text = synopsis,
+            text = description,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
-            textAlign = TextAlign.Start,
             maxLines = if (isExpanded) Int.MAX_VALUE else 5,
-            overflow = if (isExpanded) TextOverflow.Clip else TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
         )
         Text(
             text = if (isExpanded) stringResource(id = R.string.read_less) else stringResource(id = R.string.read_more),

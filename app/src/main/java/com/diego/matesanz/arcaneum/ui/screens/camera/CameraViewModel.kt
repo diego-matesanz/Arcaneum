@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.camera
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,31 +9,27 @@ import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
+class CameraViewModel : ViewModel() {
 
     var state by mutableStateOf(UiState())
         private set
 
     private val repository = BooksRepository()
 
-    fun fetchBooksBySearch(search: String) {
+    fun fetchBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
-                state = UiState(isLoading = true, searchText = search, isError = false)
-                state = UiState(
-                    isLoading = false,
-                    books = repository.fetchBooksBySearchText(search),
-                )
+                state = state.copy(isLoading = true, isError = false)
+                state = state.copy(isLoading = false, book = repository.fetchBookByIsbn(isbn))
             } catch (_: Exception) {
-                state = UiState(isLoading = false, isError = true)
+                state = state.copy(isLoading = false, isError = true)
             }
         }
     }
 
     data class UiState(
-        val books: List<Book> = emptyList(),
         val isLoading: Boolean = false,
-        val searchText: String = "",
+        val book: Book? = null,
         val isError: Boolean = false,
     )
 }
