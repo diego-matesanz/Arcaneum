@@ -23,8 +23,13 @@ class DetailViewModel(private val id: String) : ViewModel() {
         }
     }
 
+    fun onDominantColor(color: Int) {
+        state = state.copy(dominantColor = color)
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
-        val book: Book? = null
+        val book: Book? = null,
+        val dominantColor: Int = 0,
     )
 }

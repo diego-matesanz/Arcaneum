@@ -67,8 +67,6 @@ fun HomeScreen(
 ) {
     val state = viewModel.state
 
-    println("HomeScreen: ${state.searchText}")
-
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(

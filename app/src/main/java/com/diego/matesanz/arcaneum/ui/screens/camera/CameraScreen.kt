@@ -143,7 +143,7 @@ private fun ScanningScreen(
                             lastReadBarcode = result.text
                             scanFlag = true
                             showResult = true
-                            onBookScanned("0060930314")
+                            onBookScanned(it)
                         }
                     }
                     this.resume()

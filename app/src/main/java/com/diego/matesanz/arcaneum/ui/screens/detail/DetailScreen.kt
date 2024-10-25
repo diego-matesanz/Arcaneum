@@ -29,27 +29,23 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.HtmlText
-import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +55,8 @@ fun DetailScreen(
     onBack: () -> Unit,
     onBookmarked: (Book) -> Unit,
 ) {
+    val state = viewModel.state
+
     Screen {
         Scaffold(
             topBar = {
@@ -73,15 +71,12 @@ fun DetailScreen(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = if (state.dominantColor != 0) Color(state.dominantColor) else Color.Transparent,
                         navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 )
             }
         ) { padding ->
-            val state = viewModel.state
-
             if (state.isLoading) {
                 DetailLoader(padding = padding)
             } else {
@@ -89,7 +84,9 @@ fun DetailScreen(
                     Box {
                         BookDetail(
                             book = book,
-                            modifier = Modifier.padding(padding)
+                            dominantColor = state.dominantColor,
+                            onDominantColor = viewModel::onDominantColor,
+                            modifier = Modifier.padding(padding),
                         )
 
                         var bookSaved by remember { mutableStateOf(false) }
@@ -119,6 +116,8 @@ fun DetailScreen(
 @Composable
 private fun BookDetail(
     book: Book,
+    dominantColor: Int,
+    onDominantColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -139,7 +138,7 @@ private fun BookDetail(
                     }
                     .fillMaxWidth()
                     .height(180.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(if (dominantColor != 0) Color(dominantColor) else Color.Transparent)
                     .align(Alignment.TopCenter)
             )
             Column(
@@ -156,7 +155,9 @@ private fun BookDetail(
                     modifier = Modifier
                         .height(270.dp)
                         .aspectRatio(1 / 1.5F),
-                )
+                ) { color ->
+                    onDominantColor(color)
+                }
                 TitleSection(
                     title = book.title,
                     author = book.authors.first()
