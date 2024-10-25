@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -48,7 +47,6 @@ import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.HtmlText
-import com.diego.matesanz.arcaneum.ui.common.Loader
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,31 +80,32 @@ fun DetailScreen(
             val state = viewModel.state
 
             if (state.isLoading) {
-                Loader()
-            }
-            state.book?.let { book ->
-                Box {
-                    BookDetail(
-                        book = book,
-                        modifier = Modifier.padding(padding)
-                    )
-
-                    var bookSaved by remember { mutableStateOf(false) }
-                    FloatingActionButton(
-                        onClick = {
-                            bookSaved = !bookSaved
-                            onBookmarked(book)
-                        },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(32.dp),
-                    ) {
-                        Icon(
-                            imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                            contentDescription = stringResource(id = R.string.bookmark),
+                DetailLoader(padding = padding)
+            } else {
+                state.book?.let { book ->
+                    Box {
+                        BookDetail(
+                            book = book,
+                            modifier = Modifier.padding(padding)
                         )
+
+                        var bookSaved by remember { mutableStateOf(false) }
+                        FloatingActionButton(
+                            onClick = {
+                                bookSaved = !bookSaved
+                                onBookmarked(book)
+                            },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                                contentDescription = stringResource(id = R.string.bookmark),
+                            )
+                        }
                     }
                 }
             }
@@ -150,10 +149,9 @@ private fun BookDetail(
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .width(180.dp)
+                        .height(270.dp)
                         .aspectRatio(1 / 1.5F)
-                        .clip(MaterialTheme.shapes.small)
-                        .background(Color.Gray),
+                        .clip(MaterialTheme.shapes.small),
                     model = book.coverImage,
                     contentDescription = book.title,
                     contentScale = ContentScale.Crop

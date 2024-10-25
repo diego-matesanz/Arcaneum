@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -57,8 +56,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.Loader
-import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,14 +102,8 @@ fun HomeScreen(
                         onSearch = viewModel::fetchBooksBySearch,
                     )
                 }
-                if (true) {
-                    item {
-                        LoadingSkeleton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp),
-                        )
-                    }
+                if (state.isLoading) {
+                    item { HomeLoader() }
                 } else {
                     itemsIndexed(state.books) { index, book ->
                         BookItem(
@@ -197,8 +188,7 @@ private fun BookItem(
             modifier = Modifier
                 .height(180.dp)
                 .aspectRatio(1 / 1.5F)
-                .clip(MaterialTheme.shapes.small)
-                .background(Color.Gray),
+                .clip(MaterialTheme.shapes.small),
             model = book.coverImage,
             contentDescription = book.title,
         )
@@ -218,7 +208,7 @@ private fun BookItem(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom,
-            ){
+            ) {
                 RatingSection(
                     averageRating = book.averageRating,
                     ratingsCount = book.ratingsCount,

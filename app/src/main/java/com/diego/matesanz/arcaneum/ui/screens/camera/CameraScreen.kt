@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGestures
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,11 +49,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.Loader
 import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,7 +142,7 @@ private fun ScanningScreen(
                             lastReadBarcode = result.text
                             scanFlag = true
                             showResult = true
-                            onBookScanned(it)
+                            onBookScanned("0060930314")
                         }
                     }
                     this.resume()
@@ -155,7 +156,7 @@ private fun ScanningScreen(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             when {
-                isLoading -> Loader()
+                isLoading -> BookResultLoader(modifier = Modifier.padding(padding))
                 isError -> ErrorResult(padding)
                 else -> {
                     book?.let {
