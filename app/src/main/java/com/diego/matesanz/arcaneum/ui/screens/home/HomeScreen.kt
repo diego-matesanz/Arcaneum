@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -53,9 +52,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -184,13 +183,12 @@ private fun BookItem(
             .clickable(onClick = { onClick(book) }),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .height(180.dp)
-                .aspectRatio(1 / 1.5F)
-                .clip(MaterialTheme.shapes.small),
+        CustomAsyncImage(
             model = book.coverImage,
             contentDescription = book.title,
+            modifier = Modifier
+                .height(180.dp)
+                .aspectRatio(1 / 1.5F),
         )
         Column(
             modifier = Modifier

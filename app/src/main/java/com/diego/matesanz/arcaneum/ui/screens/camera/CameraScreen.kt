@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
@@ -234,13 +235,12 @@ private fun BookResult(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .height(90.dp)
-                    .aspectRatio(1 / 1.5F)
-                    .clip(MaterialTheme.shapes.small),
+            CustomAsyncImage(
                 model = book.coverImage,
                 contentDescription = book.title,
+                modifier = Modifier
+                    .height(90.dp)
+                    .aspectRatio(1 / 1.5F),
             )
             Column(
                 modifier = Modifier.weight(1f),

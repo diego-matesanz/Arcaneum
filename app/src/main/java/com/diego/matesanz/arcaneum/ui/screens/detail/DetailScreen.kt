@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,7 +47,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.HtmlText
+import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,14 +150,12 @@ private fun BookDetail(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .height(270.dp)
-                        .aspectRatio(1 / 1.5F)
-                        .clip(MaterialTheme.shapes.small),
+                CustomAsyncImage(
                     model = book.coverImage,
                     contentDescription = book.title,
-                    contentScale = ContentScale.Crop
+                    modifier = Modifier
+                        .height(270.dp)
+                        .aspectRatio(1 / 1.5F),
                 )
                 TitleSection(
                     title = book.title,
