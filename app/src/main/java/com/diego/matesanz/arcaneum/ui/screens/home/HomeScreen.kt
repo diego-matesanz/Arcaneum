@@ -34,7 +34,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,9 +67,7 @@ fun HomeScreen(
 ) {
     val state = viewModel.state
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchBooksBySearch("Brandon Sanderson")
-    }
+    println("HomeScreen: ${state.searchText}")
 
     Screen {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -97,25 +95,29 @@ fun HomeScreen(
             ) {
                 item {
                     SearchBar(
+                        searchText = state.searchText,
                         onCamClick = onCamClick,
                         onSearch = viewModel::fetchBooksBySearch,
                     )
                 }
-                if (state.isLoading) {
-                    item { HomeLoader() }
-                } else {
-                    itemsIndexed(state.books) { index, book ->
-                        BookItem(
-                            book = book,
-                            onClick = onBookClick,
-                            onBookmarked = onBookmarked
-                        )
-                        if (index < state.books.lastIndex) {
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .padding(top = 24.dp)
-                                    .padding(horizontal = 16.dp),
+                when {
+                    state.isLoading -> item { HomeLoader() }
+                    state.isError -> item { HomeError() }
+                    state.books.isEmpty() && state.searchText.isEmpty() -> item { HomeEmpty() }
+                    else -> {
+                        itemsIndexed(state.books) { index, book ->
+                            BookItem(
+                                book = book,
+                                onClick = onBookClick,
+                                onBookmarked = onBookmarked
                             )
+                            if (index < state.books.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .padding(top = 24.dp)
+                                        .padding(horizontal = 16.dp),
+                                )
+                            }
                         }
                     }
                 }
@@ -126,14 +128,16 @@ fun HomeScreen(
 
 @Composable
 private fun SearchBar(
+    searchText: String,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
 ) {
-    var textSearch by remember { mutableStateOf("") }
+    val localFocusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    var search by remember { mutableStateOf(searchText) }
     TextField(
-        value = textSearch,
-        onValueChange = { textSearch = it },
+        value = search,
+        onValueChange = { search = it },
         label = { Text(text = stringResource(id = R.string.search_label)) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -141,14 +145,16 @@ private fun SearchBar(
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                onSearch(textSearch)
+                onSearch(search)
+                localFocusManager.clearFocus()
                 keyboardController?.hide()
-            }
+            },
         ),
         singleLine = true,
         leadingIcon = {
             IconButton(onClick = {
-                onSearch(textSearch)
+                onSearch(search)
+                localFocusManager.clearFocus()
                 keyboardController?.hide()
             }) {
                 Icon(

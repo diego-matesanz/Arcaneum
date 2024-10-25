@@ -37,7 +37,7 @@ val Typography = Typography(
     ),
     headlineSmall = TextStyle(
         fontFamily = outfitFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.15.sp

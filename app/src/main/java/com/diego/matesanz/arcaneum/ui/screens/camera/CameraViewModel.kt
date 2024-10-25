@@ -19,7 +19,7 @@ class CameraViewModel : ViewModel() {
     fun fetchBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
-                state = state.copy(isLoading = true)
+                state = state.copy(isLoading = true, isError = false)
                 state = state.copy(isLoading = false, book = repository.fetchBookByIsbn(isbn))
             } catch (_: Exception) {
                 state = state.copy(isLoading = false, isError = true)
