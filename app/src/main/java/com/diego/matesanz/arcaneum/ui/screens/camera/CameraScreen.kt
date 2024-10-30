@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +45,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
@@ -54,8 +52,6 @@ import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +65,9 @@ fun CameraScreen(
 
     PermissionRequestEffect(permission = Manifest.permission.CAMERA) { permissionGranted = it }
 
-    Screen {
+    Screen(
+        contentDescription = stringResource(R.string.camera_screen_accessibility_description),
+    ) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -78,7 +76,7 @@ fun CameraScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = stringResource(R.string.go_back),
+                                contentDescription = stringResource(R.string.go_back_action_accessibility_description),
                                 tint = MaterialTheme.colorScheme.surface,
                             )
                         }
@@ -200,7 +198,7 @@ private fun ErrorResult(
             Image(
                 modifier = Modifier.size(90.dp),
                 painter = painterResource(R.drawable.ic_error),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.error_scanning_state_accessibility_description),
             )
             Text(
                 text = stringResource(R.string.error_scanning_book),
@@ -237,7 +235,7 @@ private fun BookResult(
         ) {
             CustomAsyncImage(
                 model = book.coverImage,
-                contentDescription = book.title,
+                contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
                 modifier = Modifier
                     .height(90.dp)
                     .aspectRatio(1 / 1.5F),

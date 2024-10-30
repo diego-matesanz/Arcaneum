@@ -1,20 +1,40 @@
 <resources>
+    <!-- App name -->
     <string name="app_name">Arcaneum</string>
 
-    <string name="go_back">Go back</string>
-    <string name="open_camera">Open camera</string>
-    <string name="search">Search</string>
-    <string name="need_camera_permission_to_scan">Need camera permission to scan</string>
+    <!-- Home screen -->
+    <string name="search_label">Titles, authors or topics</string>
+    <string name="empty_search">Try searching for your favorite books or authors!</string>
+
+    <!-- Detail screen -->
     <string name="rating">Rating</string>
     <string name="ratings">ratings</string>
-    <string name="pages">Pages</string>
     <string name="language">Language</string>
+    <string name="pages">Pages</string>
     <string name="description">Description</string>
-    <string name="bookmark">Bookmark</string>
-    <string name="search_label">Titles, authors or topics</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
+
+    <!-- Camera screen -->
+    <string name="need_camera_permission_to_scan">Need camera permission to scan</string>
     <string name="error_scanning_book">Oops! Seems like we don\'t have that one.</string>
     <string name="error_searching_book">Oops! Seems like we don\'t have that one. Try with another search!"</string>
-    <string name="empty_search">Try searching for your favorite books or authors!</string>
+
+    <!-- Accessibility descriptions -->
+    <!-- Screens -->
+    <string name="home_screen_accessibility_description">This is the Home screen. It contains a list of books and a searchbar</string>
+    <string name="detail_screen_accessibility_description">This is the Book Detail screen. It contains all the information about the selected book</string>
+    <string name="camera_screen_accessibility_description">This is the Camera screen. It uses your device camera to scan a book</string>
+
+    <!-- Actions -->
+    <string name="search_action_accessibility_description">Click to perform a search with the given text</string>
+    <string name="open_camera_action_accessibility_description">Click to open the camera</string>
+    <string name="bookmark_action_accessibility_description">Click to bookmark the book</string>
+    <string name="go_back_action_accessibility_description">Click to navigate back</string>
+
+    <!-- Error states -->
+    <string name="error_scanning_state_accessibility_description">An error occurred scanning the book. Please try again. If error persists, consider that it\'s possible that the book is not registered in our data base</string>
+
+    <!-- Content descriptions -->
+    <string name="book_cover_content_accessibility_description">Book cover for %1$s</string>
 </resources>
