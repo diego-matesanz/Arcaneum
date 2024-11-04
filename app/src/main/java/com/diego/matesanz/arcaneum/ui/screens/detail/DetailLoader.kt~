@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.INFO_ITEM_COUNT
-import com.diego.matesanz.arcaneum.constants.LINE_COUNT
 import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 
 @Composable
@@ -108,7 +107,8 @@ private fun DescriptionSectionLoader() {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            repeat(LINE_COUNT) {
+            val lineCount = 5
+            repeat(lineCount) {
                 LoadingSkeleton(
                     modifier = Modifier
                         .fillMaxWidth()

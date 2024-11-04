@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
+import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
@@ -238,7 +239,7 @@ private fun BookResult(
                 contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
                 modifier = Modifier
                     .height(90.dp)
-                    .aspectRatio(1 / 1.5F),
+                    .aspectRatio(BOOK_ASPECT_RATIO),
             )
             Column(
                 modifier = Modifier.weight(1f),

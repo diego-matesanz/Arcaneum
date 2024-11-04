@@ -15,14 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.BOOK_COUNT
 import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 
 @Composable
 fun HomeLoader() {
     Column {
-        repeat(6) {
+        repeat(BOOK_COUNT) {
             BookLoader()
-            if (it < 5) {
+            if (it < BOOK_COUNT - 1) {
                 HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp))
             }
         }
@@ -38,7 +40,7 @@ private fun BookLoader() {
         LoadingSkeleton(
             modifier = Modifier
                 .height(180.dp)
-                .aspectRatio(1 / 1.5F),
+                .aspectRatio(BOOK_ASPECT_RATIO),
         )
         Column(
             modifier = Modifier
