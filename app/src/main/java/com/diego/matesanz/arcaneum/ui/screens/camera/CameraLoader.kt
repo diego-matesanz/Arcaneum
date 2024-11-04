@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 
 @Composable
@@ -38,7 +39,7 @@ fun BookResultLoader(modifier: Modifier = Modifier) {
             LoadingSkeleton(
                 modifier = Modifier
                     .height(90.dp)
-                    .aspectRatio(1 / 1.5F),
+                    .aspectRatio(BOOK_ASPECT_RATIO),
             )
             Column(
                 modifier = Modifier.weight(1f),

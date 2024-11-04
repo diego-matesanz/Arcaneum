@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
+import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.HtmlText
@@ -67,12 +70,15 @@ fun DetailScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = stringResource(id = R.string.go_back_action_accessibility_description),
+                                contentDescription = stringResource(
+                                    id = R.string.go_back_action_accessibility_description
+                                ),
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if (state.dominantColor != 0) Color(state.dominantColor) else Color.Transparent,
+                        containerColor = if (state.dominantColor != 0)
+                            Color(state.dominantColor) else Color.Transparent,
                         navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 )
@@ -82,34 +88,54 @@ fun DetailScreen(
                 DetailLoader(padding = padding)
             } else {
                 state.book?.let { book ->
-                    Box {
-                        BookDetail(
-                            book = book,
-                            dominantColor = state.dominantColor,
-                            onDominantColor = viewModel::onDominantColor,
-                            modifier = Modifier.padding(padding),
-                        )
-
-                        var bookSaved by remember { mutableStateOf(false) }
-                        FloatingActionButton(
-                            onClick = {
-                                bookSaved = !bookSaved
-                                onBookmarked(book)
-                            },
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(32.dp),
-                        ) {
-                            Icon(
-                                imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                                contentDescription = stringResource(id = R.string.bookmark_action_accessibility_description),
-                            )
-                        }
-                    }
+                    DetailContent(
+                        book = book,
+                        dominantColor = state.dominantColor,
+                        onDominantColor = viewModel::onDominantColor,
+                        onBookmarked = onBookmarked,
+                        padding = padding
+                    )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DetailContent(
+    book: Book,
+    dominantColor: Int,
+    onDominantColor: (Int) -> Unit,
+    onBookmarked: (Book) -> Unit,
+    padding: PaddingValues,
+) {
+    Box {
+        BookDetail(
+            book = book,
+            dominantColor = dominantColor,
+            onDominantColor = onDominantColor,
+            modifier = Modifier.padding(padding),
+        )
+
+        var bookSaved by remember { mutableStateOf(false) }
+        FloatingActionButton(
+            onClick = {
+                bookSaved = !bookSaved
+                onBookmarked(book)
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(32.dp),
+        ) {
+            Icon(
+                imageVector = if (bookSaved)
+                    Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                contentDescription = stringResource(
+                    id = R.string.bookmark_action_accessibility_description
+                ),
+            )
         }
     }
 }
@@ -132,7 +158,7 @@ private fun BookDetail(
                 modifier = Modifier
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
-                        val height = (scrollState.value / 3F).toInt()
+                        val height = (scrollState.value / SCROLL_HEIGHT_FACTOR).toInt()
                         layout(placeable.width, placeable.height) {
                             placeable.place(0, height)
                         }
@@ -152,10 +178,13 @@ private fun BookDetail(
             ) {
                 CustomAsyncImage(
                     model = book.coverImage,
-                    contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
+                    contentDescription = stringResource(
+                        R.string.book_cover_content_accessibility_description,
+                        book.title
+                    ),
                     modifier = Modifier
                         .height(270.dp)
-                        .aspectRatio(1 / 1.5F),
+                        .aspectRatio(BOOK_ASPECT_RATIO),
                 ) { color ->
                     onDominantColor(color)
                 }

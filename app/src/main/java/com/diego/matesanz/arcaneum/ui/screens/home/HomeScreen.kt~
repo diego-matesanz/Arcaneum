@@ -58,7 +58,6 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.detail.DetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +90,10 @@ fun HomeScreen(
         ) { padding ->
             HomeContent(
                 padding = padding,
-                state = state,
+                searchText = state.searchText,
+                isLoading = state.isLoading,
+                isError = state.isError,
+                books = state.books,
                 onBookClick = onBookClick,
                 onBookmarked = onBookmarked,
                 onCamClick = onCamClick,
@@ -104,7 +106,10 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     padding: PaddingValues,
-    state: HomeViewModel.UiState,
+    searchText: String,
+    isLoading: Boolean,
+    isError: Boolean,
+    books: List<Book>,
     onBookClick: (Book) -> Unit,
     onBookmarked: (Book) -> Unit,
     onCamClick: () -> Unit,
@@ -119,23 +124,23 @@ private fun HomeContent(
     ) {
         item {
             SearchBar(
-                searchText = state.searchText,
+                searchText = searchText,
                 onCamClick = onCamClick,
                 onSearch = onSearch,
             )
         }
         when {
-            state.isLoading -> item { HomeLoader() }
-            state.isError -> item { HomeError() }
-            state.books.isEmpty() && state.searchText.isEmpty() -> item { HomeEmpty() }
+            isLoading -> item { HomeLoader() }
+            isError -> item { HomeError() }
+            books.isEmpty() && searchText.isEmpty() -> item { HomeEmpty() }
             else -> {
-                itemsIndexed(state.books) { index, book ->
+                itemsIndexed(books) { index, book ->
                     BookItem(
                         book = book,
                         onClick = onBookClick,
                         onBookmarked = onBookmarked
                     )
-                    if (index < state.books.lastIndex) {
+                    if (index < books.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier
                                 .padding(top = 24.dp)

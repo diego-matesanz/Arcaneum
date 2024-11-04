@@ -21,7 +21,7 @@ fun Navigation() {
             HomeScreen(
                 onBookClick = { book -> navController.navigate("detail/${book.id}") },
                 onCamClick = { navController.navigate("camera") },
-                onBookmarked = { book ->  },
+                onBookmarked = { book -> /* TODO: Save book */ },
             )
         }
         composable(
@@ -32,7 +32,7 @@ fun Navigation() {
             DetailScreen(
                 viewModel = viewModel { DetailViewModel(bookId) },
                 onBack = { navController.popBackStack() },
-                onBookmarked = { book ->  },
+                onBookmarked = { book -> /* TODO: Save book */ },
             )
         }
         composable("camera") {
