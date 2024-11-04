@@ -67,7 +67,9 @@ fun HomeScreen(
 ) {
     val state = viewModel.state
 
-    Screen {
+    Screen(
+        contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
+    ) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = {
@@ -157,7 +159,7 @@ private fun SearchBar(
             }) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(id = R.string.search),
+                    contentDescription = stringResource(id = R.string.search_action_accessibility_description),
                 )
             }
         },
@@ -165,7 +167,7 @@ private fun SearchBar(
             IconButton(onClick = onCamClick) {
                 Icon(
                     imageVector = Icons.Default.QrCodeScanner,
-                    contentDescription = stringResource(id = R.string.open_camera),
+                    contentDescription = stringResource(id = R.string.open_camera_action_accessibility_description),
                 )
             }
         },
@@ -189,7 +191,7 @@ private fun BookItem(
     ) {
         CustomAsyncImage(
             model = book.coverImage,
-            contentDescription = book.title,
+            contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
             modifier = Modifier
                 .height(180.dp)
                 .aspectRatio(1 / 1.5F),
@@ -229,7 +231,7 @@ private fun BookItem(
                 ) {
                     Icon(
                         imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(id = R.string.bookmark),
+                        contentDescription = stringResource(id = R.string.bookmark_action_accessibility_description),
                     )
                 }
             }

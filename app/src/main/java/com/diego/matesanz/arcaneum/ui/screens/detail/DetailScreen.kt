@@ -29,7 +29,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +56,9 @@ fun DetailScreen(
 ) {
     val state = viewModel.state
 
-    Screen {
+    Screen(
+        contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
+    ) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -66,7 +67,7 @@ fun DetailScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = stringResource(id = R.string.go_back),
+                                contentDescription = stringResource(id = R.string.go_back_action_accessibility_description),
                             )
                         }
                     },
@@ -103,7 +104,7 @@ fun DetailScreen(
                         ) {
                             Icon(
                                 imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                                contentDescription = stringResource(id = R.string.bookmark),
+                                contentDescription = stringResource(id = R.string.bookmark_action_accessibility_description),
                             )
                         }
                     }
@@ -151,7 +152,7 @@ private fun BookDetail(
             ) {
                 CustomAsyncImage(
                     model = book.coverImage,
-                    contentDescription = book.title,
+                    contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
                     modifier = Modifier
                         .height(270.dp)
                         .aspectRatio(1 / 1.5F),
