@@ -50,7 +50,6 @@ import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.HtmlText
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel,
@@ -64,57 +63,84 @@ fun DetailScreen(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {},
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = stringResource(
-                                    id = R.string.go_back_action_accessibility_description
-                                ),
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = if (state.dominantColor != 0)
-                            Color(state.dominantColor) else Color.Transparent,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
+                DetailTopBar(
+                    onBack = onBack,
+                    dominantColor = if (state.dominantColor != 0)
+                        Color(state.dominantColor) else Color.Transparent
                 )
             }
         ) { padding ->
-            if (state.isLoading) {
-                DetailLoader(padding = padding)
-            } else {
-                state.book?.let { book ->
-                    DetailContent(
-                        book = book,
-                        dominantColor = state.dominantColor,
-                        onDominantColor = viewModel::onDominantColor,
-                        onBookmarked = onBookmarked,
-                        padding = padding
-                    )
-                }
-            }
+            DetailContent(
+                state = state,
+                onDominantColor = viewModel::onDominantColor,
+                onBookmarked = onBookmarked,
+                modifier = Modifier.padding(padding),
+            )
         }
     }
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun DetailTopBar(
+    onBack: () -> Unit,
+    dominantColor: Color,
+) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = stringResource(
+                        id = R.string.go_back_action_accessibility_description
+                    ),
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = dominantColor,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+    )
+}
+
+@Composable
 private fun DetailContent(
+    state: DetailViewModel.UiState,
+    onDominantColor: (Int) -> Unit,
+    onBookmarked: (Book) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (state.isLoading) {
+        DetailLoader(modifier = modifier)
+    } else {
+        state.book?.let { book ->
+            BookDetail(
+                book = book,
+                dominantColor = state.dominantColor,
+                onDominantColor = onDominantColor,
+                onBookmarked = onBookmarked,
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BookDetail(
     book: Book,
     dominantColor: Int,
     onDominantColor: (Int) -> Unit,
     onBookmarked: (Book) -> Unit,
-    padding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     Box {
-        BookDetail(
+        BookInfo(
             book = book,
             dominantColor = dominantColor,
             onDominantColor = onDominantColor,
-            modifier = Modifier.padding(padding),
+            modifier = modifier,
         )
 
         var bookSaved by remember { mutableStateOf(false) }
@@ -141,7 +167,7 @@ private fun DetailContent(
 }
 
 @Composable
-private fun BookDetail(
+private fun BookInfo(
     book: Book,
     dominantColor: Int,
     onDominantColor: (Int) -> Unit,

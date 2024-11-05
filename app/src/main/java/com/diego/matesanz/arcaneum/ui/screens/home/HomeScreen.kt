@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +59,6 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.detail.DetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,47 +75,52 @@ fun HomeScreen(
     ) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.app_name),
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
-                        )
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
-            },
+            topBar = { HomeTopBar(scrollBehavior = scrollBehavior) },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing
         ) { padding ->
             HomeContent(
-                padding = padding,
                 state = state,
                 onBookClick = onBookClick,
                 onBookmarked = onBookmarked,
                 onCamClick = onCamClick,
                 onSearch = viewModel::fetchBooksBySearch,
+                contentPadding = padding,
             )
         }
     }
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(id = R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
+            )
+        },
+        scrollBehavior = scrollBehavior,
+    )
+}
+
+@Composable
 private fun HomeContent(
-    padding: PaddingValues,
     state: HomeViewModel.UiState,
     onBookClick: (Book) -> Unit,
     onBookmarked: (Book) -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = padding,
+        contentPadding = contentPadding,
     ) {
         item {
             SearchBar(
@@ -213,7 +218,10 @@ private fun BookItem(
     ) {
         CustomAsyncImage(
             model = book.coverImage,
-            contentDescription = stringResource(R.string.book_cover_content_accessibility_description, book.title),
+            contentDescription = stringResource(
+                R.string.book_cover_content_accessibility_description,
+                book.title
+            ),
             modifier = Modifier
                 .height(180.dp)
                 .aspectRatio(BOOK_ASPECT_RATIO),
@@ -262,31 +270,6 @@ private fun BookItem(
 }
 
 @Composable
-private fun RatingSection(
-    averageRating: Double,
-    ratingsCount: Int,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        if (averageRating > 0) {
-            Text(
-                text = "${stringResource(R.string.rating)}: $averageRating",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-            )
-        }
-        if (ratingsCount > 0) {
-            Text(
-                text = "$ratingsCount ${stringResource(R.string.ratings)}",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-            )
-        }
-    }
-}
-
-@Composable
 private fun TitleAndAuthorsSection(
     title: String,
     authors: List<String>,
@@ -316,5 +299,30 @@ private fun TitleAndAuthorsSection(
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
         )
+    }
+}
+
+@Composable
+private fun RatingSection(
+    averageRating: Double,
+    ratingsCount: Int,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        if (averageRating > 0) {
+            Text(
+                text = "${stringResource(R.string.rating)}: $averageRating",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Start,
+            )
+        }
+        if (ratingsCount > 0) {
+            Text(
+                text = "$ratingsCount ${stringResource(R.string.ratings)}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Start,
+            )
+        }
     }
 }
