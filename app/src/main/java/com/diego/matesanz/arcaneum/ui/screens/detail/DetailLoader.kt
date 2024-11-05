@@ -21,12 +21,10 @@ import com.diego.matesanz.arcaneum.constants.LINE_COUNT
 import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
 
 @Composable
-fun DetailLoader(padding: PaddingValues) {
+fun DetailLoader(modifier: Modifier = Modifier) {
     Box {
         Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
         ) {
             Box {
                 LoadingSkeleton(
