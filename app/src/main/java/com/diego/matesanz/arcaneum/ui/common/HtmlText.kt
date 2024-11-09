@@ -6,9 +6,12 @@ import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.View.TEXT_ALIGNMENT_TEXT_START
 import android.widget.TextView
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -28,12 +31,14 @@ fun HtmlText(
     val typeface: Typeface = remember(resolver, style) {
         resolver.resolve(fontFamily = style.fontFamily)
     }.value as Typeface
+    val color = style.color.takeOrElse { LocalContentColor.current }
 
     AndroidView(
         modifier = modifier,
         factory = { context -> TextView(context) },
         update = { textView ->
             textView.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            textView.setTextColor(color.toArgb())
             textView.typeface = typeface
             textView.textSize = style.fontSize.value
             textView.maxLines = maxLines
