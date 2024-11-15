@@ -7,13 +7,15 @@ plugins {
     alias(libs.plugins.arturbosch.detekt)
 }
 
+val detektFormatting = libs.detekt.formatting
+
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     detekt {
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
 
         dependencies {
-            detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
+            detektPlugins(detektFormatting)
         }
     }
 }
