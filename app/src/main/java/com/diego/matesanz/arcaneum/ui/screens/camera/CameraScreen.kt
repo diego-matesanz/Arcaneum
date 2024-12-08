@@ -1,14 +1,11 @@
 package com.diego.matesanz.arcaneum.ui.screens.camera
 
-import android.Manifest
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGestures
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,9 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -49,8 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
-import com.diego.matesanz.arcaneum.ui.common.PermissionRequestEffect
+import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
@@ -62,9 +55,9 @@ fun CameraScreen(
     viewModel: CameraViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    var permissionGranted by remember { mutableStateOf(false) }
+    val cameraState = rememberCameraState()
 
-    PermissionRequestEffect(permission = Manifest.permission.CAMERA) { permissionGranted = it }
+    cameraState.AskCameraPermission { viewModel.onPermissionResult(it) }
 
     Screen(
         contentDescription = stringResource(R.string.camera_screen_accessibility_description),
@@ -74,7 +67,6 @@ fun CameraScreen(
             contentWindowInsets = WindowInsets.safeGestures,
         ) { padding ->
             CameraContent(
-                permissionGranted = permissionGranted,
                 state = state,
                 onBookScanned = viewModel::fetchBookByIsbn,
                 onBookClick = onBookClick,
@@ -104,13 +96,12 @@ private fun CameraTopBar(onBack: () -> Unit) {
 
 @Composable
 private fun CameraContent(
-    permissionGranted: Boolean,
     state: CameraViewModel.UiState,
     onBookScanned: (String) -> Unit,
     onBookClick: (Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (permissionGranted) {
+    if (state.permissionGranted) {
         ScanningScreen(
             book = state.book,
             isLoading = state.isLoading,

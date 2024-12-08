@@ -16,6 +16,13 @@ class CameraViewModel : ViewModel() {
 
     private val repository = BooksRepository()
 
+    data class UiState(
+        val isLoading: Boolean = false,
+        val book: Book? = null,
+        val isError: Boolean = false,
+        val permissionGranted: Boolean = false,
+    )
+
     fun fetchBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
@@ -32,9 +39,7 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    data class UiState(
-        val isLoading: Boolean = false,
-        val book: Book? = null,
-        val isError: Boolean = false,
-    )
+    fun onPermissionResult(permissionGranted: Boolean) {
+        _state.update { it.copy(permissionGranted = permissionGranted) }
+    }
 }

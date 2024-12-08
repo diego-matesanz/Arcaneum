@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
+import com.diego.matesanz.arcaneum.ui.common.components.LoadingSkeleton
 
 @Composable
 fun BookResultLoader(modifier: Modifier = Modifier) {

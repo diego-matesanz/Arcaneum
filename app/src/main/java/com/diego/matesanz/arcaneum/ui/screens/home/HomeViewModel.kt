@@ -16,6 +16,14 @@ class HomeViewModel : ViewModel() {
 
     private val repository = BooksRepository()
 
+    data class UiState(
+        val books: List<Book> = emptyList(),
+        val isLoading: Boolean = false,
+        val searchText: String = "",
+        val isError: Boolean = false,
+        val message: String? = null,
+    )
+
     fun fetchBooksBySearch(search: String) {
         viewModelScope.launch {
             try {
@@ -39,12 +47,4 @@ class HomeViewModel : ViewModel() {
     fun onMessageShown() {
         _state.update { it.copy(message = null) }
     }
-
-    data class UiState(
-        val books: List<Book> = emptyList(),
-        val isLoading: Boolean = false,
-        val searchText: String = "",
-        val isError: Boolean = false,
-        val message: String? = null,
-    )
 }

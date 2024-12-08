@@ -31,14 +31,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,25 +69,18 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val homeState = rememberHomeState()
 
-    LaunchedEffect(state.message) {
-        state.message?.let { message ->
-            snackbarHostState.currentSnackbarData?.dismiss()
-            snackbarHostState.showSnackbar(message = message)
-            viewModel.onMessageShown()
-        }
-    }
+    homeState.ShowMessageEffect(state.message) { viewModel.onMessageShown() }
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
-        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-            topBar = { HomeTopBar(scrollBehavior = scrollBehavior) },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { HomeTopBar(scrollBehavior = homeState.scrollBehavior) },
+            modifier = Modifier.nestedScroll(homeState.scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing,
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { SnackbarHost(homeState.snackbarHostState) },
         ) { padding ->
             HomeContent(
                 state = state,

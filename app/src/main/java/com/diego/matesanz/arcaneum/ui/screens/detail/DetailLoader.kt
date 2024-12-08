@@ -3,7 +3,6 @@ package com.diego.matesanz.arcaneum.ui.screens.detail
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.INFO_ITEM_COUNT
 import com.diego.matesanz.arcaneum.constants.LINE_COUNT
-import com.diego.matesanz.arcaneum.ui.common.LoadingSkeleton
+import com.diego.matesanz.arcaneum.ui.common.components.LoadingSkeleton
 
 @Composable
 fun DetailLoader(modifier: Modifier = Modifier) {

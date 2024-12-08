@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -49,12 +48,11 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,16 +62,9 @@ fun DetailScreen(
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val detailState = rememberDetailState()
 
-    LaunchedEffect(state.message) {
-        state.message?.let { message ->
-            snackbarHostState.currentSnackbarData?.dismiss()
-            snackbarHostState.showSnackbar(message = message)
-            viewModel.onMessageShown()
-        }
-    }
+    detailState.ShowMessageEffect(state.message) { viewModel.onMessageShown() }
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
@@ -84,7 +75,7 @@ fun DetailScreen(
                     onBack = onBack,
                     dominantColor = if (state.dominantColor != 0)
                         Color(state.dominantColor) else Color.Transparent,
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = detailState.scrollBehavior
                 )
             },
             floatingActionButton = {
@@ -108,12 +99,8 @@ fun DetailScreen(
                     )
                 }
             },
-            snackbarHost = {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                )
-            },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            snackbarHost = { SnackbarHost(detailState.snackbarHostState) },
+            modifier = Modifier.nestedScroll(detailState.scrollBehavior.nestedScrollConnection),
         ) { padding ->
             DetailContent(
                 state = state,
@@ -188,6 +175,7 @@ private fun BookDetail(
             Box(
                 modifier = Modifier
                     .layout { measurable, constraints ->
+
                         val placeable = measurable.measure(constraints)
                         val height = (scrollState.value / SCROLL_HEIGHT_FACTOR).toInt()
                         layout(placeable.width, placeable.height) {
