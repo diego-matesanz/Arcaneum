@@ -32,10 +32,19 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun onBookmarked() {
+        _state.update { it.copy(message = "Bookmarked") }
+    }
+
+    fun onMessageShown() {
+        _state.update { it.copy(message = null) }
+    }
+
     data class UiState(
         val books: List<Book> = emptyList(),
         val isLoading: Boolean = false,
         val searchText: String = "",
         val isError: Boolean = false,
+        val message: String? = null,
     )
 }

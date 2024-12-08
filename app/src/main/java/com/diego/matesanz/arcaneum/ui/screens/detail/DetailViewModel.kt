@@ -16,6 +16,13 @@ class DetailViewModel(private val id: String) : ViewModel() {
 
     private val repository = BooksRepository()
 
+    data class UiState(
+        val isLoading: Boolean = false,
+        val book: Book? = null,
+        val dominantColor: Int = 0,
+        val message: String? = null,
+    )
+
     init {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
@@ -27,9 +34,11 @@ class DetailViewModel(private val id: String) : ViewModel() {
         _state.update { it.copy(dominantColor = color) }
     }
 
-    data class UiState(
-        val isLoading: Boolean = false,
-        val book: Book? = null,
-        val dominantColor: Int = 0,
-    )
+    fun onBookmarked() {
+        _state.update { it.copy(message = "Bookmarked") }
+    }
+
+    fun onMessageShown() {
+        _state.update { it.copy(message = null) }
+    }
 }

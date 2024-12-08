@@ -24,7 +24,6 @@ fun Navigation() {
             HomeScreen(
                 onBookClick = { book -> navController.navigate(Detail(book.id)) },
                 onCamClick = { navController.navigate(Camera) },
-                onBookmarked = { book -> },
             )
         }
         composable<Detail> { backStackEntry ->
@@ -32,7 +31,6 @@ fun Navigation() {
             DetailScreen(
                 viewModel = viewModel { DetailViewModel(detail.bookId) },
                 onBack = { navController.popBackStack() },
-                onBookmarked = { book -> },
             )
         }
         composable<Camera> {
@@ -46,11 +44,11 @@ fun Navigation() {
 
 private sealed class Screen {
     @Serializable
-    object Home
+    object Home: Screen()
 
     @Serializable
-    data class Detail(val bookId: String)
+    data class Detail(val bookId: String): Screen()
 
     @Serializable
-    object Camera
+    object Camera: Screen()
 }

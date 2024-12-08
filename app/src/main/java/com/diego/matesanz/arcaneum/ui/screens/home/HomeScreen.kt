@@ -30,12 +30,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,10 +69,18 @@ import com.diego.matesanz.arcaneum.ui.screens.Screen
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
-    onBookmarked: (Book) -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.message) {
+        state.message?.let { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = message)
+            viewModel.onMessageShown()
+        }
+    }
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
@@ -78,12 +89,13 @@ fun HomeScreen(
         Scaffold(
             topBar = { HomeTopBar(scrollBehavior = scrollBehavior) },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentWindowInsets = WindowInsets.safeDrawing
+            contentWindowInsets = WindowInsets.safeDrawing,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
             HomeContent(
                 state = state,
                 onBookClick = onBookClick,
-                onBookmarked = onBookmarked,
+                onBookmarked = viewModel::onBookmarked,
                 onCamClick = onCamClick,
                 onSearch = viewModel::fetchBooksBySearch,
                 contentPadding = padding,
@@ -110,7 +122,7 @@ private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
 private fun HomeContent(
     state: HomeViewModel.UiState,
     onBookClick: (Book) -> Unit,
-    onBookmarked: (Book) -> Unit,
+    onBookmarked: () -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -209,7 +221,7 @@ private fun SearchBar(
 private fun BookItem(
     book: Book,
     onClick: (Book) -> Unit,
-    onBookmarked: (Book) -> Unit
+    onBookmarked: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -257,7 +269,7 @@ private fun BookItem(
                         .background(MaterialTheme.colorScheme.secondaryContainer),
                     onClick = {
                         bookSaved = !bookSaved
-                        onBookmarked(book)
+                        onBookmarked()
                     },
                 ) {
                     Icon(

@@ -24,10 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -44,6 +49,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
@@ -51,13 +57,23 @@ import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel,
     onBack: () -> Unit,
-    onBookmarked: (Book) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.message) {
+        state.message?.let { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = message)
+            viewModel.onMessageShown()
+        }
+    }
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
@@ -67,14 +83,41 @@ fun DetailScreen(
                 DetailTopBar(
                     onBack = onBack,
                     dominantColor = if (state.dominantColor != 0)
-                        Color(state.dominantColor) else Color.Transparent
+                        Color(state.dominantColor) else Color.Transparent,
+                    scrollBehavior = scrollBehavior
                 )
-            }
+            },
+            floatingActionButton = {
+                var bookSaved by remember { mutableStateOf(false) }
+                FloatingActionButton(
+                    onClick = {
+                        state.book?.let { book ->
+                            bookSaved = !bookSaved
+                            viewModel.onBookmarked()
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ) {
+                    Icon(
+                        imageVector = if (bookSaved)
+                            Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
+                        contentDescription = stringResource(
+                            id = R.string.bookmark_action_accessibility_description
+                        ),
+                    )
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                )
+            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             DetailContent(
                 state = state,
                 onDominantColor = viewModel::onDominantColor,
-                onBookmarked = onBookmarked,
                 modifier = Modifier.padding(padding),
             )
         }
@@ -86,6 +129,7 @@ fun DetailScreen(
 private fun DetailTopBar(
     onBack: () -> Unit,
     dominantColor: Color,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     TopAppBar(
         title = {},
@@ -102,7 +146,8 @@ private fun DetailTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = dominantColor,
             navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
+        ),
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -110,7 +155,6 @@ private fun DetailTopBar(
 private fun DetailContent(
     state: DetailViewModel.UiState,
     onDominantColor: (Int) -> Unit,
-    onBookmarked: (Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
@@ -121,7 +165,6 @@ private fun DetailContent(
                 book = book,
                 dominantColor = state.dominantColor,
                 onDominantColor = onDominantColor,
-                onBookmarked = onBookmarked,
                 modifier = modifier,
             )
         }
@@ -130,45 +173,6 @@ private fun DetailContent(
 
 @Composable
 private fun BookDetail(
-    book: Book,
-    dominantColor: Int,
-    onDominantColor: (Int) -> Unit,
-    onBookmarked: (Book) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box {
-        BookInfo(
-            book = book,
-            dominantColor = dominantColor,
-            onDominantColor = onDominantColor,
-            modifier = modifier,
-        )
-
-        var bookSaved by remember { mutableStateOf(false) }
-        FloatingActionButton(
-            onClick = {
-                bookSaved = !bookSaved
-                onBookmarked(book)
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(32.dp),
-        ) {
-            Icon(
-                imageVector = if (bookSaved)
-                    Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                contentDescription = stringResource(
-                    id = R.string.bookmark_action_accessibility_description
-                ),
-            )
-        }
-    }
-}
-
-@Composable
-private fun BookInfo(
     book: Book,
     dominantColor: Int,
     onDominantColor: (Int) -> Unit,
