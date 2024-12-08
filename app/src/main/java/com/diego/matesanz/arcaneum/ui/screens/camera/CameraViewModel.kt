@@ -9,6 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+sealed interface CameraAction {
+    data class PermissionResult(val permissionGranted: Boolean) : CameraAction
+    data class BookScanned(val isbn: String) : CameraAction
+}
+
 class CameraViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
@@ -23,7 +28,14 @@ class CameraViewModel : ViewModel() {
         val permissionGranted: Boolean = false,
     )
 
-    fun fetchBookByIsbn(isbn: String) {
+    fun onAction(action: CameraAction) {
+        when (action) {
+            is CameraAction.PermissionResult -> onPermissionResult(action.permissionGranted)
+            is CameraAction.BookScanned -> fetchBookByIsbn(action.isbn)
+        }
+    }
+
+    private fun fetchBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, isError = false) }
@@ -39,7 +51,7 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    fun onPermissionResult(permissionGranted: Boolean) {
+    private fun onPermissionResult(permissionGranted: Boolean) {
         _state.update { it.copy(permissionGranted = permissionGranted) }
     }
 }

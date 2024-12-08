@@ -30,7 +30,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +63,7 @@ fun DetailScreen(
     val state by viewModel.state.collectAsState()
     val detailState = rememberDetailState()
 
-    detailState.ShowMessageEffect(state.message) { viewModel.onMessageShown() }
+    detailState.ShowMessageEffect(state.message) { viewModel.onAction(DetailAction.MessageShown) }
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
@@ -84,7 +83,7 @@ fun DetailScreen(
                     onClick = {
                         state.book?.let { book ->
                             bookSaved = !bookSaved
-                            viewModel.onBookmarked()
+                            viewModel.onAction(DetailAction.Bookmarked)
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -104,7 +103,7 @@ fun DetailScreen(
         ) { padding ->
             DetailContent(
                 state = state,
-                onDominantColor = viewModel::onDominantColor,
+                onDominantColor = { viewModel.onAction(DetailAction.DominantColor(it)) },
                 modifier = Modifier.padding(padding),
             )
         }

@@ -71,7 +71,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsState()
     val homeState = rememberHomeState()
 
-    homeState.ShowMessageEffect(state.message) { viewModel.onMessageShown() }
+    homeState.ShowMessageEffect(state.message) { viewModel.onAction(HomeAction.MessageShown) }
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
@@ -85,9 +85,9 @@ fun HomeScreen(
             HomeContent(
                 state = state,
                 onBookClick = onBookClick,
-                onBookmarked = viewModel::onBookmarked,
                 onCamClick = onCamClick,
-                onSearch = viewModel::fetchBooksBySearch,
+                onBookmarked = { viewModel.onAction(HomeAction.Bookmarked) },
+                onSearch = { viewModel.onAction(HomeAction.Search(it)) },
                 contentPadding = padding,
             )
         }

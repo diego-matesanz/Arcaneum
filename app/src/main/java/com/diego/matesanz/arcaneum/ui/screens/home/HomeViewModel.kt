@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+sealed interface HomeAction {
+    data class Search(val search: String) : HomeAction
+    object Bookmarked : HomeAction
+    object MessageShown : HomeAction
+}
+
 class HomeViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
@@ -24,7 +30,15 @@ class HomeViewModel : ViewModel() {
         val message: String? = null,
     )
 
-    fun fetchBooksBySearch(search: String) {
+    fun onAction(action: HomeAction) {
+        when (action) {
+            is HomeAction.Search -> fetchBooksBySearch(action.search)
+            HomeAction.Bookmarked -> onBookmarked()
+            HomeAction.MessageShown -> onMessageShown()
+        }
+    }
+
+    private fun fetchBooksBySearch(search: String) {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
@@ -40,11 +54,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun onBookmarked() {
+    private fun onBookmarked() {
         _state.update { it.copy(message = "Bookmarked") }
     }
 
-    fun onMessageShown() {
+    private fun onMessageShown() {
         _state.update { it.copy(message = null) }
     }
 }

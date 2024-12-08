@@ -57,7 +57,7 @@ fun CameraScreen(
     val state by viewModel.state.collectAsState()
     val cameraState = rememberCameraState()
 
-    cameraState.AskCameraPermission { viewModel.onPermissionResult(it) }
+    cameraState.AskCameraPermission { viewModel.onAction(CameraAction.PermissionResult(it)) }
 
     Screen(
         contentDescription = stringResource(R.string.camera_screen_accessibility_description),
@@ -68,7 +68,7 @@ fun CameraScreen(
         ) { padding ->
             CameraContent(
                 state = state,
-                onBookScanned = viewModel::fetchBookByIsbn,
+                onBookScanned = { viewModel.onAction(CameraAction.BookScanned(it)) },
                 onBookClick = onBookClick,
                 modifier = Modifier.padding(padding),
             )

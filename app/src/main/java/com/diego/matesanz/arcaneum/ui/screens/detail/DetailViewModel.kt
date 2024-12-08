@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+sealed interface DetailAction {
+    object Bookmarked : DetailAction
+    object MessageShown : DetailAction
+    data class DominantColor(val color: Int) : DetailAction
+}
+
 class DetailViewModel(private val id: String) : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
@@ -30,15 +36,23 @@ class DetailViewModel(private val id: String) : ViewModel() {
         }
     }
 
-    fun onDominantColor(color: Int) {
+    fun onAction(action: DetailAction) {
+        when (action) {
+            DetailAction.Bookmarked -> onBookmarked()
+            DetailAction.MessageShown -> onMessageShown()
+            is DetailAction.DominantColor -> onDominantColor(action.color)
+        }
+    }
+
+    private fun onDominantColor(color: Int) {
         _state.update { it.copy(dominantColor = color) }
     }
 
-    fun onBookmarked() {
+    private fun onBookmarked() {
         _state.update { it.copy(message = "Bookmarked") }
     }
 
-    fun onMessageShown() {
+    private fun onMessageShown() {
         _state.update { it.copy(message = null) }
     }
 }
