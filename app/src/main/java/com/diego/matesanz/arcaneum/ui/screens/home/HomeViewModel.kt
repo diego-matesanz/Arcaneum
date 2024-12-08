@@ -1,31 +1,33 @@
 package com.diego.matesanz.arcaneum.ui.screens.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-    var state by mutableStateOf(UiState())
-        private set
+    private val _state = MutableStateFlow(UiState())
+    val state get() = _state.asStateFlow()
 
     private val repository = BooksRepository()
 
     fun fetchBooksBySearch(search: String) {
         viewModelScope.launch {
             try {
-                state = UiState(isLoading = true, searchText = search, isError = false)
-                state = UiState(
-                    isLoading = false,
-                    books = repository.fetchBooksBySearchText(search),
-                )
+                _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        books = repository.fetchBooksBySearchText(search)
+                    )
+                }
             } catch (_: Exception) {
-                state = UiState(isLoading = false, isError = true)
+                _state.update { it.copy(isLoading = false, isError = true) }
             }
         }
     }

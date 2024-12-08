@@ -36,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +69,7 @@ fun HomeScreen(
     onBookmarked: (Book) -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),

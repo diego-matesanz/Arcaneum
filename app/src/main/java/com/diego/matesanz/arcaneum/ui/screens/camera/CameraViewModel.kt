@@ -1,28 +1,33 @@
 package com.diego.matesanz.arcaneum.ui.screens.camera
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CameraViewModel : ViewModel() {
 
-    var state by mutableStateOf(UiState())
-        private set
+    private val _state = MutableStateFlow(UiState())
+    val state get() = _state.asStateFlow()
 
     private val repository = BooksRepository()
 
     fun fetchBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
-                state = state.copy(isLoading = true, isError = false)
-                state = state.copy(isLoading = false, book = repository.fetchBookByIsbn(isbn))
+                _state.update { it.copy(isLoading = true, isError = false) }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        book = repository.fetchBookByIsbn(isbn)
+                    )
+                }
             } catch (_: Exception) {
-                state = state.copy(isLoading = false, isError = true)
+                _state.update { it.copy(isLoading = false, isError = true) }
             }
         }
     }

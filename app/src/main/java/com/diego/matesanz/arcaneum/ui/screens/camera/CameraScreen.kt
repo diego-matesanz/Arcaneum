@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +61,7 @@ fun CameraScreen(
     onBookClick: (Book) -> Unit,
     viewModel: CameraViewModel = viewModel(),
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
     var permissionGranted by remember { mutableStateOf(false) }
 
     PermissionRequestEffect(permission = Manifest.permission.CAMERA) { permissionGranted = it }

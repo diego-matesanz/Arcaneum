@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +57,7 @@ fun DetailScreen(
     onBack: () -> Unit,
     onBookmarked: (Book) -> Unit,
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
