@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail
+package com.diego.matesanz.arcaneum.ui.screens.detail.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

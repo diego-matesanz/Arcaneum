@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail
+package com.diego.matesanz.arcaneum.ui.screens.detail.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -53,6 +53,9 @@ import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailAction
+import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailViewModel
+import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

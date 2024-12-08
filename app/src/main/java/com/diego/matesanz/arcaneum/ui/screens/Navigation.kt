@@ -9,10 +9,10 @@ import androidx.navigation.toRoute
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Camera
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Detail
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Home
-import com.diego.matesanz.arcaneum.ui.screens.camera.CameraScreen
-import com.diego.matesanz.arcaneum.ui.screens.detail.DetailScreen
-import com.diego.matesanz.arcaneum.ui.screens.detail.DetailViewModel
-import com.diego.matesanz.arcaneum.ui.screens.home.HomeScreen
+import com.diego.matesanz.arcaneum.ui.screens.camera.view.CameraScreen
+import com.diego.matesanz.arcaneum.ui.screens.detail.view.DetailScreen
+import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailViewModel
+import com.diego.matesanz.arcaneum.ui.screens.home.view.HomeScreen
 import kotlinx.serialization.Serializable
 
 @Composable

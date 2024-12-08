@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.camera
+package com.diego.matesanz.arcaneum.ui.screens.camera.stateHolder
 
 import android.Manifest
 import androidx.compose.runtime.Composable

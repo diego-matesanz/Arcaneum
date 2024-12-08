@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.camera
+package com.diego.matesanz.arcaneum.ui.screens.camera.view
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +45,9 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.camera.viewModel.CameraAction
+import com.diego.matesanz.arcaneum.ui.screens.camera.viewModel.CameraViewModel
+import com.diego.matesanz.arcaneum.ui.screens.camera.stateHolder.rememberCameraState
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 

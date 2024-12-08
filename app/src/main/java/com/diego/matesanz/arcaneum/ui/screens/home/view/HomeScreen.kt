@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.home.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,6 +60,9 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
+import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
+import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail
+package com.diego.matesanz.arcaneum.ui.screens.detail.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

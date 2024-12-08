@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.camera
+package com.diego.matesanz.arcaneum.ui.screens.camera.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

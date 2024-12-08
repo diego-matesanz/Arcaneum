@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail
+package com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState

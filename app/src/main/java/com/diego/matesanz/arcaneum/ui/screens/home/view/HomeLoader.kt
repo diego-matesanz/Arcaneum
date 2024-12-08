@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.home.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
