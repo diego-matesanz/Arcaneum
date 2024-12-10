@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.home
+package com.diego.matesanz.arcaneum.ui.screens.home.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,12 +30,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,34 +58,39 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
+import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
+import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
-    onBookmarked: (Book) -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
+    val homeState = rememberHomeState()
+
+    homeState.ShowMessageEffect(state.message) { viewModel.onAction(HomeAction.MessageShown) }
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
-        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
-            topBar = { HomeTopBar(scrollBehavior = scrollBehavior) },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentWindowInsets = WindowInsets.safeDrawing
+            topBar = { HomeTopBar(scrollBehavior = homeState.scrollBehavior) },
+            modifier = Modifier.nestedScroll(homeState.scrollBehavior.nestedScrollConnection),
+            contentWindowInsets = WindowInsets.safeDrawing,
+            snackbarHost = { SnackbarHost(homeState.snackbarHostState) },
         ) { padding ->
             HomeContent(
                 state = state,
                 onBookClick = onBookClick,
-                onBookmarked = onBookmarked,
                 onCamClick = onCamClick,
-                onSearch = viewModel::fetchBooksBySearch,
+                onBookmarked = { viewModel.onAction(HomeAction.Bookmarked) },
+                onSearch = { viewModel.onAction(HomeAction.Search(it)) },
                 contentPadding = padding,
             )
         }
@@ -109,7 +115,7 @@ private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
 private fun HomeContent(
     state: HomeViewModel.UiState,
     onBookClick: (Book) -> Unit,
-    onBookmarked: (Book) -> Unit,
+    onBookmarked: () -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -208,7 +214,7 @@ private fun SearchBar(
 private fun BookItem(
     book: Book,
     onClick: (Book) -> Unit,
-    onBookmarked: (Book) -> Unit
+    onBookmarked: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -256,7 +262,7 @@ private fun BookItem(
                         .background(MaterialTheme.colorScheme.secondaryContainer),
                     onClick = {
                         bookSaved = !bookSaved
-                        onBookmarked(book)
+                        onBookmarked()
                     },
                 ) {
                     Icon(

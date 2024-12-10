@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.common
+package com.diego.matesanz.arcaneum.ui.common.components
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat

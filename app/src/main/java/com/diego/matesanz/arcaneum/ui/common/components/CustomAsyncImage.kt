@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.common
+package com.diego.matesanz.arcaneum.ui.common.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
