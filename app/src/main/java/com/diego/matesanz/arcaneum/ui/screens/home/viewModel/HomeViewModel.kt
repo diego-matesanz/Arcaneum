@@ -30,6 +30,10 @@ class HomeViewModel : ViewModel() {
         val message: String? = null,
     )
 
+    init {
+        onAction(HomeAction.Search("Harry Potter"))
+    }
+
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.Search -> fetchBooksBySearch(action.search)
