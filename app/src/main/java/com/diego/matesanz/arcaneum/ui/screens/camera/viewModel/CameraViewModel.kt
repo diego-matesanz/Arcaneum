@@ -31,18 +31,18 @@ class CameraViewModel(
     fun onAction(action: CameraAction) {
         when (action) {
             is CameraAction.PermissionResult -> onPermissionResult(action.permissionGranted)
-            is CameraAction.BookScanned -> fetchBookByIsbn(action.isbn)
+            is CameraAction.BookScanned -> findBookByIsbn(action.isbn)
         }
     }
 
-    private fun fetchBookByIsbn(isbn: String) {
+    private fun findBookByIsbn(isbn: String) {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, isError = false) }
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        book = repository.fetchBookByIsbn(isbn)
+                        book = repository.findBookByIsbn(isbn)
                     )
                 }
             } catch (_: Exception) {

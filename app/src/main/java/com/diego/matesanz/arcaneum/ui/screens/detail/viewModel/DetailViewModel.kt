@@ -33,7 +33,9 @@ class DetailViewModel(
     init {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            _state.update { it.copy(isLoading = false, book = repository.fetchBookById(id)) }
+            repository.findBookById(id).collect { book ->
+                _state.update { it.copy(isLoading = false, book = book) }
+            }
         }
     }
 

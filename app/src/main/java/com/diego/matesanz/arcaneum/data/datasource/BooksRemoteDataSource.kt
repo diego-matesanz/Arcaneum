@@ -3,29 +3,29 @@ package com.diego.matesanz.arcaneum.data.datasource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.BooksClient
-import com.diego.matesanz.arcaneum.data.RemoteResult.RemoteBook
-import com.diego.matesanz.arcaneum.data.toHttps
+import com.diego.matesanz.arcaneum.data.datasource.remote.BooksClient
+import com.diego.matesanz.arcaneum.data.datasource.remote.RemoteResult.RemoteBook
+import com.diego.matesanz.arcaneum.extensions.toHttps
 
 class BooksRemoteDataSource {
 
-    suspend fun fetchBooksBySearchText(search: String): List<Book> =
+    suspend fun findBooksBySearchText(search: String): List<Book> =
         BooksClient
             .instance
-            .fetchBooksBySearchText(search)
+            .findBooksBySearchText(search)
             .items
             .map { it.toDomainModel() }
 
-    suspend fun fetchBookById(id: String): Book =
+    suspend fun findBookById(id: String): Book =
         BooksClient
             .instance
-            .fetchBookById(id)
+            .findBookById(id)
             .toDomainModel()
 
-    suspend fun fetchBookByIsbn(isbn: String): Book =
+    suspend fun findBookByIsbn(isbn: String): Book =
         BooksClient
             .instance
-            .fetchBooksBySearchText("isbn:$isbn")
+            .findBooksBySearchText("isbn:$isbn")
             .items
             .first()
             .toDomainModel()
@@ -33,7 +33,8 @@ class BooksRemoteDataSource {
 
 private fun RemoteBook.toDomainModel(): Book =
     Book(
-        id = id ?: "",
+        bookId = id ?: "",
+        shelfId = Int.MAX_VALUE,
         title = volumeInfo?.title ?: "",
         authors = volumeInfo?.authors ?: emptyList(),
         coverImage = volumeInfo?.imageLinks?.thumbnail?.toHttps() ?: "",
