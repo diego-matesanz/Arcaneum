@@ -36,20 +36,20 @@ class HomeViewModel(
 
     fun onAction(action: HomeAction) {
         when (action) {
-            is HomeAction.Search -> fetchBooksBySearch(action.search)
+            is HomeAction.Search -> findBooksBySearch(action.search)
             HomeAction.Bookmarked -> onBookmarked()
             HomeAction.MessageShown -> onMessageShown()
         }
     }
 
-    private fun fetchBooksBySearch(search: String) {
+    private fun findBooksBySearch(search: String) {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        books = repository.fetchBooksBySearchText(search)
+                        books = repository.findBooksBySearchText(search)
                     )
                 }
             } catch (_: Exception) {

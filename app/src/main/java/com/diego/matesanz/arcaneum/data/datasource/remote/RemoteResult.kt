@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data
+package com.diego.matesanz.arcaneum.data.datasource.remote
 
 
 import kotlinx.serialization.SerialName

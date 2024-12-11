@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -58,25 +59,52 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+
+    // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Jetpack Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+
+    // Jetpack Compose: Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // Jetpack Compose: Coil
+    implementation(libs.coil.compose)
+
+    // Material
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+
+    // Zxing
     implementation(libs.zxing.android.embedded)
     implementation(libs.zxing.core)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
+
+    // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
+
+    // Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Gson
+    implementation(libs.gson)
+
+    // Palette
     implementation (libs.androidx.palette)
+
+    // Firebase
     //implementation(platform(libs.firebase.bom))
     //implementation(libs.firebase.analytics)
     //implementation(libs.firebase.crashlytics.ktx)
+
+    // Room
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
 
