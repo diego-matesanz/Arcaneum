@@ -55,7 +55,7 @@ import com.journeyapps.barcodescanner.CompoundBarcodeView
 fun CameraScreen(
     onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
-    viewModel: CameraViewModel = viewModel(),
+    viewModel: CameraViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     val cameraState = rememberCameraState()

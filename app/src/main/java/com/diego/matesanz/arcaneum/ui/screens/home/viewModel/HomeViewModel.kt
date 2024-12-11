@@ -15,12 +15,12 @@ sealed interface HomeAction {
     object MessageShown : HomeAction
 }
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val repository: BooksRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
     val state get() = _state.asStateFlow()
-
-    private val repository = BooksRepository()
 
     data class UiState(
         val books: List<Book> = emptyList(),

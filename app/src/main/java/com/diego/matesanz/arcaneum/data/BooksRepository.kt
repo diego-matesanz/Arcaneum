@@ -1,42 +1,17 @@
 package com.diego.matesanz.arcaneum.data
 
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toUpperCase
-import com.diego.matesanz.arcaneum.data.RemoteResult.RemoteBook
+import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
 
-class BooksRepository {
+class BooksRepository(
+    private val remoteDataSource: BooksRemoteDataSource,
+) {
 
     suspend fun fetchBooksBySearchText(search: String): List<Book> =
-        BooksClient
-            .instance
-            .fetchBooksBySearchText(search)
-            .items
-            .map { it.toDomainModel() }
+        remoteDataSource.fetchBooksBySearchText(search)
 
     suspend fun fetchBookById(id: String): Book =
-        BooksClient
-            .instance
-            .fetchBookById(id)
-            .toDomainModel()
+        remoteDataSource.fetchBookById(id)
 
     suspend fun fetchBookByIsbn(isbn: String): Book =
-        BooksClient
-            .instance
-            .fetchBooksBySearchText("isbn:$isbn")
-            .items
-            .first()
-            .toDomainModel()
+        remoteDataSource.fetchBookByIsbn(isbn)
 }
-
-private fun RemoteBook.toDomainModel(): Book =
-    Book(
-        id = id ?: "",
-        title = volumeInfo?.title ?: "",
-        authors = volumeInfo?.authors ?: emptyList(),
-        coverImage = volumeInfo?.imageLinks?.thumbnail?.toHttps() ?: "",
-        pageCount = volumeInfo?.pageCount ?: 0,
-        description = volumeInfo?.description ?: "",
-        language = volumeInfo?.language?.toUpperCase(Locale.current) ?: "",
-        averageRating = volumeInfo?.averageRating ?: 0.0,
-        ratingsCount = volumeInfo?.ratingsCount ?: 0
-    )

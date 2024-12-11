@@ -14,12 +14,12 @@ sealed interface CameraAction {
     data class BookScanned(val isbn: String) : CameraAction
 }
 
-class CameraViewModel : ViewModel() {
+class CameraViewModel(
+    private val repository: BooksRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
     val state get() = _state.asStateFlow()
-
-    private val repository = BooksRepository()
 
     data class UiState(
         val isLoading: Boolean = false,

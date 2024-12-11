@@ -69,7 +69,7 @@ import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
-    viewModel: HomeViewModel = viewModel(),
+    viewModel: HomeViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     val homeState = rememberHomeState()

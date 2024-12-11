@@ -15,12 +15,13 @@ sealed interface DetailAction {
     data class DominantColor(val color: Int) : DetailAction
 }
 
-class DetailViewModel(private val id: String) : ViewModel() {
+class DetailViewModel(
+    private val id: String,
+    private val repository: BooksRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
     val state get() = _state.asStateFlow()
-
-    private val repository = BooksRepository()
 
     data class UiState(
         val isLoading: Boolean = false,
