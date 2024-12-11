@@ -15,4 +15,8 @@ import com.diego.matesanz.arcaneum.data.Shelf
 abstract class ArcaneumDatabase: RoomDatabase() {
     abstract fun booksDao(): BooksDao
     abstract fun shelvesDao(): ShelvesDao
+
+    companion object {
+        const val DATABASE_NAME = "arcaneum-db"
+    }
 }

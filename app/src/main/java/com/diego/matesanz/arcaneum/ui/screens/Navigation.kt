@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.diego.matesanz.arcaneum.App
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.ShelvesRepository
 import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
+import com.diego.matesanz.arcaneum.data.datasource.ShelvesLocalDataSource
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Camera
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Detail
 import com.diego.matesanz.arcaneum.ui.screens.Screen.Home

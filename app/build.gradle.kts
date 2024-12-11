@@ -27,6 +27,10 @@ android {
 
         val googleBooksApiKey = properties.getProperty("GOOGLE_BOOKS_API_KEY", "")
         buildConfigField("String", "GOOGLE_BOOKS_API_KEY", "\"$googleBooksApiKey\"")
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {

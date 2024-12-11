@@ -2,6 +2,11 @@
     <!-- App name -->
     <string name="app_name">Arcaneum</string>
 
+    <!-- Database -->
+    <string name="read_shelf">Read</string>
+    <string name="reading_shelf">Currently Reading</string>
+    <string name="want_read_shelf">Want to Read</string>
+
     <!-- Home screen -->
     <string name="search_label">Titles, authors or topics</string>
     <string name="empty_search">Try searching for your favorite books or authors!</string>

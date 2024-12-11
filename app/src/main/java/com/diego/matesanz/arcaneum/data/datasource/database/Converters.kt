@@ -1,8 +1,10 @@
 package com.diego.matesanz.arcaneum.data.datasource.database
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.diego.matesanz.arcaneum.extensions.fromJson
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 
 class Converters {
 
@@ -13,7 +15,8 @@ class Converters {
     fun toListString(value: String): List<String> {
         return try {
             Gson().fromJson<List<String>>(value)
-        } catch (e: Exception) {
+        } catch (e: JsonSyntaxException) {
+            Log.e("Converters", "Error converting string to list", e)
             listOf()
         }
     }
