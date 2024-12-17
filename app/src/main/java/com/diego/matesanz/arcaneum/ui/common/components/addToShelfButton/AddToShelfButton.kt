@@ -56,6 +56,24 @@ fun AddToShelfButton(
 }
 
 @Composable
+fun SimpleAddToShelfButton(
+    shelves: List<Shelf>,
+    selectedShelfId: Int,
+    onShelfSelected: (Shelf) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .width(IntrinsicSize.Max)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainer),
+    ) {
+        val state = rememberAddToShelfButtonState(shelves, selectedShelfId, onShelfSelected)
+        DropdownShelfButton(state = state, isSimplified = true)
+    }
+}
+
+@Composable
 private fun DropdownShelvesList(
     state: AddToShelfButtonState,
 ) {
@@ -106,6 +124,7 @@ private fun DropdownShelvesList(
 @Composable
 private fun DropdownShelfButton(
     state: AddToShelfButtonState,
+    isSimplified: Boolean = false,
 ) {
     state.shownShelf?.let { shelf ->
         Row(
@@ -148,13 +167,15 @@ private fun DropdownShelfButton(
                     color = state.getButtonContentColor(),
                 )
             }
-            VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
-                Icon(
-                    imageVector = state.getExpandIcon(),
-                    contentDescription = "Expand shelves",
-                    tint = state.getButtonContentColor(),
-                )
+            if (!isSimplified) {
+                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
+                    Icon(
+                        imageVector = state.getExpandIcon(),
+                        contentDescription = "Expand shelves",
+                        tint = state.getButtonContentColor(),
+                    )
+                }
             }
         }
     }

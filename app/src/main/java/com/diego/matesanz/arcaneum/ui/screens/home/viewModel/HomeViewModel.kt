@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,7 @@ sealed interface HomeAction {
 
 class HomeViewModel(
     private val booksRepository: BooksRepository,
+    private val shelvesRepository: ShelvesRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UiState())
@@ -29,6 +31,7 @@ class HomeViewModel(
         val searchText: String = "",
         val isError: Boolean = false,
         val message: String? = null,
+        val shelves: List<Shelf> = emptyList(),
     )
 
     init {
@@ -47,11 +50,14 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        books = booksRepository.findBooksBySearchText(search)
-                    )
+                shelvesRepository.shelves.collect { shelves ->
+                    _state.update {
+                        it.copy(
+                            shelves = shelves,
+                            isLoading = false,
+                            books = booksRepository.findBooksBySearchText(search)
+                        )
+                    }
                 }
             } catch (_: Exception) {
                 _state.update { it.copy(isLoading = false, isError = true) }

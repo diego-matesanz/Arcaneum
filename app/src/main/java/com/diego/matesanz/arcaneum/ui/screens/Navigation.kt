@@ -39,7 +39,12 @@ fun Navigation() {
             HomeScreen(
                 onBookClick = { book -> navController.navigate(Detail(book.bookId)) },
                 onCamClick = { navController.navigate(Camera) },
-                viewModel = viewModel { HomeViewModel(booksRepository) },
+                viewModel = viewModel {
+                    HomeViewModel(
+                        booksRepository = booksRepository,
+                        shelvesRepository = shelvesRepository,
+                    )
+                },
             )
         }
         composable<Detail> { backStackEntry ->

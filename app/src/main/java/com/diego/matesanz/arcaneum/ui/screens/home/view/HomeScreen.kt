@@ -1,6 +1,6 @@
 package com.diego.matesanz.arcaneum.ui.screens.home.view
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,10 +20,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -54,15 +53,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.AddToShelfButton
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.SimpleAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
-import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,6 +145,7 @@ private fun HomeContent(
                 itemsIndexed(state.books) { index, book ->
                     BookItem(
                         book = book,
+                        shelves = state.shelves,
                         onClick = onBookClick,
                         onBookmarked = onBookmarked
                     )
@@ -213,6 +216,7 @@ private fun SearchBar(
 @Composable
 private fun BookItem(
     book: Book,
+    shelves: List<Shelf>,
     onClick: (Book) -> Unit,
     onBookmarked: () -> Unit
 ) {
@@ -239,37 +243,29 @@ private fun BookItem(
                 .padding(vertical = 4.dp),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            TitleAndAuthorsSection(
-                title = book.title,
-                authors = book.authors,
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                TitleAndAuthorsSection(
+                    title = book.title,
+                    authors = book.authors,
+                )
                 RatingSection(
                     averageRating = book.averageRating,
                     ratingsCount = book.ratingsCount,
                 )
-
-                var bookSaved by remember { mutableStateOf(false) }
-                IconButton(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .clip(MaterialTheme.shapes.small)
-                        .background(MaterialTheme.colorScheme.secondaryContainer),
-                    onClick = {
-                        bookSaved = !bookSaved
-                        onBookmarked()
-                    },
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(id = R.string.bookmark_action_accessibility_description),
-                    )
-                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                SimpleAddToShelfButton(
+                    modifier = Modifier.padding(end = 8.dp),
+                    shelves = shelves,
+                    selectedShelfId = book.shelfId,
+                    onShelfSelected = {}
+                )
             }
         }
     }
