@@ -32,6 +32,7 @@ fun Navigation() {
         BooksRemoteDataSource(),
         BooksLocalDataSource(app.db.booksDao()),
     )
+    val shelvesRepository = ShelvesRepository(ShelvesLocalDataSource(app.db.shelvesDao()))
 
     NavHost(navController = navController, startDestination = Home) {
         composable<Home> {
@@ -48,7 +49,8 @@ fun Navigation() {
                 viewModel = viewModel {
                     DetailViewModel(
                         id = detail.bookId,
-                        repository = booksRepository,
+                        booksRepository = booksRepository,
+                        shelvesRepository = shelvesRepository,
                     )
                 },
             )

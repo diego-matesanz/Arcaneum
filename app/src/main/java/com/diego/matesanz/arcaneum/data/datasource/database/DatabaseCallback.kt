@@ -20,9 +20,9 @@ class DatabaseCallback(
         super.onCreate(db)
 
         listOf(
-            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.read_shelf)) },
-            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.reading_shelf)) },
             ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.want_read_shelf)) },
+            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.reading_shelf)) },
+            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.read_shelf)) },
         ).forEach {
             db.insert(SHELF_TABLE, OnConflictStrategy.REPLACE, it)
         }

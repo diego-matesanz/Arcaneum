@@ -16,10 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.BookmarkAdded
-import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,10 +49,11 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.AddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
 import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailAction
 import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailViewModel
-import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,27 +77,6 @@ fun DetailScreen(
                         Color(state.dominantColor) else Color.Transparent,
                     scrollBehavior = detailState.scrollBehavior
                 )
-            },
-            floatingActionButton = {
-                var bookSaved by remember { mutableStateOf(false) }
-                FloatingActionButton(
-                    onClick = {
-                        state.book?.let { book ->
-                            bookSaved = !bookSaved
-                            viewModel.onAction(DetailAction.Bookmarked)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved)
-                            Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(
-                            id = R.string.bookmark_action_accessibility_description
-                        ),
-                    )
-                }
             },
             snackbarHost = { SnackbarHost(detailState.snackbarHostState) },
             modifier = Modifier.nestedScroll(detailState.scrollBehavior.nestedScrollConnection),
@@ -150,12 +127,22 @@ private fun DetailContent(
         DetailLoader(modifier = modifier)
     } else {
         state.book?.let { book ->
-            BookDetail(
-                book = book,
-                dominantColor = state.dominantColor,
-                onDominantColor = onDominantColor,
-                modifier = modifier,
-            )
+            Box {
+                BookDetail(
+                    book = book,
+                    dominantColor = state.dominantColor,
+                    onDominantColor = onDominantColor,
+                    modifier = modifier,
+                )
+                AddToShelfButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 80.dp),
+                    shelves = state.shelves,
+                    selectedShelfId = book.shelfId,
+                    onShelfSelected = {}
+                )
+            }
         }
     }
 }
@@ -192,7 +179,7 @@ private fun BookDetail(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 80.dp)
+                    .padding(bottom = 140.dp)
                     .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(32.dp),

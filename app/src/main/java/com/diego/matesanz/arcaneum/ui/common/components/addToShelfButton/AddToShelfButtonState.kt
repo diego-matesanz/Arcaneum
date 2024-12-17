@@ -22,12 +22,12 @@ class AddToShelfButtonState(
     var optionExpanded by mutableStateOf(false)
     var selectedShelf by mutableStateOf(shelves.find { it.shelfId == selectedShelfId })
     var isSaved by mutableStateOf(selectedShelf != null)
-    var shownShelf by mutableStateOf(selectedShelf ?: shelves.first())
+    var shownShelf by mutableStateOf(selectedShelf ?: shelves.firstOrNull())
 
     fun selectSelf(shelf: Shelf) {
         selectedShelf = if (selectedShelf == shelf) null else shelf
         isSaved = selectedShelf != null
-        shownShelf = selectedShelf ?: shelves.first()
+        shownShelf = selectedShelf ?: shelves.firstOrNull()
         optionExpanded = false
         onShelfSelected(shelf)
     }

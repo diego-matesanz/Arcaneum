@@ -1,6 +1,7 @@
 package com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -40,9 +41,10 @@ fun AddToShelfButton(
     shelves: List<Shelf>,
     selectedShelfId: Int,
     onShelfSelected: (Shelf) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(IntrinsicSize.Max)
             .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surfaceContainer),
@@ -105,50 +107,55 @@ private fun DropdownShelvesList(
 private fun DropdownShelfButton(
     state: AddToShelfButtonState,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.large)
-            .background(state.getButtonColor())
-            .height(IntrinsicSize.Max)
-            .fillMaxWidth(),
-    ) {
+    state.shownShelf?.let { shelf ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .clickable(
-                    onClick = { state.selectSelf(state.shownShelf) },
-                    role = Role.Button,
-                )
-                .padding(16.dp)
-                .weight(1f),
+                .clip(MaterialTheme.shapes.large)
+                .background(state.getButtonColor())
+                .height(IntrinsicSize.Max)
+                .fillMaxWidth(),
         ) {
-            AnimatedVisibility(
-                visible = state.isSaved,
-                enter = expandHorizontally(tween(1000)) + fadeIn(),
-                exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .clickable(
+                        onClick = { state.selectSelf(shelf) },
+                        role = Role.Button,
+                    )
+                    .padding(16.dp)
+                    .weight(1f)
+                    .animateContentSize(),
             ) {
+                AnimatedVisibility(
+                    visible = state.isSaved,
+                    enter = expandHorizontally(tween(1000)) + fadeIn(),
+                    exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Icon check",
+                        tint = state.getButtonContentColor(),
+                    )
+                }
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateContentSize(),
+                    text = shelf.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = state.getButtonContentColor(),
+                )
+            }
+            VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
                 Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Icon check",
+                    imageVector = state.getExpandIcon(),
+                    contentDescription = "Expand shelves",
                     tint = state.getButtonContentColor(),
                 )
             }
-            Text(
-                modifier = Modifier.weight(1f),
-                text = state.shownShelf.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = state.getButtonContentColor(),
-            )
-        }
-        VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
-        IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
-            Icon(
-                imageVector = state.getExpandIcon(),
-                contentDescription = "Expand shelves",
-                tint = state.getButtonContentColor(),
-            )
         }
     }
 }
