@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -36,8 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.data.Shelf
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToShelfButton(
+fun DropdownAddToShelfButton(
     shelves: List<Shelf>,
     selectedShelfId: Int,
     onShelfSelected: (Shelf) -> Unit,
@@ -51,12 +54,13 @@ fun AddToShelfButton(
     ) {
         val state = rememberAddToShelfButtonState(shelves, selectedShelfId, onShelfSelected)
         DropdownShelvesList(state)
-        DropdownShelfButton(state)
+        ShelfButton(state)
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimpleAddToShelfButton(
+fun ModalAddToShelfButton(
     shelves: List<Shelf>,
     selectedShelfId: Int,
     onShelfSelected: (Shelf) -> Unit,
@@ -69,7 +73,8 @@ fun SimpleAddToShelfButton(
             .background(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         val state = rememberAddToShelfButtonState(shelves, selectedShelfId, onShelfSelected)
-        DropdownShelfButton(state = state, isSimplified = true)
+        ModalShelvesList(state = state)
+        ShelfButton(state = state)
     }
 }
 
@@ -82,49 +87,55 @@ private fun DropdownShelvesList(
         enter = expandVertically(tween(1500)) + fadeIn(),
         exit = shrinkVertically(tween(1200)) + fadeOut(tween(1000)),
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            state.shelves.forEachIndexed { index, shelf ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable(
-                            onClick = { state.selectSelf(shelf) },
-                            role = Role.Button,
-                        )
-                        .padding(16.dp)
+        ShelvesList(state = state)
+    }
+}
+
+@Composable
+private fun ShelvesList(
+    state: AddToShelfButtonState,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        state.shelves.forEachIndexed { index, shelf ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable(
+                        onClick = { state.selectSelf(shelf) },
+                        role = Role.Button,
+                    )
+                    .padding(16.dp)
+            ) {
+                AnimatedVisibility(
+                    visible = state.selectedShelf == shelf,
+                    enter = expandHorizontally(tween(1000)) + fadeIn(),
+                    exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
                 ) {
-                    AnimatedVisibility(
-                        visible = state.selectedShelf == shelf,
-                        enter = expandHorizontally(tween(1000)) + fadeIn(),
-                        exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Icon check",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                    Text(
-                        text = shelf.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                        textDecoration = state.getTextDecoration(shelf),
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Icon check",
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                if (index != state.shelves.lastIndex) {
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                }
+                Text(
+                    text = shelf.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f),
+                    textDecoration = state.getTextDecoration(shelf),
+                )
+            }
+            if (index != state.shelves.lastIndex) {
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
     }
 }
 
 @Composable
-private fun DropdownShelfButton(
+private fun ShelfButton(
     state: AddToShelfButtonState,
-    isSimplified: Boolean = false,
 ) {
     state.shownShelf?.let { shelf ->
         Row(
@@ -167,16 +178,29 @@ private fun DropdownShelfButton(
                     color = state.getButtonContentColor(),
                 )
             }
-            if (!isSimplified) {
-                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
-                    Icon(
-                        imageVector = state.getExpandIcon(),
-                        contentDescription = "Expand shelves",
-                        tint = state.getButtonContentColor(),
-                    )
-                }
+            VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            IconButton(onClick = { state.optionExpanded = !state.optionExpanded }) {
+                Icon(
+                    imageVector = state.getExpandIcon(),
+                    contentDescription = "Expand shelves",
+                    tint = state.getButtonContentColor(),
+                )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ModalShelvesList(
+    state: AddToShelfButtonState,
+) {
+    if (state.optionExpanded) {
+        ModalBottomSheet(
+            onDismissRequest = { state.optionExpanded = false },
+            sheetState = state.sheetState,
+        ) {
+            ShelvesList(state = state)
         }
     }
 }
@@ -184,7 +208,7 @@ private fun DropdownShelfButton(
 @Composable
 @Preview
 private fun AddToShelfButtonPreview() {
-    AddToShelfButton(
+    DropdownAddToShelfButton(
         shelves = listOf(
             Shelf(1, "Want to Read"),
             Shelf(2, "Currently Reading"),

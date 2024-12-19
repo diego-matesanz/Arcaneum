@@ -1,6 +1,5 @@
 package com.diego.matesanz.arcaneum.ui.screens.home.view
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -53,14 +51,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
-import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.AddToShelfButton
-import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.SimpleAddToShelfButton
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.ModalAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
@@ -260,7 +256,7 @@ private fun BookItem(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom,
             ) {
-                SimpleAddToShelfButton(
+                ModalAddToShelfButton(
                     modifier = Modifier.padding(end = 8.dp),
                     shelves = shelves,
                     selectedShelfId = book.shelfId,

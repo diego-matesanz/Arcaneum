@@ -49,7 +49,7 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
-import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.AddToShelfButton
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.DropdownAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
 import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailAction
@@ -134,7 +134,7 @@ private fun DetailContent(
                     onDominantColor = onDominantColor,
                     modifier = modifier,
                 )
-                AddToShelfButton(
+                DropdownAddToShelfButton(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 80.dp),

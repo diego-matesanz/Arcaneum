@@ -3,19 +3,28 @@ package com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextDecoration
 import com.diego.matesanz.arcaneum.data.Shelf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 class AddToShelfButtonState(
     val shelves: List<Shelf>,
+    val sheetState: SheetState,
+    val scope: CoroutineScope,
     private val selectedShelfId: Int,
     private val onShelfSelected: (Shelf) -> Unit,
 ) {
@@ -28,7 +37,11 @@ class AddToShelfButtonState(
         selectedShelf = if (selectedShelf == shelf) null else shelf
         isSaved = selectedShelf != null
         shownShelf = selectedShelf ?: shelves.firstOrNull()
-        optionExpanded = false
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) {
+                optionExpanded = false
+            }
+        }
         onShelfSelected(shelf)
     }
 
@@ -53,17 +66,22 @@ class AddToShelfButtonState(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun rememberAddToShelfButtonState(
     shelves: List<Shelf>,
     selectedShelfId: Int,
     onShelfSelected: (Shelf) -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(),
+    scope: CoroutineScope = rememberCoroutineScope(),
 ): AddToShelfButtonState {
     return remember {
         AddToShelfButtonState(
             shelves = shelves,
             selectedShelfId = selectedShelfId,
             onShelfSelected = onShelfSelected,
+            sheetState = sheetState,
+            scope = scope,
         )
     }
 }
