@@ -13,8 +13,7 @@ import kotlinx.coroutines.launch
 
 sealed interface HomeAction {
     data class Search(val search: String) : HomeAction
-    object Bookmarked : HomeAction
-    object MessageShown : HomeAction
+    data class Bookmarked(val shelfId: Int, val book: Book) : HomeAction
 }
 
 class HomeViewModel(
@@ -41,8 +40,7 @@ class HomeViewModel(
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.Search -> findBooksBySearch(action.search)
-            HomeAction.Bookmarked -> onBookmarked()
-            HomeAction.MessageShown -> onMessageShown()
+            is HomeAction.Bookmarked -> onBookmarked(action.shelfId, action.book)
         }
     }
 
@@ -65,11 +63,17 @@ class HomeViewModel(
         }
     }
 
-    private fun onBookmarked() {
-        _state.update { it.copy(message = "Bookmarked") }
-    }
-
-    private fun onMessageShown() {
-        _state.update { it.copy(message = null) }
+    private fun onBookmarked(shelfId: Int, book: Book) {
+        viewModelScope.launch {
+            try {
+                val newBook = book.copy(shelfId = shelfId)
+                val newBooks = state.value.books.toMutableList()
+                newBooks[newBooks.indexOf(book)] = newBook
+                _state.update { it.copy(books = newBooks) }
+                booksRepository.saveBook(newBook)
+            } catch (_: Exception) {
+                _state.update { it.copy(isLoading = false, isError = true) }
+            }
+        }
     }
 }

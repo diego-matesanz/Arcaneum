@@ -14,8 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface DetailAction {
-    object Bookmarked : DetailAction
-    object MessageShown : DetailAction
+    data class Bookmarked(val shelfId: Int, val book: Book) : DetailAction
     data class DominantColor(val color: Int) : DetailAction
 }
 
@@ -47,8 +46,7 @@ class DetailViewModel(
 
     fun onAction(action: DetailAction) {
         when (action) {
-            DetailAction.Bookmarked -> onBookmarked()
-            DetailAction.MessageShown -> onMessageShown()
+            is DetailAction.Bookmarked -> onBookmarked(action.shelfId, action.book)
             is DetailAction.DominantColor -> onDominantColor(action.color)
         }
     }
@@ -57,11 +55,11 @@ class DetailViewModel(
         _state.update { it.copy(dominantColor = color) }
     }
 
-    private fun onBookmarked() {
-        _state.update { it.copy(message = "Bookmarked") }
-    }
-
-    private fun onMessageShown() {
-        _state.update { it.copy(message = null) }
+    private fun onBookmarked(shelfId: Int, book: Book) {
+        viewModelScope.launch {
+            val newBook = book.copy(shelfId = shelfId)
+            _state.update { it.copy(book = newBook) }
+            booksRepository.saveBook(newBook)
+        }
     }
 }

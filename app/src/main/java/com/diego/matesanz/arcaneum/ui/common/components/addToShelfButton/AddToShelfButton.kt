@@ -37,13 +37,19 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_ENTER_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_EXIT_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_EXIT_FADE_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_ENTER_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_EXIT_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownAddToShelfButton(
     shelves: List<Shelf>,
     selectedShelfId: Int,
-    onShelfSelected: (Shelf) -> Unit,
+    onShelfSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -63,7 +69,7 @@ fun DropdownAddToShelfButton(
 fun ModalAddToShelfButton(
     shelves: List<Shelf>,
     selectedShelfId: Int,
-    onShelfSelected: (Shelf) -> Unit,
+    onShelfSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -84,8 +90,9 @@ private fun DropdownShelvesList(
 ) {
     AnimatedVisibility(
         visible = state.optionExpanded,
-        enter = expandVertically(tween(1500)) + fadeIn(),
-        exit = shrinkVertically(tween(1200)) + fadeOut(tween(1000)),
+        enter = expandVertically(tween(DROPDOWN_SHELVES_ENTER_ANIMATION_DURATION)) + fadeIn(),
+        exit = shrinkVertically(tween(DROPDOWN_SHELVES_EXIT_ANIMATION_DURATION)) +
+                fadeOut(tween(DROPDOWN_SHELVES_EXIT_FADE_ANIMATION_DURATION)),
     ) {
         ShelvesList(state = state)
     }
@@ -109,8 +116,9 @@ private fun ShelvesList(
             ) {
                 AnimatedVisibility(
                     visible = state.selectedShelf == shelf,
-                    enter = expandHorizontally(tween(1000)) + fadeIn(),
-                    exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
+                    enter = expandHorizontally(tween(SHELF_CHECK_ENTER_ANIMATION_DURATION)) + fadeIn(),
+                    exit = shrinkHorizontally(tween(SHELF_CHECK_EXIT_ANIMATION_DURATION)) +
+                            fadeOut(tween(SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION)),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
@@ -160,8 +168,9 @@ private fun ShelfButton(
             ) {
                 AnimatedVisibility(
                     visible = state.isSaved,
-                    enter = expandHorizontally(tween(1000)) + fadeIn(),
-                    exit = shrinkHorizontally(tween(700)) + fadeOut(tween(500)),
+                    enter = expandHorizontally(tween(SHELF_CHECK_ENTER_ANIMATION_DURATION)) + fadeIn(),
+                    exit = shrinkHorizontally(tween(SHELF_CHECK_EXIT_ANIMATION_DURATION)) +
+                            fadeOut(tween(SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION)),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
@@ -207,8 +216,22 @@ private fun ModalShelvesList(
 
 @Composable
 @Preview
-private fun AddToShelfButtonPreview() {
+private fun DropdownAddToShelfButtonPreview() {
     DropdownAddToShelfButton(
+        shelves = listOf(
+            Shelf(1, "Want to Read"),
+            Shelf(2, "Currently Reading"),
+            Shelf(3, "Read"),
+        ),
+        selectedShelfId = -1,
+        onShelfSelected = {},
+    )
+}
+
+@Composable
+@Preview
+private fun ModalAddToShelfButtonPreview() {
+    ModalAddToShelfButton(
         shelves = listOf(
             Shelf(1, "Want to Read"),
             Shelf(2, "Currently Reading"),

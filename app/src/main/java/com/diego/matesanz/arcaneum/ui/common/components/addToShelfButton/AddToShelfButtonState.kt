@@ -26,7 +26,7 @@ class AddToShelfButtonState(
     val sheetState: SheetState,
     val scope: CoroutineScope,
     private val selectedShelfId: Int,
-    private val onShelfSelected: (Shelf) -> Unit,
+    private val onShelfSelected: (Int) -> Unit,
 ) {
     var optionExpanded by mutableStateOf(false)
     var selectedShelf by mutableStateOf(shelves.find { it.shelfId == selectedShelfId })
@@ -42,7 +42,7 @@ class AddToShelfButtonState(
                 optionExpanded = false
             }
         }
-        onShelfSelected(shelf)
+        onShelfSelected(shelf.shelfId)
     }
 
     @Composable
@@ -71,7 +71,7 @@ class AddToShelfButtonState(
 fun rememberAddToShelfButtonState(
     shelves: List<Shelf>,
     selectedShelfId: Int,
-    onShelfSelected: (Shelf) -> Unit,
+    onShelfSelected: (Int) -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(),
     scope: CoroutineScope = rememberCoroutineScope(),
 ): AddToShelfButtonState {

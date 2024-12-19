@@ -64,8 +64,6 @@ fun DetailScreen(
     val state by viewModel.state.collectAsState()
     val detailState = rememberDetailState()
 
-    detailState.ShowMessageEffect(state.message) { viewModel.onAction(DetailAction.MessageShown) }
-
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
     ) {
@@ -84,6 +82,9 @@ fun DetailScreen(
             DetailContent(
                 state = state,
                 onDominantColor = { viewModel.onAction(DetailAction.DominantColor(it)) },
+                onBookmarked = { shelfId, book ->
+                    viewModel.onAction(DetailAction.Bookmarked(shelfId, book))
+                },
                 modifier = Modifier.padding(padding),
             )
         }
@@ -121,6 +122,7 @@ private fun DetailTopBar(
 private fun DetailContent(
     state: DetailViewModel.UiState,
     onDominantColor: (Int) -> Unit,
+    onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
@@ -140,7 +142,7 @@ private fun DetailContent(
                         .padding(end = 16.dp, bottom = 80.dp),
                     shelves = state.shelves,
                     selectedShelfId = book.shelfId,
-                    onShelfSelected = {}
+                    onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
                 )
             }
         }

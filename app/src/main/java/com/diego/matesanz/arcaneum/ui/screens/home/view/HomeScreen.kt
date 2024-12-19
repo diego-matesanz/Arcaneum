@@ -72,8 +72,6 @@ fun HomeScreen(
     val state by viewModel.state.collectAsState()
     val homeState = rememberHomeState()
 
-    homeState.ShowMessageEffect(state.message) { viewModel.onAction(HomeAction.MessageShown) }
-
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
@@ -87,7 +85,9 @@ fun HomeScreen(
                 state = state,
                 onBookClick = onBookClick,
                 onCamClick = onCamClick,
-                onBookmarked = { viewModel.onAction(HomeAction.Bookmarked) },
+                onBookmarked = { shelfId, book ->
+                    viewModel.onAction(HomeAction.Bookmarked(shelfId, book))
+                },
                 onSearch = { viewModel.onAction(HomeAction.Search(it)) },
                 contentPadding = padding,
             )
@@ -113,7 +113,7 @@ private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
 private fun HomeContent(
     state: HomeViewModel.UiState,
     onBookClick: (Book) -> Unit,
-    onBookmarked: () -> Unit,
+    onBookmarked: (Int, Book) -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -214,7 +214,7 @@ private fun BookItem(
     book: Book,
     shelves: List<Shelf>,
     onClick: (Book) -> Unit,
-    onBookmarked: () -> Unit
+    onBookmarked: (Int, Book) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -260,7 +260,7 @@ private fun BookItem(
                     modifier = Modifier.padding(end = 8.dp),
                     shelves = shelves,
                     selectedShelfId = book.shelfId,
-                    onShelfSelected = {}
+                    onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
                 )
             }
         }

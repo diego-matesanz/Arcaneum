@@ -627,6 +627,7 @@ style:
     ignoreEnums: false
     ignoreRanges: false
     ignoreExtensionFunctions: true
+    ignoreAnnotated: ['Preview']
   MandatoryBracesLoops:
     active: false
   MaxChainedCallsOnSameLine:
@@ -740,6 +741,7 @@ style:
     active: true
   UnusedPrivateMember:
     active: true
+    ignoreAnnotated: ['Preview']
     allowedNames: ''
   UnusedPrivateProperty:
     active: true
