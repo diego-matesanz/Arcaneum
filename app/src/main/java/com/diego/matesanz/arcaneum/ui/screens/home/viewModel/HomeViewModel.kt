@@ -8,6 +8,8 @@ import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -48,15 +50,18 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
-                shelvesRepository.shelves.collect { shelves ->
+                combine(
+                    booksRepository.findBooksBySearchText(search),
+                    shelvesRepository.shelves,
+                ) { books, shelves ->
                     _state.update {
                         it.copy(
                             shelves = shelves,
                             isLoading = false,
-                            books = booksRepository.findBooksBySearchText(search)
+                            books = books,
                         )
                     }
-                }
+                }.collect()
             } catch (_: Exception) {
                 _state.update { it.copy(isLoading = false, isError = true) }
             }
@@ -65,14 +70,10 @@ class HomeViewModel(
 
     private fun onBookmarked(shelfId: Int, book: Book) {
         viewModelScope.launch {
-            try {
-                val newBook = book.copy(shelfId = shelfId)
-                val newBooks = state.value.books.toMutableList()
-                newBooks[newBooks.indexOf(book)] = newBook
-                _state.update { it.copy(books = newBooks) }
-                booksRepository.saveBook(newBook)
-            } catch (_: Exception) {
-                _state.update { it.copy(isLoading = false, isError = true) }
+            if (book.shelfId == shelfId) {
+                booksRepository.deleteBook(book.bookId)
+            } else {
+                booksRepository.saveBook(book.copy(shelfId = shelfId))
             }
         }
     }

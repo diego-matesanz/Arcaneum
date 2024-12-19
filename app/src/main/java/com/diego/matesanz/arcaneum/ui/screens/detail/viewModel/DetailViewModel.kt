@@ -57,9 +57,11 @@ class DetailViewModel(
 
     private fun onBookmarked(shelfId: Int, book: Book) {
         viewModelScope.launch {
-            val newBook = book.copy(shelfId = shelfId)
-            _state.update { it.copy(book = newBook) }
-            booksRepository.saveBook(newBook)
+            if (book.shelfId == shelfId) {
+                booksRepository.deleteBook(book.bookId)
+            } else {
+                booksRepository.saveBook(book.copy(shelfId = shelfId))
+            }
         }
     }
 }

@@ -10,8 +10,13 @@ class BooksRepository(
     private val localDataSource: BooksLocalDataSource,
 ) {
 
-    suspend fun findBooksBySearchText(search: String): List<Book> =
-        remoteDataSource.findBooksBySearchText(search)
+    suspend fun findBooksBySearchText(search: String): Flow<List<Book>> =
+        savedBooks.transform { savedBooks ->
+            val remoteBooks = remoteDataSource.findBooksBySearchText(search)
+            emit(remoteBooks.map { book ->
+                savedBooks.find { it.bookId == book.bookId } ?: book
+            })
+        }
 
     fun findBookById(id: String): Flow<Book?> =
         localDataSource.findSavedBookById(id).transform { localBook ->
