@@ -83,6 +83,7 @@ dependencies {
     // Material
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material)
 
     // Zxing
     implementation(libs.zxing.android.embedded)
