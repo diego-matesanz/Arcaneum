@@ -25,6 +25,10 @@
     <string name="error_scanning_book">Oops! Seems like we don\'t have that one.</string>
     <string name="error_searching_book">Oops! Seems like we don\'t have that one. Try with another search!"</string>
 
+    <!-- Shelves screen -->
+    <string name="shelves_screen_title">My Shelves</string>
+    <string name="books_in_shelf">%1$d books</string>
+
     <!-- Accessibility descriptions -->
     <!-- Screens -->
     <string name="home_screen_accessibility_description">This is the Home screen. It contains a list of books and a searchbar</string>

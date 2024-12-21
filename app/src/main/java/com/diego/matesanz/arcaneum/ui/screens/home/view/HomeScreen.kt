@@ -27,11 +27,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,9 +54,9 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.TopBar
 import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.ModalAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
 
@@ -70,16 +68,19 @@ fun HomeScreen(
     viewModel: HomeViewModel,
 ) {
     val state by viewModel.state.collectAsState()
-    val homeState = rememberHomeState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
         Scaffold(
-            topBar = { HomeTopBar(scrollBehavior = homeState.scrollBehavior) },
-            modifier = Modifier.nestedScroll(homeState.scrollBehavior.nestedScrollConnection),
-            contentWindowInsets = WindowInsets.safeDrawing,
-            snackbarHost = { SnackbarHost(homeState.snackbarHostState) },
+            topBar = {
+                TopBar(
+                    title = stringResource(id = R.string.app_name),
+                    scrollBehavior = scrollBehavior,
+                )
+            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             HomeContent(
                 state = state,
@@ -93,20 +94,6 @@ fun HomeScreen(
             )
         }
     }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
-            )
-        },
-        scrollBehavior = scrollBehavior,
-    )
 }
 
 @Composable

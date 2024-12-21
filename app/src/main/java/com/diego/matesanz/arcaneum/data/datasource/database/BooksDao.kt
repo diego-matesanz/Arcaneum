@@ -16,9 +16,6 @@ interface BooksDao {
     @Query("SELECT * FROM Book WHERE bookId = :bookId")
     fun findSavedBookById(bookId: String): Flow<Book?>
 
-    @Query("SELECT * FROM Book WHERE shelfId = :shelfId")
-    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveBook(book: Book)
 

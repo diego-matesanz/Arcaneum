@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail.view
+package com.diego.matesanz.arcaneum.ui.screens.bookDetail.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,18 +50,17 @@ import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.DropdownAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
-import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailAction
-import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailViewModel
+import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailAction
+import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(
-    viewModel: DetailViewModel,
+fun BookDetailScreen(
+    viewModel: BookDetailViewModel,
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val detailState = rememberDetailState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
@@ -73,17 +71,16 @@ fun DetailScreen(
                     onBack = onBack,
                     dominantColor = if (state.dominantColor != 0)
                         Color(state.dominantColor) else Color.Transparent,
-                    scrollBehavior = detailState.scrollBehavior
+                    scrollBehavior = scrollBehavior,
                 )
             },
-            snackbarHost = { SnackbarHost(detailState.snackbarHostState) },
-            modifier = Modifier.nestedScroll(detailState.scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             DetailContent(
                 state = state,
-                onDominantColor = { viewModel.onAction(DetailAction.DominantColor(it)) },
+                onDominantColor = { viewModel.onAction(BookDetailAction.DominantColor(it)) },
                 onBookmarked = { shelfId, book ->
-                    viewModel.onAction(DetailAction.Bookmarked(shelfId, book))
+                    viewModel.onAction(BookDetailAction.Bookmarked(shelfId, book))
                 },
                 modifier = Modifier.padding(padding),
             )
@@ -120,13 +117,13 @@ private fun DetailTopBar(
 
 @Composable
 private fun DetailContent(
-    state: DetailViewModel.UiState,
+    state: BookDetailViewModel.UiState,
     onDominantColor: (Int) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
-        DetailLoader(modifier = modifier)
+        BookDetailLoader(modifier = modifier)
     } else {
         state.book?.let { book ->
             Box {

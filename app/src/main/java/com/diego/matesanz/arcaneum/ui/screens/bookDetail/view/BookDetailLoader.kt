@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail.view
+package com.diego.matesanz.arcaneum.ui.screens.bookDetail.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,7 @@ import com.diego.matesanz.arcaneum.constants.LINE_COUNT
 import com.diego.matesanz.arcaneum.ui.common.components.LoadingSkeleton
 
 @Composable
-fun DetailLoader(modifier: Modifier = Modifier) {
+fun BookDetailLoader(modifier: Modifier = Modifier) {
     Box {
         Column(
             modifier = modifier.fillMaxSize(),

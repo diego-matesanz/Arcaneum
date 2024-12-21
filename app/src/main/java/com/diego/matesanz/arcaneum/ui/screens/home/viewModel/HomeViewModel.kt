@@ -31,7 +31,6 @@ class HomeViewModel(
         val isLoading: Boolean = false,
         val searchText: String = "",
         val isError: Boolean = false,
-        val message: String? = null,
         val shelves: List<Shelf> = emptyList(),
     )
 

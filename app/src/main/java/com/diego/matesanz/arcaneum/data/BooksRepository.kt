@@ -3,11 +3,13 @@ package com.diego.matesanz.arcaneum.data
 import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transform
 
 class BooksRepository(
     private val remoteDataSource: BooksRemoteDataSource,
     private val localDataSource: BooksLocalDataSource,
+    private val shelvesRepository: ShelvesRepository,
 ) {
 
     suspend fun findBooksBySearchText(search: String): Flow<List<Book>> =
@@ -30,7 +32,16 @@ class BooksRepository(
     val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
 
     fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
-        localDataSource.findSavedBooksByShelfId(shelfId)
+        savedBooks.transform { savedBooks ->
+            emit(savedBooks.filter { book -> book.shelfId == shelfId })
+        }
+
+    val booksByShelf: Flow<Map<Shelf, List<Book>>> =
+        combine(shelvesRepository.shelves, savedBooks) { shelves, savedBooks ->
+            shelves.associate { shelf ->
+                shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
+            }
+        }
 
     suspend fun saveBook(book: Book) = localDataSource.saveBook(book)
 

@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail.viewModel
+package com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed interface DetailAction {
-    data class Bookmarked(val shelfId: Int, val book: Book) : DetailAction
-    data class DominantColor(val color: Int) : DetailAction
+sealed interface BookDetailAction {
+    data class Bookmarked(val shelfId: Int, val book: Book) : BookDetailAction
+    data class DominantColor(val color: Int) : BookDetailAction
 }
 
-class DetailViewModel(
+class BookDetailViewModel(
     private val id: String,
     private val booksRepository: BooksRepository,
     private val shelvesRepository: ShelvesRepository,
@@ -31,7 +31,6 @@ class DetailViewModel(
         val isLoading: Boolean = false,
         val book: Book? = null,
         val dominantColor: Int = 0,
-        val message: String? = null,
         val shelves: List<Shelf> = emptyList(),
     )
 
@@ -44,10 +43,10 @@ class DetailViewModel(
         }
     }
 
-    fun onAction(action: DetailAction) {
+    fun onAction(action: BookDetailAction) {
         when (action) {
-            is DetailAction.Bookmarked -> onBookmarked(action.shelfId, action.book)
-            is DetailAction.DominantColor -> onDominantColor(action.color)
+            is BookDetailAction.Bookmarked -> onBookmarked(action.shelfId, action.book)
+            is BookDetailAction.DominantColor -> onDominantColor(action.color)
         }
     }
 

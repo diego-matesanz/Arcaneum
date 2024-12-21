@@ -11,9 +11,6 @@ class BooksLocalDataSource(
 
     fun findSavedBookById(bookId: String): Flow<Book?> = booksDao.findSavedBookById(bookId)
 
-    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
-        booksDao.findSavedBooksByShelfId(shelfId)
-
     suspend fun saveBook(book: Book) = booksDao.saveBook(book)
 
     suspend fun deleteBook(bookId: String) = booksDao.deleteBook(bookId)
