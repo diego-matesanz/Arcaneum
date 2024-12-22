@@ -11,6 +11,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+sealed interface ShelvesAction {
+    data class AddShelf(val name: String) : ShelvesAction
+    data class RemoveShelf(val shelf: Shelf) : ShelvesAction
+}
+
 class ShelvesViewModel(
     private val shelvesRepository: ShelvesRepository,
     private val booksRepository: BooksRepository,
@@ -28,12 +33,31 @@ class ShelvesViewModel(
         getBooksByShelf()
     }
 
+    fun onAction(action: ShelvesAction) {
+        when (action) {
+            is ShelvesAction.AddShelf -> addShelf(action.name)
+            is ShelvesAction.RemoveShelf -> removeShelf(action.shelf)
+        }
+    }
+
     private fun getBooksByShelf() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             booksRepository.booksByShelf.collect { booksByShelf ->
                 _state.update { it.copy(isLoading = false, booksByShelf = booksByShelf) }
             }
+        }
+    }
+
+    private fun addShelf(name: String) {
+        viewModelScope.launch {
+            shelvesRepository.saveShelf(Shelf(name = name))
+        }
+    }
+
+    private fun removeShelf(shelf: Shelf) {
+        viewModelScope.launch {
+            shelvesRepository.deleteShelf(shelf)
         }
     }
 }

@@ -10,6 +10,7 @@
     <!-- Home screen -->
     <string name="search_label">Titles, authors or topics</string>
     <string name="empty_search">Try searching for your favorite books or authors!</string>
+    <string name="error_searching_book">Oops! Seems like we don\'t have that one. Try with another search!"</string>
 
     <!-- Detail screen -->
     <string name="rating">Rating</string>
@@ -23,11 +24,20 @@
     <!-- Camera screen -->
     <string name="need_camera_permission_to_scan">Need camera permission to scan</string>
     <string name="error_scanning_book">Oops! Seems like we don\'t have that one.</string>
-    <string name="error_searching_book">Oops! Seems like we don\'t have that one. Try with another search!"</string>
 
     <!-- Shelves screen -->
     <string name="shelves_screen_title">My Shelves</string>
     <string name="books_in_shelf">%1$d books</string>
+    <string name="add_shelf_dialog_title">Create New Shelf</string>
+    <string name="add_shelf_dialog_message">Enter a name for your new shelf:</string>
+    <string name="add_shelf_dialog_confirm_button">Create</string>
+    <string name="add_shelf_dialog_dismiss_button">Dismiss</string>
+    <string name="add_shelf_dialog_text_field_placeholder">New shelf</string>
+    <string name="add_shelf_dialog_error_message">Shelf name cannot be empty.</string>
+    <string name="remove_shelf_dialog_confirm_button">Delete</string>
+    <string name="remove_shelf_dialog_dismiss_button">Dismiss</string>
+    <string name="remove_shelf_dialog_title">Delete Shelf?</string>
+    <string name="remove_shelf_dialog_message">Are you sure you want to delete this shelf? This action cannot be undone.</string>
 
     <!-- Accessibility descriptions -->
     <!-- Screens -->

@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Shelf(
     @PrimaryKey(autoGenerate = true)
-    val shelfId: Int,
+    val shelfId: Int = 0,
     val name: String,
+    val isRemovable: Boolean = true,
 )

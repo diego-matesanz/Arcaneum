@@ -6,23 +6,37 @@ import androidx.room.OnConflictStrategy
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.diego.matesanz.arcaneum.R
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.CURRENTLY_READING_SHELF_ID
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.IS_REMOVABLE_COLUMN
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.READ_SHELF_ID
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_ID_COLUMN
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_NAME_COLUMN
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_TABLE
+import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.WANT_TO_READ_SHELF_ID
 
 class DatabaseCallback(
     private val context: Context,
 ) : RoomDatabase.Callback() {
 
-    companion object {
-        private const val SHELF_TABLE = "Shelf"
-        private const val NAME_COLUMN = "name"
-    }
-
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
 
         listOf(
-            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.want_read_shelf)) },
-            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.reading_shelf)) },
-            ContentValues().apply { put(NAME_COLUMN, context.getString(R.string.read_shelf)) },
+            ContentValues().apply {
+                put(SHELF_ID_COLUMN, WANT_TO_READ_SHELF_ID)
+                put(SHELF_NAME_COLUMN, context.getString(R.string.want_read_shelf))
+                put(IS_REMOVABLE_COLUMN, false)
+            },
+            ContentValues().apply {
+                put(SHELF_ID_COLUMN, CURRENTLY_READING_SHELF_ID)
+                put(SHELF_NAME_COLUMN, context.getString(R.string.reading_shelf))
+                put(IS_REMOVABLE_COLUMN, false)
+            },
+            ContentValues().apply {
+                put(SHELF_ID_COLUMN, READ_SHELF_ID)
+                put(SHELF_NAME_COLUMN, context.getString(R.string.read_shelf))
+                put(IS_REMOVABLE_COLUMN, false)
+            },
         ).forEach {
             db.insert(SHELF_TABLE, OnConflictStrategy.REPLACE, it)
         }
