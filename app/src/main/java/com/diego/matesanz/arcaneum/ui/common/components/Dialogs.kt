@@ -174,7 +174,6 @@ private fun TitleAndMessage(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
-            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = textAlign,
         )
