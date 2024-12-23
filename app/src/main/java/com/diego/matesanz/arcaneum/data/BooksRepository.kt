@@ -3,15 +3,31 @@ package com.diego.matesanz.arcaneum.data
 import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transform
 
 class BooksRepository(
     private val remoteDataSource: BooksRemoteDataSource,
     private val localDataSource: BooksLocalDataSource,
+    shelvesRepository: ShelvesRepository,
 ) {
 
-    suspend fun findBooksBySearchText(search: String): List<Book> =
-        remoteDataSource.findBooksBySearchText(search)
+    val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
+
+    val booksByShelf: Flow<Map<Shelf, List<Book>>> =
+        combine(shelvesRepository.shelves, savedBooks) { shelves, savedBooks ->
+            shelves.associate { shelf ->
+                shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
+            }
+        }
+
+    fun findBooksBySearchText(search: String): Flow<List<Book>> =
+        savedBooks.transform { savedBooks ->
+            val remoteBooks = remoteDataSource.findBooksBySearchText(search)
+            emit(remoteBooks.map { book ->
+                savedBooks.find { it.bookId == book.bookId } ?: book
+            })
+        }
 
     fun findBookById(id: String): Flow<Book?> =
         localDataSource.findSavedBookById(id).transform { localBook ->
@@ -19,13 +35,13 @@ class BooksRepository(
             emit(book)
         }
 
+    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
+        savedBooks.transform { savedBooks ->
+            emit(savedBooks.filter { book -> book.shelfId == shelfId })
+        }
+
     suspend fun findBookByIsbn(isbn: String): Book =
         remoteDataSource.findBookByIsbn(isbn)
-
-    val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
-
-    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
-        localDataSource.findSavedBooksByShelfId(shelfId)
 
     suspend fun saveBook(book: Book) = localDataSource.saveBook(book)
 

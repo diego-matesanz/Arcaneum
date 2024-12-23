@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.ui.screens.detail.view
+package com.diego.matesanz.arcaneum.ui.screens.bookDetail.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -13,22 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.BookmarkAdded
-import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,9 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -49,64 +40,41 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
+import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.DropdownAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailAction
-import com.diego.matesanz.arcaneum.ui.screens.detail.viewModel.DetailViewModel
-import com.diego.matesanz.arcaneum.ui.screens.detail.stateHolder.rememberDetailState
+import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailAction
+import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(
-    viewModel: DetailViewModel,
+fun BookDetailScreen(
+    viewModel: BookDetailViewModel,
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val detailState = rememberDetailState()
-
-    detailState.ShowMessageEffect(state.message) { viewModel.onAction(DetailAction.MessageShown) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
     ) {
         Scaffold(
             topBar = {
-                DetailTopBar(
+                NavigationBackTopBar(
                     onBack = onBack,
-                    dominantColor = if (state.dominantColor != 0)
-                        Color(state.dominantColor) else Color.Transparent,
-                    scrollBehavior = detailState.scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    dominantColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             },
-            floatingActionButton = {
-                var bookSaved by remember { mutableStateOf(false) }
-                FloatingActionButton(
-                    onClick = {
-                        state.book?.let { book ->
-                            bookSaved = !bookSaved
-                            viewModel.onAction(DetailAction.Bookmarked)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved)
-                            Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(
-                            id = R.string.bookmark_action_accessibility_description
-                        ),
-                    )
-                }
-            },
-            snackbarHost = { SnackbarHost(detailState.snackbarHostState) },
-            modifier = Modifier.nestedScroll(detailState.scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             DetailContent(
                 state = state,
-                onDominantColor = { viewModel.onAction(DetailAction.DominantColor(it)) },
+                onBookmarked = { shelfId, book ->
+                    viewModel.onAction(BookDetailAction.Bookmarked(shelfId, book))
+                },
                 modifier = Modifier.padding(padding),
             )
         }
@@ -114,48 +82,29 @@ fun DetailScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun DetailTopBar(
-    onBack: () -> Unit,
-    dominantColor: Color,
-    scrollBehavior: TopAppBarScrollBehavior,
-) {
-    TopAppBar(
-        title = {},
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = stringResource(
-                        id = R.string.go_back_action_accessibility_description
-                    ),
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = dominantColor,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
-        scrollBehavior = scrollBehavior,
-    )
-}
-
-@Composable
 private fun DetailContent(
-    state: DetailViewModel.UiState,
-    onDominantColor: (Int) -> Unit,
+    state: BookDetailViewModel.UiState,
+    onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
-        DetailLoader(modifier = modifier)
+        BookDetailLoader(modifier = modifier)
     } else {
         state.book?.let { book ->
-            BookDetail(
-                book = book,
-                dominantColor = state.dominantColor,
-                onDominantColor = onDominantColor,
-                modifier = modifier,
-            )
+            Box {
+                BookDetail(
+                    book = book,
+                    modifier = modifier,
+                )
+                DropdownAddToShelfButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 80.dp),
+                    shelves = state.shelves,
+                    selectedShelfId = book.shelfId,
+                    onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
+                )
+            }
         }
     }
 }
@@ -163,64 +112,56 @@ private fun DetailContent(
 @Composable
 private fun BookDetail(
     book: Book,
-    dominantColor: Int,
-    onDominantColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .padding(bottom = 140.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(32.dp),
     ) {
-        Box {
-            Box(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(elevation = 3.dp, shape = RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
+                .clip(RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(vertical = 24.dp, horizontal = 16.dp)
+        ) {
+            CustomAsyncImage(
+                model = book.coverImage,
+                contentDescription = stringResource(
+                    R.string.book_cover_content_accessibility_description,
+                    book.title
+                ),
                 modifier = Modifier
-                    .layout { measurable, constraints ->
-
-                        val placeable = measurable.measure(constraints)
-                        val height = (scrollState.value / SCROLL_HEIGHT_FACTOR).toInt()
-                        layout(placeable.width, placeable.height) {
-                            placeable.place(0, height)
-                        }
-                    }
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .background(if (dominantColor != 0) Color(dominantColor) else Color.Transparent)
-                    .align(Alignment.TopCenter)
+                    .height(270.dp)
+                    .aspectRatio(BOOK_ASPECT_RATIO),
             )
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 80.dp)
-                    .align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
-                CustomAsyncImage(
-                    model = book.coverImage,
-                    contentDescription = stringResource(
-                        R.string.book_cover_content_accessibility_description,
-                        book.title
-                    ),
-                    modifier = Modifier
-                        .height(270.dp)
-                        .aspectRatio(BOOK_ASPECT_RATIO),
-                ) { color ->
-                    onDominantColor(color)
-                }
-                TitleSection(
-                    title = book.title,
-                    author = book.authors.first()
-                )
-                InfoSection(
-                    rating = book.averageRating,
-                    pages = book.pageCount,
-                    language = book.language
-                )
-                if (book.description.isNotEmpty()) {
-                    DescriptionSection(book.description)
-                }
+            TitleSection(
+                title = book.title,
+                author = book.authors.first()
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+        ) {
+            InfoSection(
+                rating = book.averageRating,
+                pages = book.pageCount,
+                language = book.language
+            )
+            if (book.description.isNotEmpty()) {
+                DescriptionSection(book.description)
             }
         }
     }
@@ -230,8 +171,10 @@ private fun BookDetail(
 private fun TitleSection(
     title: String,
     author: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -239,11 +182,13 @@ private fun TitleSection(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = author,
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -257,6 +202,12 @@ private fun InfoSection(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .padding(16.dp),
     ) {
         if (rating > 0) {
             InfoItem(

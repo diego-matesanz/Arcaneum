@@ -1,68 +1,50 @@
 package com.diego.matesanz.arcaneum.ui.screens.home.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.TopBar
+import com.diego.matesanz.arcaneum.ui.common.components.books.booksList.BookItem
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeAction
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
-import com.diego.matesanz.arcaneum.ui.screens.home.stateHolder.rememberHomeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,24 +54,27 @@ fun HomeScreen(
     viewModel: HomeViewModel,
 ) {
     val state by viewModel.state.collectAsState()
-    val homeState = rememberHomeState()
-
-    homeState.ShowMessageEffect(state.message) { viewModel.onAction(HomeAction.MessageShown) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
         Scaffold(
-            topBar = { HomeTopBar(scrollBehavior = homeState.scrollBehavior) },
-            modifier = Modifier.nestedScroll(homeState.scrollBehavior.nestedScrollConnection),
-            contentWindowInsets = WindowInsets.safeDrawing,
-            snackbarHost = { SnackbarHost(homeState.snackbarHostState) },
+            topBar = {
+                TopBar(
+                    title = stringResource(id = R.string.app_name),
+                    scrollBehavior = scrollBehavior,
+                )
+            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             HomeContent(
                 state = state,
                 onBookClick = onBookClick,
                 onCamClick = onCamClick,
-                onBookmarked = { viewModel.onAction(HomeAction.Bookmarked) },
+                onBookmarked = { shelfId, book ->
+                    viewModel.onAction(HomeAction.Bookmarked(shelfId, book))
+                },
                 onSearch = { viewModel.onAction(HomeAction.Search(it)) },
                 contentPadding = padding,
             )
@@ -98,24 +83,10 @@ fun HomeScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun HomeTopBar(scrollBehavior: TopAppBarScrollBehavior) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Normal),
-            )
-        },
-        scrollBehavior = scrollBehavior,
-    )
-}
-
-@Composable
 private fun HomeContent(
     state: HomeViewModel.UiState,
     onBookClick: (Book) -> Unit,
-    onBookmarked: () -> Unit,
+    onBookmarked: (Int, Book) -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -143,6 +114,7 @@ private fun HomeContent(
                 itemsIndexed(state.books) { index, book ->
                     BookItem(
                         book = book,
+                        shelves = state.shelves,
                         onClick = onBookClick,
                         onBookmarked = onBookmarked
                     )
@@ -208,127 +180,4 @@ private fun SearchBar(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small),
     )
-}
-
-@Composable
-private fun BookItem(
-    book: Book,
-    onClick: (Book) -> Unit,
-    onBookmarked: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .height(IntrinsicSize.Max)
-            .clickable(onClick = { onClick(book) }),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        CustomAsyncImage(
-            model = book.coverImage,
-            contentDescription = stringResource(
-                R.string.book_cover_content_accessibility_description,
-                book.title
-            ),
-            modifier = Modifier
-                .height(180.dp)
-                .aspectRatio(BOOK_ASPECT_RATIO),
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(vertical = 4.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            TitleAndAuthorsSection(
-                title = book.title,
-                authors = book.authors,
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                RatingSection(
-                    averageRating = book.averageRating,
-                    ratingsCount = book.ratingsCount,
-                )
-
-                var bookSaved by remember { mutableStateOf(false) }
-                IconButton(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .clip(MaterialTheme.shapes.small)
-                        .background(MaterialTheme.colorScheme.secondaryContainer),
-                    onClick = {
-                        bookSaved = !bookSaved
-                        onBookmarked()
-                    },
-                ) {
-                    Icon(
-                        imageVector = if (bookSaved) Icons.Filled.BookmarkAdded else Icons.Outlined.BookmarkAdd,
-                        contentDescription = stringResource(id = R.string.bookmark_action_accessibility_description),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TitleAndAuthorsSection(
-    title: String,
-    authors: List<String>,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Start,
-        )
-
-        var authorsText = StringBuilder()
-        authors.forEachIndexed { index, author ->
-            authorsText.append(author)
-            if (index < authors.lastIndex) {
-                authorsText.append(", ")
-            }
-        }
-        Text(
-            text = authorsText.toString(),
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Start,
-        )
-    }
-}
-
-@Composable
-private fun RatingSection(
-    averageRating: Double,
-    ratingsCount: Int,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        if (averageRating > 0) {
-            Text(
-                text = "${stringResource(R.string.rating)}: $averageRating",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-            )
-        }
-        if (ratingsCount > 0) {
-            Text(
-                text = "$ratingsCount ${stringResource(R.string.ratings)}",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-            )
-        }
-    }
 }
