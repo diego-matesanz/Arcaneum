@@ -7,15 +7,35 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Equator,
+    onPrimary = SealBrown,
+    primaryContainer = Equator,
+    onPrimaryContainer = SealBrown,
+    secondary = CoffeeBean,
+    onSecondary = Janna,
+    secondaryContainer = CoffeeBean,
+    onSecondaryContainer = Janna,
+    tertiary = Janna,
+    onTertiary = CoffeeBean,
+    tertiaryContainer = Janna,
+    onTertiaryContainer = CoffeeBean,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Equator,
+    onPrimary = SealBrown,
+    primaryContainer = Equator,
+    onPrimaryContainer = SealBrown,
+    secondary = CoffeeBean,
+    onSecondary = Janna,
+    secondaryContainer = CoffeeBean,
+    onSecondaryContainer = Janna,
+    tertiary = Janna,
+    onTertiary = CoffeeBean,
+    tertiaryContainer = Janna,
+    onTertiaryContainer = CoffeeBean,
+    surfaceVariant = Merino,
+    onSurfaceVariant = CoffeeBean,
 )
 
 @Composable
@@ -24,7 +44,7 @@ fun ArcaneumTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        darkTheme -> DarkColorScheme
+        //darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 

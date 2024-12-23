@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +44,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
@@ -83,8 +86,8 @@ fun ShelvesScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showAddShelfDialog = true },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -133,9 +136,16 @@ private fun ShelvesContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = contentPadding,
+        contentPadding = PaddingValues(
+            top = contentPadding.calculateTopPadding(),
+            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            bottom = 100.dp,
+        ),
     ) {
         items(booksByShelf.keys.toList()) { shelf ->
             ShelfItem(
@@ -156,7 +166,7 @@ private fun ShelfItem(
     onDeleteClick: (Shelf) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small)
@@ -195,7 +205,7 @@ private fun ShelfItem(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete shelf icon",
                 modifier = Modifier
-                    .align(Alignment.End)
+                    .align(Alignment.BottomEnd)
                     .clickable { onDeleteClick(shelf) },
             )
         }
