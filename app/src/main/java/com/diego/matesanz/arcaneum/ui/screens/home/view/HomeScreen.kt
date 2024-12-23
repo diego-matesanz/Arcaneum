@@ -2,6 +2,8 @@ package com.diego.matesanz.arcaneum.ui.screens.home.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
@@ -97,7 +100,12 @@ private fun HomeContent(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = contentPadding,
+        contentPadding = PaddingValues(
+            top = 24.dp + contentPadding.calculateTopPadding(),
+            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            bottom = contentPadding.calculateBottomPadding(),
+        ),
     ) {
         item {
             SearchBar(

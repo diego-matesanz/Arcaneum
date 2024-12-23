@@ -141,10 +141,10 @@ private fun ShelvesContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(
-            top = contentPadding.calculateTopPadding(),
+            top = 24.dp + contentPadding.calculateTopPadding(),
             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
             end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = 100.dp,
+            bottom = 100.dp + contentPadding.calculateBottomPadding(),
         ),
     ) {
         items(booksByShelf.keys.toList()) { shelf ->

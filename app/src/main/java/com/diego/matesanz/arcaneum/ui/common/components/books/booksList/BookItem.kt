@@ -59,15 +59,16 @@ fun BookItem(
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 TitleAndAuthorsSection(
                     title = book.title,
                     authors = book.authors,
                 )
-                RatingSection(
+                /*RatingSection(
                     averageRating = book.averageRating,
                     ratingsCount = book.ratingsCount,
-                )
+                )*/
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

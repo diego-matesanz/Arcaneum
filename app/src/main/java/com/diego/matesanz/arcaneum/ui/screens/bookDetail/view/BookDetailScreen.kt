@@ -99,7 +99,7 @@ private fun DetailContent(
                 DropdownAddToShelfButton(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(end = 16.dp, bottom = 80.dp),
+                        .padding(end = 16.dp, bottom = 24.dp),
                     shelves = state.shelves,
                     selectedShelfId = book.shelfId,
                     onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
@@ -119,7 +119,7 @@ private fun BookDetail(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(bottom = 140.dp),
+            .padding(bottom = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp),
     ) {
@@ -131,7 +131,8 @@ private fun BookDetail(
                 .shadow(elevation = 3.dp, shape = RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
                 .clip(RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(vertical = 24.dp, horizontal = 16.dp)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 24.dp)
         ) {
             CustomAsyncImage(
                 model = book.coverImage,
