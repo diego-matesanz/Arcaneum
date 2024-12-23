@@ -48,6 +48,7 @@ import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
 import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.DropdownAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailAction
@@ -67,7 +68,7 @@ fun BookDetailScreen(
     ) {
         Scaffold(
             topBar = {
-                DetailTopBar(
+                NavigationBackTopBar(
                     onBack = onBack,
                     dominantColor = if (state.dominantColor != 0)
                         Color(state.dominantColor) else Color.Transparent,
@@ -86,33 +87,6 @@ fun BookDetailScreen(
             )
         }
     }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun DetailTopBar(
-    onBack: () -> Unit,
-    dominantColor: Color,
-    scrollBehavior: TopAppBarScrollBehavior,
-) {
-    TopAppBar(
-        title = {},
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = stringResource(
-                        id = R.string.go_back_action_accessibility_description
-                    ),
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = dominantColor,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
-        scrollBehavior = scrollBehavior,
-    )
 }
 
 @Composable

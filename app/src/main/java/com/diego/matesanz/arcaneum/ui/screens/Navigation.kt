@@ -43,6 +43,8 @@ import com.diego.matesanz.arcaneum.ui.screens.camera.view.CameraScreen
 import com.diego.matesanz.arcaneum.ui.screens.camera.viewModel.CameraViewModel
 import com.diego.matesanz.arcaneum.ui.screens.home.view.HomeScreen
 import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
+import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.view.ShelfDetailScreen
+import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailViewModel
 import com.diego.matesanz.arcaneum.ui.screens.shelves.view.ShelvesScreen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
 import kotlinx.serialization.Serializable
@@ -135,7 +137,14 @@ fun Navigation() {
             navigation<Bookmarks>(startDestination = Shelves) {
                 composable<Shelves> {
                     ShelvesScreen(
-                        onShelfClick = {},
+                        onShelfClick = { shelf ->
+                            navController.navigate(
+                                ShelfDetail(
+                                    shelf.shelfId,
+                                    shelf.name
+                                )
+                            )
+                        },
                         viewModel = viewModel {
                             ShelvesViewModel(
                                 shelvesRepository = shelvesRepository,
@@ -146,7 +155,31 @@ fun Navigation() {
                 }
                 composable<ShelfDetail> { backStackEntry ->
                     val shelfDetail: ShelfDetail = backStackEntry.toRoute()
-                    Text(text = "Shelf detail: ${shelfDetail.shelfId}")
+                    ShelfDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
+                        viewModel = viewModel {
+                            ShelfDetailViewModel(
+                                shelfId = shelfDetail.shelfId,
+                                shelfName = shelfDetail.shelfName,
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        }
+                    )
+                }
+                composable<BookDetail> { backStackEntry ->
+                    val bookDetail: BookDetail = backStackEntry.toRoute()
+                    BookDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        viewModel = viewModel {
+                            BookDetailViewModel(
+                                id = bookDetail.bookId,
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        },
+                    )
                 }
             }
         }
@@ -216,4 +249,4 @@ object Camera
 object Shelves
 
 @Serializable
-data class ShelfDetail(val shelfId: Int)
+data class ShelfDetail(val shelfId: Int, val shelfName: String)

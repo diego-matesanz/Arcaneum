@@ -9,10 +9,19 @@ import kotlinx.coroutines.flow.transform
 class BooksRepository(
     private val remoteDataSource: BooksRemoteDataSource,
     private val localDataSource: BooksLocalDataSource,
-    private val shelvesRepository: ShelvesRepository,
+    shelvesRepository: ShelvesRepository,
 ) {
 
-    suspend fun findBooksBySearchText(search: String): Flow<List<Book>> =
+    val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
+
+    val booksByShelf: Flow<Map<Shelf, List<Book>>> =
+        combine(shelvesRepository.shelves, savedBooks) { shelves, savedBooks ->
+            shelves.associate { shelf ->
+                shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
+            }
+        }
+
+    fun findBooksBySearchText(search: String): Flow<List<Book>> =
         savedBooks.transform { savedBooks ->
             val remoteBooks = remoteDataSource.findBooksBySearchText(search)
             emit(remoteBooks.map { book ->
@@ -26,22 +35,13 @@ class BooksRepository(
             emit(book)
         }
 
-    suspend fun findBookByIsbn(isbn: String): Book =
-        remoteDataSource.findBookByIsbn(isbn)
-
-    val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
-
     fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
         savedBooks.transform { savedBooks ->
             emit(savedBooks.filter { book -> book.shelfId == shelfId })
         }
 
-    val booksByShelf: Flow<Map<Shelf, List<Book>>> =
-        combine(shelvesRepository.shelves, savedBooks) { shelves, savedBooks ->
-            shelves.associate { shelf ->
-                shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
-            }
-        }
+    suspend fun findBookByIsbn(isbn: String): Book =
+        remoteDataSource.findBookByIsbn(isbn)
 
     suspend fun saveBook(book: Book) = localDataSource.saveBook(book)
 

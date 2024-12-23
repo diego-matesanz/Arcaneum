@@ -12,8 +12,6 @@ class ShelvesRepository(
 
     val shelves: Flow<List<Shelf>> = localDataSource.getShelves()
 
-    fun findShelfById(shelfId: Int): Flow<Shelf?> = localDataSource.findShelfById(shelfId)
-
     suspend fun saveShelf(shelf: Shelf) = localDataSource.saveShelf(shelf)
 
     suspend fun deleteShelf(shelf: Shelf) {

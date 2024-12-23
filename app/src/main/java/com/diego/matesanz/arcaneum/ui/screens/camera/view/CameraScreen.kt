@@ -39,18 +39,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
+import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
 import com.diego.matesanz.arcaneum.ui.screens.Screen
+import com.diego.matesanz.arcaneum.ui.screens.camera.stateHolder.rememberCameraState
 import com.diego.matesanz.arcaneum.ui.screens.camera.viewModel.CameraAction
 import com.diego.matesanz.arcaneum.ui.screens.camera.viewModel.CameraViewModel
-import com.diego.matesanz.arcaneum.ui.screens.camera.stateHolder.rememberCameraState
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(
     onBack: () -> Unit,
@@ -66,7 +67,12 @@ fun CameraScreen(
         contentDescription = stringResource(R.string.camera_screen_accessibility_description),
     ) {
         Scaffold(
-            topBar = { CameraTopBar(onBack = onBack) },
+            topBar = {
+                NavigationBackTopBar(
+                    onBack = onBack,
+                    dominantColor = Color.Transparent,
+                )
+            },
             contentWindowInsets = WindowInsets.safeGestures,
         ) { padding ->
             CameraContent(
@@ -77,24 +83,6 @@ fun CameraScreen(
             )
         }
     }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun CameraTopBar(onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text("") },
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.go_back_action_accessibility_description),
-                    tint = MaterialTheme.colorScheme.surface,
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-    )
 }
 
 @Composable

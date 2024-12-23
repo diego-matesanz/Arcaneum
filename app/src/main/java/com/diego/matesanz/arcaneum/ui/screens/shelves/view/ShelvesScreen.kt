@@ -59,7 +59,7 @@ import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShelvesScreen(
-    onShelfClick: (Int) -> Unit,
+    onShelfClick: (Shelf) -> Unit,
     viewModel: ShelvesViewModel,
 ) {
     val state by viewModel.state.collectAsState()
@@ -100,7 +100,7 @@ fun ShelvesScreen(
                     shelfToRemove = it
                     showRemoveShelfDialog = true
                 },
-                modifier = Modifier.padding(padding),
+                contentPadding = padding,
             )
             if (showAddShelfDialog) {
                 AddShelfDialog(
@@ -127,14 +127,15 @@ fun ShelvesScreen(
 @Composable
 private fun ShelvesContent(
     booksByShelf: Map<Shelf, List<Book>>,
-    onShelfClick: (Int) -> Unit,
+    onShelfClick: (Shelf) -> Unit,
     onDeleteClick: (Shelf) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = contentPadding,
     ) {
         items(booksByShelf.keys.toList()) { shelf ->
             ShelfItem(
@@ -151,7 +152,7 @@ private fun ShelvesContent(
 private fun ShelfItem(
     shelf: Shelf,
     books: List<Book>?,
-    onShelfClick: (Int) -> Unit,
+    onShelfClick: (Shelf) -> Unit,
     onDeleteClick: (Shelf) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -160,7 +161,7 @@ private fun ShelfItem(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable { onShelfClick(shelf.shelfId) }
+            .clickable { onShelfClick(shelf) }
             .padding(16.dp),
     ) {
         Row(
