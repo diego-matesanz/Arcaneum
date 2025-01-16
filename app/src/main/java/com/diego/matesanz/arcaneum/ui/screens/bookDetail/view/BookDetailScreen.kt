@@ -44,8 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar

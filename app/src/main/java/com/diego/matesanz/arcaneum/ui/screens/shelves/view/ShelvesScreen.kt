@@ -48,7 +48,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVERS_COUNT
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVER_TRANSLATION
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.AddShelfDialog
@@ -219,9 +221,8 @@ private fun BooksCovers(
 ) {
     val imageSize = 90.dp
     val overlap = 15.dp
-    val translation = 15
 
-    val nFirstBooks = books.take(3)
+    val nFirstBooks = books.take(BOOK_COVERS_COUNT)
 
     Box(modifier = modifier) {
         if (nFirstBooks.isNotEmpty()) {
@@ -236,8 +237,8 @@ private fun BooksCovers(
                         .height(if (index == 0) imageSize else imageSize - (overlap * index))
                         .aspectRatio(BOOK_ASPECT_RATIO)
                         .offset(
-                            x = if (index > 0) (index * translation * 1.25).dp else 0.dp,
-                            y = if (index > 0) (index * translation).dp else 0.dp,
+                            x = if (index > 0) (index * BOOK_COVER_TRANSLATION * 1.25).dp else 0.dp,
+                            y = if (index > 0) (index * BOOK_COVER_TRANSLATION).dp else 0.dp,
                         )
                         .zIndex(nFirstBooks.size - index.toFloat()),
                 )

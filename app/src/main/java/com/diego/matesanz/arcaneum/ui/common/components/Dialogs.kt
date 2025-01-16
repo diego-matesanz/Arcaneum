@@ -51,30 +51,12 @@ fun AddShelfDialog(
                     title = stringResource(id = R.string.add_shelf_dialog_title),
                     message = stringResource(id = R.string.add_shelf_dialog_message),
                 )
-                TextField(
-                    value = text,
+                ShelfNameTextField(
+                    text = text,
+                    isError = isError,
                     onValueChange = {
                         isError = false
                         text = it
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    isError = isError,
-                    supportingText = {
-                        if (isError) {
-                            Text(
-                                style = MaterialTheme.typography.bodySmall,
-                                text = stringResource(id = R.string.add_shelf_dialog_error_message),
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(id = R.string.add_shelf_dialog_text_field_placeholder),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
                     },
                 )
                 ConfirmAndDismissButtons(
@@ -178,6 +160,37 @@ private fun TitleAndMessage(
             textAlign = textAlign,
         )
     }
+}
+
+@Composable
+private fun ShelfNameTextField(
+    text: String,
+    isError: Boolean,
+    onValueChange: (String) -> Unit,
+) {
+    TextField(
+        value = text,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1,
+        textStyle = MaterialTheme.typography.bodyLarge,
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    style = MaterialTheme.typography.bodySmall,
+                    text = stringResource(id = R.string.add_shelf_dialog_error_message),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.add_shelf_dialog_text_field_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
+    )
 }
 
 @Composable
