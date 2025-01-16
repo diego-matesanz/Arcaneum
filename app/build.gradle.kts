@@ -102,11 +102,6 @@ dependencies {
     // Palette
     implementation (libs.androidx.palette)
 
-    // Firebase
-    //implementation(platform(libs.firebase.bom))
-    //implementation(libs.firebase.analytics)
-    //implementation(libs.firebase.crashlytics.ktx)
-
     // Room
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
