@@ -86,8 +86,8 @@ fun ShelvesScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showAddShelfDialog = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -144,7 +144,7 @@ private fun ShelvesContent(
             top = 24.dp + contentPadding.calculateTopPadding(),
             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
             end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = 100.dp + contentPadding.calculateBottomPadding(),
+            bottom = contentPadding.calculateBottomPadding(),
         ),
     ) {
         items(booksByShelf.keys.toList()) { shelf ->
@@ -166,7 +166,7 @@ private fun ShelfItem(
     onDeleteClick: (Shelf) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small)
@@ -205,7 +205,7 @@ private fun ShelfItem(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete shelf icon",
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.End)
                     .clickable { onDeleteClick(shelf) },
             )
         }

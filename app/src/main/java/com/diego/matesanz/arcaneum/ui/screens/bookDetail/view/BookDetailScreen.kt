@@ -13,13 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
@@ -64,14 +70,16 @@ fun BookDetailScreen(
             topBar = {
                 NavigationBackTopBar(
                     onBack = onBack,
+                    dominantColor = if (state.dominantColor != 0)
+                        Color(state.dominantColor) else Color.Transparent,
                     scrollBehavior = scrollBehavior,
-                    dominantColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { padding ->
             DetailContent(
                 state = state,
+                onDominantColor = { viewModel.onAction(BookDetailAction.DominantColor(it)) },
                 onBookmarked = { shelfId, book ->
                     viewModel.onAction(BookDetailAction.Bookmarked(shelfId, book))
                 },
@@ -84,6 +92,7 @@ fun BookDetailScreen(
 @Composable
 private fun DetailContent(
     state: BookDetailViewModel.UiState,
+    onDominantColor: (Int) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -94,6 +103,8 @@ private fun DetailContent(
             Box {
                 BookDetail(
                     book = book,
+                    dominantColor = state.dominantColor,
+                    onDominantColor = onDominantColor,
                     modifier = modifier,
                 )
                 DropdownAddToShelfButton(
@@ -112,57 +123,64 @@ private fun DetailContent(
 @Composable
 private fun BookDetail(
     book: Book,
+    dominantColor: Int,
+    onDominantColor: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(bottom = 64.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp),
+            .verticalScroll(scrollState),
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(elevation = 3.dp, shape = RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
-                .clip(RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 24.dp)
-        ) {
-            CustomAsyncImage(
-                model = book.coverImage,
-                contentDescription = stringResource(
-                    R.string.book_cover_content_accessibility_description,
-                    book.title
-                ),
+        Box {
+            Box(
                 modifier = Modifier
-                    .height(270.dp)
-                    .aspectRatio(BOOK_ASPECT_RATIO),
+                    .layout { measurable, constraints ->
+
+                        val placeable = measurable.measure(constraints)
+                        val height = (scrollState.value / SCROLL_HEIGHT_FACTOR).toInt()
+                        layout(placeable.width, placeable.height) {
+                            placeable.place(0, height)
+                        }
+                    }
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(if (dominantColor != 0) Color(dominantColor) else Color.Transparent)
+                    .align(Alignment.TopCenter)
             )
-            TitleSection(
-                title = book.title,
-                author = book.authors.first()
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-        ) {
-            InfoSection(
-                rating = book.averageRating,
-                pages = book.pageCount,
-                language = book.language
-            )
-            if (book.description.isNotEmpty()) {
-                DescriptionSection(book.description)
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 140.dp)
+                    .align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+            ) {
+                CustomAsyncImage(
+                    model = book.coverImage,
+                    contentDescription = stringResource(
+                        R.string.book_cover_content_accessibility_description,
+                        book.title
+                    ),
+                    modifier = Modifier
+                        .height(270.dp)
+                        .aspectRatio(BOOK_ASPECT_RATIO),
+                ) { color ->
+                    onDominantColor(color)
+                }
+                TitleSection(
+                    title = book.title,
+                    author = book.authors.first()
+                )
+                InfoSection(
+                    rating = book.averageRating,
+                    pages = book.pageCount,
+                    language = book.language
+                )
+                if (book.description.isNotEmpty()) {
+                    DescriptionSection(book.description)
+                }
             }
         }
     }
@@ -172,10 +190,8 @@ private fun BookDetail(
 private fun TitleSection(
     title: String,
     author: String,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -183,13 +199,11 @@ private fun TitleSection(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = author,
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Light),
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -203,12 +217,6 @@ private fun InfoSection(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
-            .padding(16.dp),
     ) {
         if (rating > 0) {
             InfoItem(

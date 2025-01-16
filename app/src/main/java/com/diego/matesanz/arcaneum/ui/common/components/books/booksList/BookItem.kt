@@ -119,7 +119,7 @@ private fun TitleAndAuthorsSection(
     }
 }
 
-@Composable
+/*@Composable
 private fun RatingSection(
     averageRating: Double,
     ratingsCount: Int,
@@ -142,4 +142,4 @@ private fun RatingSection(
             )
         }
     }
-}
+}*/

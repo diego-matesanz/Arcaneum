@@ -7,20 +7,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -47,7 +47,6 @@ import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.view.ShelfDetailScreen
 import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailViewModel
 import com.diego.matesanz.arcaneum.ui.screens.shelves.view.ShelvesScreen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
-import com.diego.matesanz.arcaneum.ui.theme.ArcaneumTheme
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -66,124 +65,121 @@ fun Navigation() {
         TopLevelRoute("Bookmarks", Bookmarks, Icons.Default.Bookmarks)
     )
 
-    ArcaneumTheme {
-        Scaffold(
-            bottomBar = {
-                val navBackStackEntry = navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry.value?.destination
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    topLevelRoutes.forEach { topLevelRoute ->
-                        BottomNavigationItem(
-                            icon = topLevelRoute.icon,
-                            name = topLevelRoute.name,
-                            selected = currentDestination?.hierarchy?.any { it.route == topLevelRoute.route::class.toString() } == true,
-                            onClick = {
-                                navController.navigate(topLevelRoute.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        )
-                    }
-                }
-            },
-            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer),
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = Explore,
-                modifier = Modifier.padding(innerPadding).background(MaterialTheme.colorScheme.primaryContainer),
+    Scaffold(
+        bottomBar = {
+            val navBackStackEntry = navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry.value?.destination
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                navigation<Explore>(startDestination = Home) {
-                    composable<Home> {
-                        HomeScreen(
-                            onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
-                            onCamClick = { navController.navigate(Camera) },
-                            viewModel = viewModel {
-                                HomeViewModel(
-                                    booksRepository = booksRepository,
-                                    shelvesRepository = shelvesRepository,
-                                )
-                            },
-                        )
-                    }
-                    composable<BookDetail> { backStackEntry ->
-                        val bookDetail: BookDetail = backStackEntry.toRoute()
-                        BookDetailScreen(
-                            onBack = { navController.popBackStack() },
-                            viewModel = viewModel {
-                                BookDetailViewModel(
-                                    id = bookDetail.bookId,
-                                    booksRepository = booksRepository,
-                                    shelvesRepository = shelvesRepository,
-                                )
-                            },
-                        )
-                    }
-                    composable<Camera> {
-                        CameraScreen(
-                            onBack = { navController.popBackStack() },
-                            onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
-                            viewModel = viewModel { CameraViewModel(booksRepository) },
-                        )
-                    }
-                }
-                navigation<Bookmarks>(startDestination = Shelves) {
-                    composable<Shelves> {
-                        ShelvesScreen(
-                            onShelfClick = { shelf ->
-                                navController.navigate(
-                                    ShelfDetail(
-                                        shelf.shelfId,
-                                        shelf.name
-                                    )
-                                )
-                            },
-                            viewModel = viewModel {
-                                ShelvesViewModel(
-                                    shelvesRepository = shelvesRepository,
-                                    booksRepository = booksRepository,
-                                )
-                            },
-                        )
-                    }
-                    composable<ShelfDetail> { backStackEntry ->
-                        val shelfDetail: ShelfDetail = backStackEntry.toRoute()
-                        ShelfDetailScreen(
-                            onBack = { navController.popBackStack() },
-                            onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
-                            viewModel = viewModel {
-                                ShelfDetailViewModel(
-                                    shelfId = shelfDetail.shelfId,
-                                    shelfName = shelfDetail.shelfName,
-                                    booksRepository = booksRepository,
-                                    shelvesRepository = shelvesRepository,
-                                )
+                topLevelRoutes.forEach { topLevelRoute ->
+                    BottomNavigationItem(
+                        icon = topLevelRoute.icon,
+                        name = topLevelRoute.name,
+                        selected = currentDestination?.hierarchy?.any { it.route == topLevelRoute.route::class.toString() } == true,
+                        onClick = {
+                            navController.navigate(topLevelRoute.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                        )
-                    }
-                    composable<BookDetail> { backStackEntry ->
-                        val bookDetail: BookDetail = backStackEntry.toRoute()
-                        BookDetailScreen(
-                            onBack = { navController.popBackStack() },
-                            viewModel = viewModel {
-                                BookDetailViewModel(
-                                    id = bookDetail.bookId,
-                                    booksRepository = booksRepository,
-                                    shelvesRepository = shelvesRepository,
+                        }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Explore,
+            modifier = Modifier.padding(innerPadding),
+        ) {
+            navigation<Explore>(startDestination = Home) {
+                composable<Home> {
+                    HomeScreen(
+                        onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
+                        onCamClick = { navController.navigate(Camera) },
+                        viewModel = viewModel {
+                            HomeViewModel(
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        },
+                    )
+                }
+                composable<BookDetail> { backStackEntry ->
+                    val bookDetail: BookDetail = backStackEntry.toRoute()
+                    BookDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        viewModel = viewModel {
+                            BookDetailViewModel(
+                                id = bookDetail.bookId,
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        },
+                    )
+                }
+                composable<Camera> {
+                    CameraScreen(
+                        onBack = { navController.popBackStack() },
+                        onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
+                        viewModel = viewModel { CameraViewModel(booksRepository) },
+                    )
+                }
+            }
+            navigation<Bookmarks>(startDestination = Shelves) {
+                composable<Shelves> {
+                    ShelvesScreen(
+                        onShelfClick = { shelf ->
+                            navController.navigate(
+                                ShelfDetail(
+                                    shelf.shelfId,
+                                    shelf.name
                                 )
-                            },
-                        )
-                    }
+                            )
+                        },
+                        viewModel = viewModel {
+                            ShelvesViewModel(
+                                shelvesRepository = shelvesRepository,
+                                booksRepository = booksRepository,
+                            )
+                        },
+                    )
+                }
+                composable<ShelfDetail> { backStackEntry ->
+                    val shelfDetail: ShelfDetail = backStackEntry.toRoute()
+                    ShelfDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
+                        viewModel = viewModel {
+                            ShelfDetailViewModel(
+                                shelfId = shelfDetail.shelfId,
+                                shelfName = shelfDetail.shelfName,
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        }
+                    )
+                }
+                composable<BookDetail> { backStackEntry ->
+                    val bookDetail: BookDetail = backStackEntry.toRoute()
+                    BookDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        viewModel = viewModel {
+                            BookDetailViewModel(
+                                id = bookDetail.bookId,
+                                booksRepository = booksRepository,
+                                shelvesRepository = shelvesRepository,
+                            )
+                        },
+                    )
                 }
             }
         }
@@ -211,6 +207,12 @@ fun BottomNavigationItem(
             imageVector = icon,
             contentDescription = name,
             tint = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer
+        )
+        Text(
+            text = name,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
         )
     }
 }

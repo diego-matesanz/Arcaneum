@@ -47,14 +47,14 @@ class AddToShelfButtonState(
 
     @Composable
     fun getButtonColor(): Color {
-        return if (selectedShelf == null) MaterialTheme.colorScheme.tertiaryContainer
-        else MaterialTheme.colorScheme.primaryContainer
+        return if (selectedShelf == null) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.tertiaryContainer
     }
 
     @Composable
     fun getButtonContentColor(): Color {
-        return if (selectedShelf == null) MaterialTheme.colorScheme.onTertiaryContainer
-        else MaterialTheme.colorScheme.onPrimaryContainer
+        return if (selectedShelf == null) MaterialTheme.colorScheme.onPrimaryContainer
+        else MaterialTheme.colorScheme.onTertiaryContainer
     }
 
     fun getExpandIcon(): ImageVector {
