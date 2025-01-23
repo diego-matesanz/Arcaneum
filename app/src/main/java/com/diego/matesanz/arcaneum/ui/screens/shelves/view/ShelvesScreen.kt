@@ -28,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -56,6 +55,7 @@ import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.AddShelfDialog
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.RemoveShelfDialog
+import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.TopBar
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesAction
@@ -76,7 +76,9 @@ fun ShelvesScreen(
     Screen(
         contentDescription = "Shelves screen content description",
     ) {
-        Scaffold(
+        ResultScaffold(
+            state = state,
+            loading = { /* TODO */ },
             topBar = {
                 TopBar(
                     title = stringResource(id = R.string.shelves_screen_title),
@@ -97,9 +99,9 @@ fun ShelvesScreen(
                     )
                 }
             }
-        ) { padding ->
+        ) { padding, data ->
             ShelvesContent(
-                booksByShelf = state.booksByShelf,
+                booksByShelf = data,
                 onShelfClick = onShelfClick,
                 onDeleteClick = {
                     shelfToRemove = it

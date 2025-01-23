@@ -19,7 +19,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -41,6 +40,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.TopBar
 import com.diego.matesanz.arcaneum.ui.common.components.books.booksList.BookItem
 import com.diego.matesanz.arcaneum.ui.screens.Screen
@@ -60,7 +61,10 @@ fun HomeScreen(
     Screen(
         contentDescription = stringResource(id = R.string.home_screen_accessibility_description),
     ) {
-        Scaffold(
+        ResultScaffold(
+            state = state,
+            loading = { HomeLoader() },
+            error = { HomeError() },
             topBar = {
                 TopBar(
                     title = stringResource(id = R.string.app_name),
@@ -68,9 +72,10 @@ fun HomeScreen(
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { padding ->
+        ) { padding, data ->
             HomeContent(
-                state = state,
+                books = data.first,
+                shelves = data.second,
                 onBookClick = onBookClick,
                 onCamClick = onCamClick,
                 onBookmarked = { shelfId, book ->
@@ -85,7 +90,8 @@ fun HomeScreen(
 
 @Composable
 private fun HomeContent(
-    state: HomeViewModel.UiState,
+    books: List<Book>,
+    shelves: List<Shelf>,
     onBookClick: (Book) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     onCamClick: () -> Unit,
@@ -115,26 +121,19 @@ private fun HomeContent(
                 onSearch = onSearch,
             )
         }
-        when {
-            state.isLoading -> item { HomeLoader() }
-            state.isError -> item { HomeError() }
-            state.books.isEmpty() && search.isEmpty() -> item { HomeEmpty() }
-            else -> {
-                itemsIndexed(state.books) { index, book ->
-                    BookItem(
-                        book = book,
-                        shelves = state.shelves,
-                        onClick = onBookClick,
-                        onBookmarked = onBookmarked
-                    )
-                    if (index < state.books.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(top = 24.dp)
-                                .padding(horizontal = 16.dp),
-                        )
-                    }
-                }
+        itemsIndexed(books) { index, book ->
+            BookItem(
+                book = book,
+                shelves = shelves,
+                onClick = onBookClick,
+                onBookmarked = onBookmarked
+            )
+            if (index < books.lastIndex) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .padding(horizontal = 16.dp),
+                )
             }
         }
     }

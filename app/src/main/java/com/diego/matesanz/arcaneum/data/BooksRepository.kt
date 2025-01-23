@@ -4,6 +4,7 @@ import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.transform
 
 class BooksRepository(
@@ -29,16 +30,19 @@ class BooksRepository(
             })
         }
 
-    fun findBookById(id: String): Flow<Book?> =
-        localDataSource.findSavedBookById(id).transform { localBook ->
-            val book = localBook ?: remoteDataSource.findBookById(id)
-            emit(book)
-        }
+    fun findBookById(id: String): Flow<Book> =
+        localDataSource.findSavedBookById(id)
+            .transform { localBook ->
+                val book = localBook ?: remoteDataSource.findBookById(id)
+                emit(book)
+            }
+            .filterNotNull()
 
-    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>?> =
-        savedBooks.transform { savedBooks ->
+    fun findSavedBooksByShelfId(shelfId: Int): Flow<List<Book>> = savedBooks
+        .transform { savedBooks ->
             emit(savedBooks.filter { book -> book.shelfId == shelfId })
         }
+        .filterNotNull()
 
     suspend fun findBookByIsbn(isbn: String): Book =
         remoteDataSource.findBookByIsbn(isbn)

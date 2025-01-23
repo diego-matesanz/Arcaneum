@@ -14,17 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,8 +41,10 @@ import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.constants.Constants.SCROLL_HEIGHT_FACTOR
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
+import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.addToShelfButton.DropdownAddToShelfButton
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailAction
@@ -68,7 +63,9 @@ fun BookDetailScreen(
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
     ) {
-        Scaffold(
+        ResultScaffold(
+            state = state,
+            loading = { BookDetailLoader() },
             topBar = {
                 NavigationBackTopBar(
                     onBack = onBack,
@@ -77,9 +74,10 @@ fun BookDetailScreen(
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { padding ->
+        ) { padding, data ->
             DetailContent(
-                state = state,
+                book = data.first,
+                shelves = data.second,
                 dominantColor = dominantColor,
                 onDominantColor = { dominantColor = it },
                 onBookmarked = { shelfId, book ->
@@ -93,33 +91,28 @@ fun BookDetailScreen(
 
 @Composable
 private fun DetailContent(
-    state: BookDetailViewModel.UiState,
+    book: Book,
+    shelves: List<Shelf>,
     dominantColor: Int,
     onDominantColor: (Int) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (state.isLoading) {
-        BookDetailLoader(modifier = modifier)
-    } else {
-        state.book?.let { book ->
-            Box {
-                BookDetail(
-                    book = book,
-                    dominantColor = dominantColor,
-                    onDominantColor = onDominantColor,
-                    modifier = modifier,
-                )
-                DropdownAddToShelfButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 16.dp, bottom = 24.dp),
-                    shelves = state.shelves,
-                    selectedShelfId = book.shelfId,
-                    onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
-                )
-            }
-        }
+    Box {
+        BookDetail(
+            book = book,
+            dominantColor = dominantColor,
+            onDominantColor = onDominantColor,
+            modifier = modifier,
+        )
+        DropdownAddToShelfButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 24.dp),
+            shelves = shelves,
+            selectedShelfId = book.shelfId,
+            onShelfSelected = { shelfId -> onBookmarked(shelfId, book) }
+        )
     }
 }
 

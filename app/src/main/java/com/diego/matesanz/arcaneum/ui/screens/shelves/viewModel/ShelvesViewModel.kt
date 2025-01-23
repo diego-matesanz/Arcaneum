@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import kotlinx.coroutines.flow.SharingStarted
+import com.diego.matesanz.arcaneum.data.stateAsResultIn
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed interface ShelvesAction {
@@ -22,18 +21,8 @@ class ShelvesViewModel(
     private val shelvesRepository: ShelvesRepository,
 ) : ViewModel() {
 
-    val state: StateFlow<UiState> = booksRepository.booksByShelf
-        .map { UiState(booksByShelf = it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UiState(isLoading = true),
-        )
-
-    data class UiState(
-        val booksByShelf: Map<Shelf, List<Book>> = emptyMap(),
-        val isLoading: Boolean = false,
-    )
+    val state: StateFlow<Result<Map<Shelf, List<Book>>>> = booksRepository.booksByShelf
+        .stateAsResultIn(viewModelScope)
 
     fun onAction(action: ShelvesAction) {
         when (action) {

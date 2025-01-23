@@ -4,13 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import kotlinx.coroutines.flow.SharingStarted
+import com.diego.matesanz.arcaneum.data.stateAsResultIn
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed interface ShelfDetailAction {
@@ -23,29 +22,12 @@ class ShelfDetailViewModel(
     private val booksRepository: BooksRepository,
 ) : ViewModel() {
 
-    val state: StateFlow<UiState> = combine(
-        booksRepository.findSavedBooksByShelfId(shelfId),
-        shelvesRepository.shelves,
-    ) { books, shelves -> Pair(books, shelves) }
-        .map {
-            UiState(
-                books = it.first ?: emptyList(),
-                shelves = it.second,
-                selectedShelf = it.second.find { it.shelfId == shelfId }
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UiState(isLoading = true),
-        )
-
-    data class UiState(
-        val books: List<Book> = emptyList(),
-        val shelves: List<Shelf> = emptyList(),
-        val selectedShelf: Shelf? = null,
-        val isLoading: Boolean = false,
-    )
+    val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>> =
+        combine(
+            booksRepository.findSavedBooksByShelfId(shelfId),
+            shelvesRepository.shelves,
+        ) { books, shelves -> Pair(books, shelves) }
+            .stateAsResultIn(viewModelScope)
 
     fun onAction(action: ShelfDetailAction) {
         when (action) {

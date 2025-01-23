@@ -10,20 +10,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
+import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.books.booksList.BookItem
 import com.diego.matesanz.arcaneum.ui.screens.Screen
-import com.diego.matesanz.arcaneum.ui.screens.home.view.HomeLoader
 import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailAction
 import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailViewModel
 
@@ -37,21 +40,30 @@ fun ShelfDetailScreen(
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    var shelfName by remember { mutableStateOf("") }
+
     Screen(
         contentDescription = "Shelf detail screen content description",
     ) {
-        Scaffold(
+        ResultScaffold(
+            state = state,
+            loading = { /* TODO */ },
             topBar = {
                 NavigationBackTopBar(
-                    title = state.selectedShelf?.name ?: "",
+                    title = shelfName,
                     scrollBehavior = scrollBehavior,
                     onBack = onBack,
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { padding ->
+        ) { padding, data ->
+            val books = data.first
+            val shelves = data.second
+            shelfName = shelves.find { it.shelfId == books.firstOrNull()?.shelfId }?.name ?: ""
+
             ShelfDetailContent(
-                state = state,
+                books = books,
+                shelves = shelves,
                 onBookClick = onBookClick,
                 onBookmarked = { shelfId, book ->
                     viewModel.onAction(ShelfDetailAction.Bookmarked(shelfId, book))
@@ -64,7 +76,8 @@ fun ShelfDetailScreen(
 
 @Composable
 private fun ShelfDetailContent(
-    state: ShelfDetailViewModel.UiState,
+    books: List<Book>,
+    shelves: List<Shelf>,
     onBookClick: (Book) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     contentPadding: PaddingValues,
@@ -82,24 +95,19 @@ private fun ShelfDetailContent(
             bottom = contentPadding.calculateBottomPadding(),
         ),
     ) {
-        when {
-            state.isLoading -> item { HomeLoader() }
-            else -> {
-                itemsIndexed(state.books) { index, book ->
-                    BookItem(
-                        book = book,
-                        shelves = state.shelves,
-                        onClick = onBookClick,
-                        onBookmarked = onBookmarked
-                    )
-                    if (index < state.books.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(top = 24.dp)
-                                .padding(horizontal = 16.dp),
-                        )
-                    }
-                }
+        itemsIndexed(books) { index, book ->
+            BookItem(
+                book = book,
+                shelves = shelves,
+                onClick = onBookClick,
+                onBookmarked = onBookmarked
+            )
+            if (index < books.lastIndex) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .padding(horizontal = 16.dp),
+                )
             }
         }
     }
