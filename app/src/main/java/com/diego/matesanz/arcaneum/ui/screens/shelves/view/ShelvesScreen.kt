@@ -28,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -48,12 +47,15 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVERS_COUNT
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVER_TRANSLATION
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.AddShelfDialog
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.RemoveShelfDialog
+import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.TopBar
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesAction
@@ -74,7 +76,9 @@ fun ShelvesScreen(
     Screen(
         contentDescription = "Shelves screen content description",
     ) {
-        Scaffold(
+        ResultScaffold(
+            state = state,
+            loading = { /* TODO */ },
             topBar = {
                 TopBar(
                     title = stringResource(id = R.string.shelves_screen_title),
@@ -86,8 +90,8 @@ fun ShelvesScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showAddShelfDialog = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -95,9 +99,9 @@ fun ShelvesScreen(
                     )
                 }
             }
-        ) { padding ->
+        ) { padding, data ->
             ShelvesContent(
-                booksByShelf = state.booksByShelf,
+                booksByShelf = data,
                 onShelfClick = onShelfClick,
                 onDeleteClick = {
                     shelfToRemove = it
@@ -141,10 +145,10 @@ private fun ShelvesContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(
-            top = contentPadding.calculateTopPadding(),
+            top = 24.dp + contentPadding.calculateTopPadding(),
             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
             end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = 100.dp,
+            bottom = contentPadding.calculateBottomPadding(),
         ),
     ) {
         items(booksByShelf.keys.toList()) { shelf ->
@@ -166,7 +170,7 @@ private fun ShelfItem(
     onDeleteClick: (Shelf) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small)
@@ -205,7 +209,7 @@ private fun ShelfItem(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete shelf icon",
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.End)
                     .clickable { onDeleteClick(shelf) },
             )
         }
@@ -219,9 +223,8 @@ private fun BooksCovers(
 ) {
     val imageSize = 90.dp
     val overlap = 15.dp
-    val translation = 15
 
-    val nFirstBooks = books.take(3)
+    val nFirstBooks = books.take(BOOK_COVERS_COUNT)
 
     Box(modifier = modifier) {
         if (nFirstBooks.isNotEmpty()) {
@@ -236,8 +239,8 @@ private fun BooksCovers(
                         .height(if (index == 0) imageSize else imageSize - (overlap * index))
                         .aspectRatio(BOOK_ASPECT_RATIO)
                         .offset(
-                            x = if (index > 0) (index * translation * 1.25).dp else 0.dp,
-                            y = if (index > 0) (index * translation).dp else 0.dp,
+                            x = if (index > 0) (index * BOOK_COVER_TRANSLATION * 1.25).dp else 0.dp,
+                            y = if (index > 0) (index * BOOK_COVER_TRANSLATION).dp else 0.dp,
                         )
                         .zIndex(nFirstBooks.size - index.toFloat()),
                 )

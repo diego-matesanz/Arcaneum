@@ -14,17 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGestures
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
@@ -61,7 +55,9 @@ fun CameraScreen(
     val state by viewModel.state.collectAsState()
     val cameraState = rememberCameraState()
 
-    cameraState.AskCameraPermission { viewModel.onAction(CameraAction.PermissionResult(it)) }
+    var permissionGranted by remember { mutableStateOf(false) }
+
+    cameraState.AskCameraPermission { permissionGranted = it }
 
     Screen(
         contentDescription = stringResource(R.string.camera_screen_accessibility_description),
@@ -77,6 +73,7 @@ fun CameraScreen(
         ) { padding ->
             CameraContent(
                 state = state,
+                permissionGranted = permissionGranted,
                 onBookScanned = { viewModel.onAction(CameraAction.BookScanned(it)) },
                 onBookClick = onBookClick,
                 modifier = Modifier.padding(padding),
@@ -88,11 +85,12 @@ fun CameraScreen(
 @Composable
 private fun CameraContent(
     state: CameraViewModel.UiState,
+    permissionGranted: Boolean,
     onBookScanned: (String) -> Unit,
     onBookClick: (Book) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (state.permissionGranted) {
+    if (permissionGranted) {
         ScanningScreen(
             book = state.book,
             isLoading = state.isLoading,

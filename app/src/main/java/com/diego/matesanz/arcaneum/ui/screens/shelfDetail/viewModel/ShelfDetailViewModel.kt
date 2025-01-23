@@ -4,13 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface ShelfDetailAction {
@@ -18,39 +17,17 @@ sealed interface ShelfDetailAction {
 }
 
 class ShelfDetailViewModel(
-    private val shelfId: Int,
-    private val shelfName: String,
+    shelfId: Int,
+    shelvesRepository: ShelvesRepository,
     private val booksRepository: BooksRepository,
-    private val shelvesRepository: ShelvesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state get() = _state.asStateFlow()
-
-    data class UiState(
-        val books: List<Book> = emptyList(),
-        val shelves: List<Shelf> = emptyList(),
-        val shelfName: String = "",
-        val isLoading: Boolean = false,
-    )
-
-    init {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, shelfName = shelfName) }
-            combine(
-                booksRepository.findSavedBooksByShelfId(shelfId),
-                shelvesRepository.shelves,
-            ) { books, shelves ->
-                _state.update {
-                    it.copy(
-                        books = books ?: emptyList(),
-                        shelves = shelves,
-                        isLoading = false
-                    )
-                }
-            }.collect()
-        }
-    }
+    val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>> =
+        combine(
+            booksRepository.findSavedBooksByShelfId(shelfId),
+            shelvesRepository.shelves,
+        ) { books, shelves -> Pair(books, shelves) }
+            .stateAsResultIn(viewModelScope)
 
     fun onAction(action: ShelfDetailAction) {
         when (action) {

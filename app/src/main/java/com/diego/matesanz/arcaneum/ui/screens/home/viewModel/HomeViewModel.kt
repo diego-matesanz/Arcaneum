@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
+import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 sealed interface HomeAction {
@@ -19,20 +22,18 @@ sealed interface HomeAction {
 }
 
 class HomeViewModel(
+    shelvesRepository: ShelvesRepository,
     private val booksRepository: BooksRepository,
-    private val shelvesRepository: ShelvesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state get() = _state.asStateFlow()
+    private var search = MutableStateFlow("")
 
-    data class UiState(
-        val books: List<Book> = emptyList(),
-        val isLoading: Boolean = false,
-        val searchText: String = "",
-        val isError: Boolean = false,
-        val shelves: List<Shelf> = emptyList(),
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>> = search
+        .filter { it.isNotBlank() }
+        .flatMapLatest { search -> booksRepository.findBooksBySearchText(search) }
+        .combine(shelvesRepository.shelves) { books, shelves -> Pair(books, shelves) }
+        .stateAsResultIn(viewModelScope)
 
     init {
         onAction(HomeAction.Search("Harry Potter"))
@@ -46,25 +47,7 @@ class HomeViewModel(
     }
 
     private fun findBooksBySearch(search: String) {
-        viewModelScope.launch {
-            try {
-                _state.update { it.copy(isLoading = true, searchText = search, isError = false) }
-                combine(
-                    booksRepository.findBooksBySearchText(search),
-                    shelvesRepository.shelves,
-                ) { books, shelves ->
-                    _state.update {
-                        it.copy(
-                            shelves = shelves,
-                            isLoading = false,
-                            books = books,
-                        )
-                    }
-                }.collect()
-            } catch (_: Exception) {
-                _state.update { it.copy(isLoading = false, isError = true) }
-            }
-        }
+        this.search.value = search
     }
 
     private fun onBookmarked(shelfId: Int, book: Book) {

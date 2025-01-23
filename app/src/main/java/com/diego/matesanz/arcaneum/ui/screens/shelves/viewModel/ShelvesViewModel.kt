@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
+import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed interface ShelvesAction {
@@ -17,35 +17,17 @@ sealed interface ShelvesAction {
 }
 
 class ShelvesViewModel(
+    booksRepository: BooksRepository,
     private val shelvesRepository: ShelvesRepository,
-    private val booksRepository: BooksRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state get() = _state.asStateFlow()
-
-    data class UiState(
-        val booksByShelf: Map<Shelf, List<Book>> = emptyMap(),
-        val isLoading: Boolean = false,
-    )
-
-    init {
-        getBooksByShelf()
-    }
+    val state: StateFlow<Result<Map<Shelf, List<Book>>>> = booksRepository.booksByShelf
+        .stateAsResultIn(viewModelScope)
 
     fun onAction(action: ShelvesAction) {
         when (action) {
             is ShelvesAction.AddShelf -> addShelf(action.name)
             is ShelvesAction.RemoveShelf -> removeShelf(action.shelf)
-        }
-    }
-
-    private fun getBooksByShelf() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            booksRepository.booksByShelf.collect { booksByShelf ->
-                _state.update { it.copy(isLoading = false, booksByShelf = booksByShelf) }
-            }
         }
     }
 

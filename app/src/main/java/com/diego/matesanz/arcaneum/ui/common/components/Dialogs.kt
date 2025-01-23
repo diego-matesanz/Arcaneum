@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,30 +51,12 @@ fun AddShelfDialog(
                     title = stringResource(id = R.string.add_shelf_dialog_title),
                     message = stringResource(id = R.string.add_shelf_dialog_message),
                 )
-                TextField(
-                    value = text,
+                ShelfNameTextField(
+                    text = text,
+                    isError = isError,
                     onValueChange = {
                         isError = false
                         text = it
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    isError = isError,
-                    supportingText = {
-                        if (isError) {
-                            Text(
-                                style = MaterialTheme.typography.bodySmall,
-                                text = stringResource(id = R.string.add_shelf_dialog_error_message),
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(id = R.string.add_shelf_dialog_text_field_placeholder),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
                     },
                 )
                 ConfirmAndDismissButtons(
@@ -182,6 +163,37 @@ private fun TitleAndMessage(
 }
 
 @Composable
+private fun ShelfNameTextField(
+    text: String,
+    isError: Boolean,
+    onValueChange: (String) -> Unit,
+) {
+    TextField(
+        value = text,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1,
+        textStyle = MaterialTheme.typography.bodyLarge,
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    style = MaterialTheme.typography.bodySmall,
+                    text = stringResource(id = R.string.add_shelf_dialog_error_message),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.add_shelf_dialog_text_field_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
+    )
+}
+
+@Composable
 private fun ConfirmAndDismissButtons(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
@@ -201,25 +213,17 @@ private fun ConfirmAndDismissButtons(
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.secondary,
             )
         }
         Button(
             onClick = onConfirmation,
             modifier = Modifier.weight(1f),
-            colors = ButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
-                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            )
         ) {
             Text(
                 text = confirmButtonText,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondary,
             )
         }
     }

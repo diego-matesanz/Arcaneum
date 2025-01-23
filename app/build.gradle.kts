@@ -17,8 +17,8 @@ android {
         applicationId = "com.diego.matesanz.arcaneum"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.0.1"
+        versionCode = 4
+        versionName = "0.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -101,11 +101,6 @@ dependencies {
 
     // Palette
     implementation (libs.androidx.palette)
-
-    // Firebase
-    //implementation(platform(libs.firebase.bom))
-    //implementation(libs.firebase.analytics)
-    //implementation(libs.firebase.crashlytics.ktx)
 
     // Room
     implementation(libs.androidx.room.ktx)
