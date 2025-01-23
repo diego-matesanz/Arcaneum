@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transform
 
 class BooksRepository(
+    shelvesRepository: ShelvesRepository,
     private val remoteDataSource: BooksRemoteDataSource,
     private val localDataSource: BooksLocalDataSource,
-    shelvesRepository: ShelvesRepository,
 ) {
 
-    val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
+    private val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
 
     val booksByShelf: Flow<Map<Shelf, List<Book>>> =
         combine(shelvesRepository.shelves, savedBooks) { shelves, savedBooks ->

@@ -169,7 +169,7 @@ private fun NavGraphBuilder.exploreTab(
                 onBack = { navController.popBackStack() },
                 viewModel = viewModel {
                     BookDetailViewModel(
-                        id = bookDetail.bookId,
+                        bookId = bookDetail.bookId,
                         booksRepository = booksRepository,
                         shelvesRepository = shelvesRepository,
                     )
@@ -195,12 +195,7 @@ private fun NavGraphBuilder.bookmarksTab(
         composable<Shelves> {
             ShelvesScreen(
                 onShelfClick = { shelf ->
-                    navController.navigate(
-                        ShelfDetail(
-                            shelf.shelfId,
-                            shelf.name
-                        )
-                    )
+                    navController.navigate(ShelfDetail(shelf.shelfId))
                 },
                 viewModel = viewModel {
                     ShelvesViewModel(
@@ -218,7 +213,6 @@ private fun NavGraphBuilder.bookmarksTab(
                 viewModel = viewModel {
                     ShelfDetailViewModel(
                         shelfId = shelfDetail.shelfId,
-                        shelfName = shelfDetail.shelfName,
                         booksRepository = booksRepository,
                         shelvesRepository = shelvesRepository,
                     )
@@ -231,7 +225,7 @@ private fun NavGraphBuilder.bookmarksTab(
                 onBack = { navController.popBackStack() },
                 viewModel = viewModel {
                     BookDetailViewModel(
-                        id = bookDetail.bookId,
+                        bookId = bookDetail.bookId,
                         booksRepository = booksRepository,
                         shelvesRepository = shelvesRepository,
                     )
@@ -306,4 +300,4 @@ object Camera
 object Shelves
 
 @Serializable
-data class ShelfDetail(val shelfId: Int, val shelfName: String)
+data class ShelfDetail(val shelfId: Int)

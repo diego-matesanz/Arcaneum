@@ -93,6 +93,8 @@ private fun HomeContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    var search by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -107,7 +109,8 @@ private fun HomeContent(
     ) {
         item {
             SearchBar(
-                searchText = state.searchText,
+                search = search,
+                onValueChange = { search = it },
                 onCamClick = onCamClick,
                 onSearch = onSearch,
             )
@@ -115,7 +118,7 @@ private fun HomeContent(
         when {
             state.isLoading -> item { HomeLoader() }
             state.isError -> item { HomeError() }
-            state.books.isEmpty() && state.searchText.isEmpty() -> item { HomeEmpty() }
+            state.books.isEmpty() && search.isEmpty() -> item { HomeEmpty() }
             else -> {
                 itemsIndexed(state.books) { index, book ->
                     BookItem(
@@ -139,16 +142,16 @@ private fun HomeContent(
 
 @Composable
 private fun SearchBar(
-    searchText: String,
+    search: String,
+    onValueChange: (String) -> Unit,
     onCamClick: () -> Unit,
     onSearch: (String) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    var search by remember { mutableStateOf(searchText) }
     TextField(
         value = search,
-        onValueChange = { search = it },
+        onValueChange = onValueChange,
         label = { Text(text = stringResource(id = R.string.search_label)) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,

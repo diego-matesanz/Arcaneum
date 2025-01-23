@@ -6,11 +6,11 @@ import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.BooksRepository
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed interface ShelfDetailAction {
@@ -18,39 +18,34 @@ sealed interface ShelfDetailAction {
 }
 
 class ShelfDetailViewModel(
-    private val shelfId: Int,
-    private val shelfName: String,
+    shelfId: Int,
+    shelvesRepository: ShelvesRepository,
     private val booksRepository: BooksRepository,
-    private val shelvesRepository: ShelvesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state get() = _state.asStateFlow()
+    val state: StateFlow<UiState> = combine(
+        booksRepository.findSavedBooksByShelfId(shelfId),
+        shelvesRepository.shelves,
+    ) { books, shelves -> Pair(books, shelves) }
+        .map {
+            UiState(
+                books = it.first ?: emptyList(),
+                shelves = it.second,
+                selectedShelf = it.second.find { it.shelfId == shelfId }
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = UiState(isLoading = true),
+        )
 
     data class UiState(
         val books: List<Book> = emptyList(),
         val shelves: List<Shelf> = emptyList(),
-        val shelfName: String = "",
+        val selectedShelf: Shelf? = null,
         val isLoading: Boolean = false,
     )
-
-    init {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, shelfName = shelfName) }
-            combine(
-                booksRepository.findSavedBooksByShelfId(shelfId),
-                shelvesRepository.shelves,
-            ) { books, shelves ->
-                _state.update {
-                    it.copy(
-                        books = books ?: emptyList(),
-                        shelves = shelves,
-                        isLoading = false
-                    )
-                }
-            }.collect()
-        }
-    }
 
     fun onAction(action: ShelfDetailAction) {
         when (action) {

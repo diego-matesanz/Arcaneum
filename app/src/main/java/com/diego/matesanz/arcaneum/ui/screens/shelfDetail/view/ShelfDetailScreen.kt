@@ -43,7 +43,7 @@ fun ShelfDetailScreen(
         Scaffold(
             topBar = {
                 NavigationBackTopBar(
-                    title = state.shelfName,
+                    title = state.selectedShelf?.name ?: "",
                     scrollBehavior = scrollBehavior,
                     onBack = onBack,
                 )

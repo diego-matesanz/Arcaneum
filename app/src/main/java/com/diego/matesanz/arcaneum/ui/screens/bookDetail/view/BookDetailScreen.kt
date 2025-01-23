@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,6 +63,7 @@ fun BookDetailScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var dominantColor by remember { mutableIntStateOf(0) }
 
     Screen(
         contentDescription = stringResource(id = R.string.detail_screen_accessibility_description),
@@ -70,8 +72,7 @@ fun BookDetailScreen(
             topBar = {
                 NavigationBackTopBar(
                     onBack = onBack,
-                    dominantColor = if (state.dominantColor != 0)
-                        Color(state.dominantColor) else Color.Transparent,
+                    dominantColor = if (dominantColor != 0) Color(dominantColor) else Color.Transparent,
                     scrollBehavior = scrollBehavior,
                 )
             },
@@ -79,7 +80,8 @@ fun BookDetailScreen(
         ) { padding ->
             DetailContent(
                 state = state,
-                onDominantColor = { viewModel.onAction(BookDetailAction.DominantColor(it)) },
+                dominantColor = dominantColor,
+                onDominantColor = { dominantColor = it },
                 onBookmarked = { shelfId, book ->
                     viewModel.onAction(BookDetailAction.Bookmarked(shelfId, book))
                 },
@@ -92,6 +94,7 @@ fun BookDetailScreen(
 @Composable
 private fun DetailContent(
     state: BookDetailViewModel.UiState,
+    dominantColor: Int,
     onDominantColor: (Int) -> Unit,
     onBookmarked: (Int, Book) -> Unit,
     modifier: Modifier = Modifier,
@@ -103,7 +106,7 @@ private fun DetailContent(
             Box {
                 BookDetail(
                     book = book,
-                    dominantColor = state.dominantColor,
+                    dominantColor = dominantColor,
                     onDominantColor = onDominantColor,
                     modifier = modifier,
                 )
