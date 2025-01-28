@@ -5,7 +5,7 @@ import androidx.compose.ui.text.toUpperCase
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.datasource.remote.BooksClient
 import com.diego.matesanz.arcaneum.data.datasource.remote.RemoteResult.RemoteBook
-import com.diego.matesanz.arcaneum.extensions.toHttps
+import com.diego.matesanz.arcaneum.data.common.utils.toHttps
 
 class BooksRemoteDataSource {
 

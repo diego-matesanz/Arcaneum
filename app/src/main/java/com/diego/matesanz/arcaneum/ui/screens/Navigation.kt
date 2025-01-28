@@ -49,6 +49,15 @@ import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.view.ShelfDetailScreen
 import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailViewModel
 import com.diego.matesanz.arcaneum.ui.screens.shelves.view.ShelvesScreen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
+import com.diego.matesanz.arcaneum.usecases.CreateShelfUseCase
+import com.diego.matesanz.arcaneum.usecases.FindBookByIdUseCase
+import com.diego.matesanz.arcaneum.usecases.FindBookByIsbnUseCase
+import com.diego.matesanz.arcaneum.usecases.FindBooksBySearchTextUseCase
+import com.diego.matesanz.arcaneum.usecases.FindBooksByShelfIdUseCase
+import com.diego.matesanz.arcaneum.usecases.GetBooksByShelfUseCase
+import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase
+import com.diego.matesanz.arcaneum.usecases.RemoveShelfUseCase
+import com.diego.matesanz.arcaneum.usecases.ToggleBookShelfUseCase
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -157,8 +166,9 @@ private fun NavGraphBuilder.exploreTab(
                 onCamClick = { navController.navigate(Camera) },
                 viewModel = viewModel {
                     HomeViewModel(
-                        booksRepository = booksRepository,
-                        shelvesRepository = shelvesRepository,
+                        findBooksBySearchTextUseCase = FindBooksBySearchTextUseCase(booksRepository),
+                        getShelvesUseCase = GetShelvesUseCase(shelvesRepository),
+                        toggleBookShelfUseCase = ToggleBookShelfUseCase(booksRepository)
                     )
                 },
             )
@@ -170,8 +180,9 @@ private fun NavGraphBuilder.exploreTab(
                 viewModel = viewModel {
                     BookDetailViewModel(
                         bookId = bookDetail.bookId,
-                        booksRepository = booksRepository,
-                        shelvesRepository = shelvesRepository,
+                        findBookByIdUseCase = FindBookByIdUseCase(booksRepository),
+                        getShelvesUseCase = GetShelvesUseCase(shelvesRepository),
+                        toggleBookShelfUseCase = ToggleBookShelfUseCase(booksRepository),
                     )
                 },
             )
@@ -180,7 +191,7 @@ private fun NavGraphBuilder.exploreTab(
             CameraScreen(
                 onBack = { navController.popBackStack() },
                 onBookClick = { book -> navController.navigate(BookDetail(book.bookId)) },
-                viewModel = viewModel { CameraViewModel(booksRepository) },
+                viewModel = viewModel { CameraViewModel(FindBookByIsbnUseCase(booksRepository)) },
             )
         }
     }
@@ -199,8 +210,9 @@ private fun NavGraphBuilder.bookmarksTab(
                 },
                 viewModel = viewModel {
                     ShelvesViewModel(
-                        shelvesRepository = shelvesRepository,
-                        booksRepository = booksRepository,
+                        getBooksByShelfUseCase = GetBooksByShelfUseCase(booksRepository),
+                        createShelfUseCase = CreateShelfUseCase(shelvesRepository),
+                        removeShelfUseCase = RemoveShelfUseCase(shelvesRepository),
                     )
                 },
             )
@@ -213,8 +225,9 @@ private fun NavGraphBuilder.bookmarksTab(
                 viewModel = viewModel {
                     ShelfDetailViewModel(
                         shelfId = shelfDetail.shelfId,
-                        booksRepository = booksRepository,
-                        shelvesRepository = shelvesRepository,
+                        findBooksByShelfIdUseCase = FindBooksByShelfIdUseCase(booksRepository),
+                        getShelvesUseCase = GetShelvesUseCase(shelvesRepository),
+                        toggleBookShelfUseCase = ToggleBookShelfUseCase(booksRepository),
                     )
                 }
             )
@@ -226,8 +239,9 @@ private fun NavGraphBuilder.bookmarksTab(
                 viewModel = viewModel {
                     BookDetailViewModel(
                         bookId = bookDetail.bookId,
-                        booksRepository = booksRepository,
-                        shelvesRepository = shelvesRepository,
+                        findBookByIdUseCase = FindBookByIdUseCase(booksRepository),
+                        getShelvesUseCase = GetShelvesUseCase(shelvesRepository),
+                        toggleBookShelfUseCase = ToggleBookShelfUseCase(booksRepository),
                     )
                 },
             )

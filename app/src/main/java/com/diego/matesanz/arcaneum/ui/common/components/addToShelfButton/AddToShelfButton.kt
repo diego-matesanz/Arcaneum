@@ -37,12 +37,12 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diego.matesanz.arcaneum.data.Shelf
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_ENTER_ANIMATION_DURATION
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_EXIT_ANIMATION_DURATION
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.DROPDOWN_SHELVES_EXIT_FADE_ANIMATION_DURATION
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_ENTER_ANIMATION_DURATION
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_EXIT_ANIMATION_DURATION
-import com.diego.matesanz.arcaneum.ui.common.utils.AnimationConstants.SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_ENTER_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_EXIT_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_EXIT_FADE_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.SHELF_CHECK_ENTER_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.SHELF_CHECK_EXIT_ANIMATION_DURATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,6 +114,7 @@ private fun ShelvesList(
                     )
                     .padding(16.dp)
             ) {
+                val SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION = 0
                 AnimatedVisibility(
                     visible = state.selectedShelf == shelf,
                     enter = expandHorizontally(tween(SHELF_CHECK_ENTER_ANIMATION_DURATION)) + fadeIn(),

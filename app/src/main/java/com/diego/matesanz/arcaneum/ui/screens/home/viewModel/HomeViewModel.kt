@@ -3,11 +3,12 @@ package com.diego.matesanz.arcaneum.ui.screens.home.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.BooksRepository
 import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.data.Shelf
-import com.diego.matesanz.arcaneum.data.ShelvesRepository
 import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import com.diego.matesanz.arcaneum.usecases.FindBooksBySearchTextUseCase
+import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase
+import com.diego.matesanz.arcaneum.usecases.ToggleBookShelfUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +23,9 @@ sealed interface HomeAction {
 }
 
 class HomeViewModel(
-    shelvesRepository: ShelvesRepository,
-    private val booksRepository: BooksRepository,
+    findBooksBySearchTextUseCase: FindBooksBySearchTextUseCase,
+    getShelvesUseCase: GetShelvesUseCase,
+    private val toggleBookShelfUseCase: ToggleBookShelfUseCase,
 ) : ViewModel() {
 
     private var search = MutableStateFlow("")
@@ -31,8 +33,8 @@ class HomeViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>> = search
         .filter { it.isNotBlank() }
-        .flatMapLatest { search -> booksRepository.findBooksBySearchText(search) }
-        .combine(shelvesRepository.shelves) { books, shelves -> Pair(books, shelves) }
+        .flatMapLatest { search -> findBooksBySearchTextUseCase(search) }
+        .combine(getShelvesUseCase()) { books, shelves -> Pair(books, shelves) }
         .stateAsResultIn(viewModelScope)
 
     init {
@@ -52,11 +54,7 @@ class HomeViewModel(
 
     private fun onBookmarked(shelfId: Int, book: Book) {
         viewModelScope.launch {
-            if (book.shelfId == shelfId) {
-                booksRepository.deleteBook(book.bookId)
-            } else {
-                booksRepository.saveBook(book.copy(shelfId = shelfId))
-            }
+            toggleBookShelfUseCase(shelfId, book)
         }
     }
 }

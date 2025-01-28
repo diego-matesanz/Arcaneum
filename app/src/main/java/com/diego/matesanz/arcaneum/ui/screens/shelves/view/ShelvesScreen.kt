@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVERS_COUNT
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COVER_TRANSLATION
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVERS_COUNT
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVER_TRANSLATION
 import com.diego.matesanz.arcaneum.data.Book
 import com.diego.matesanz.arcaneum.data.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.AddShelfDialog
