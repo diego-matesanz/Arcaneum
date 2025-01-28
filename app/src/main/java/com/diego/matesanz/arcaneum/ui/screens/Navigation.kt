@@ -91,8 +91,8 @@ fun Navigation() {
                     BottomNavigationItem(
                         icon = topLevelRoute.icon,
                         name = topLevelRoute.name,
-                        selected = currentDestination?.hierarchy?.any {
-                            it.route == topLevelRoute.route::class.toString()
+                        selected = currentDestination?.parent?.route?.let {
+                            topLevelRoute.route.toString().contains(it)
                         } == true,
                         onClick = {
                             navController.navigate(topLevelRoute.route) {
@@ -270,14 +270,14 @@ fun BottomNavigationItem(
             imageVector = icon,
             contentDescription = name,
             tint = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
-            else MaterialTheme.colorScheme.onTertiaryContainer
+            else MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = name,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
             color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
-            else MaterialTheme.colorScheme.onTertiaryContainer,
+            else MaterialTheme.colorScheme.onSurface,
         )
     }
 }
