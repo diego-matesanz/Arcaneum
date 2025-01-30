@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data
+package com.diego.matesanz.arcaneum.data.datasource.database.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = Shelf::class,
+            entity = ShelfEntity::class,
             parentColumns = arrayOf("shelfId"),
             childColumns = arrayOf("shelfId"),
             onDelete = ForeignKey.CASCADE,
@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
         ),
     ]
 )
-data class Book(
+data class BookEntity(
     @PrimaryKey
     val bookId: String,
     val shelfId: Int,

@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextDecoration
-import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.domain.Shelf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

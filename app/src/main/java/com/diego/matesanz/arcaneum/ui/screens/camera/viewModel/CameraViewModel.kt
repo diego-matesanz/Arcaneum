@@ -2,7 +2,7 @@ package com.diego.matesanz.arcaneum.ui.screens.camera.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.usecases.FindBookByIsbnUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

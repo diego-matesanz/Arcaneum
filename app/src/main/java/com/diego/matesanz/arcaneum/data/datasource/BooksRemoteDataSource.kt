@@ -2,7 +2,7 @@ package com.diego.matesanz.arcaneum.data.datasource
 
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
-import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.data.datasource.remote.BooksClient
 import com.diego.matesanz.arcaneum.data.datasource.remote.RemoteResult.RemoteBook
 import com.diego.matesanz.arcaneum.data.common.utils.toHttps

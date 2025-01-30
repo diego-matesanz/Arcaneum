@@ -36,7 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_ENTER_ANIMATION_DURATION
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_EXIT_ANIMATION_DURATION
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.DROPDOWN_SHELVES_EXIT_FADE_ANIMATION_DURATION

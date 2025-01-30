@@ -5,12 +5,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.data.datasource.database.dao.BooksDao
+import com.diego.matesanz.arcaneum.data.datasource.database.dao.ShelvesDao
+import com.diego.matesanz.arcaneum.data.datasource.database.entities.BookEntity
+import com.diego.matesanz.arcaneum.data.datasource.database.entities.ShelfEntity
 
 @Database(
-    entities = [Book::class, Shelf::class],
-    version = 2,
+    entities = [BookEntity::class, ShelfEntity::class],
+    version = 3,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -22,6 +24,38 @@ abstract class ArcaneumDatabase : RoomDatabase() {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE Shelf ADD COLUMN isRemovable INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE Book RENAME TO BookEntity")
+                database.execSQL("ALTER TABLE Shelf RENAME TO ShelfEntity")
+                database.execSQL(
+                    """
+            CREATE TABLE BookEntity_temp (
+                bookId TEXT NOT NULL PRIMARY KEY,
+                shelfId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                authors TEXT NOT NULL,
+                coverImage TEXT NOT NULL,
+                pageCount INTEGER NOT NULL,
+                description TEXT NOT NULL,
+                language TEXT NOT NULL,
+                averageRating REAL NOT NULL,
+                ratingsCount INTEGER NOT NULL,
+                FOREIGN KEY (shelfId) REFERENCES ShelfEntity(shelfId) ON DELETE CASCADE ON UPDATE CASCADE
+            )
+        """.trimIndent()
+                )
+                database.execSQL(
+                    """
+            INSERT INTO BookEntity_temp (bookId, shelfId, title, authors, coverImage, pageCount, description, language, averageRating, ratingsCount)
+            SELECT bookId, shelfId, title, authors, coverImage, pageCount, description, language, averageRating, ratingsCount
+            FROM BookEntity
+        """.trimIndent()
+                )
+                database.execSQL("DROP TABLE BookEntity")
+                database.execSQL("ALTER TABLE BookEntity_temp RENAME TO BookEntity")
             }
         }
     }

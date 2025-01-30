@@ -2,9 +2,9 @@ package com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.data.Result
-import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.data.stateAsResultIn
 import com.diego.matesanz.arcaneum.usecases.FindBookByIdUseCase
 import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase

@@ -2,6 +2,8 @@ package com.diego.matesanz.arcaneum.data
 
 import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
+import com.diego.matesanz.arcaneum.domain.Book
+import com.diego.matesanz.arcaneum.domain.Shelf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
