@@ -6,16 +6,23 @@ import com.diego.matesanz.arcaneum.domain.Book
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class BooksLocalDataSource(
+interface BooksLocalDataSource {
+    fun getSavedBooks(): Flow<List<Book>>
+    fun findSavedBookById(bookId: String): Flow<Book?>
+    suspend fun saveBook(book: Book)
+    suspend fun deleteBook(bookId: String)
+}
+
+class BooksRoomDataSource(
     private val booksDao: BooksDao,
-) {
-    fun getSavedBooks(): Flow<List<Book>> = booksDao.getSavedBooks().map { books -> books.map { it.toDomainModel() } }
+): BooksLocalDataSource {
+    override fun getSavedBooks(): Flow<List<Book>> = booksDao.getSavedBooks().map { books -> books.map { it.toDomainModel() } }
 
-    fun findSavedBookById(bookId: String): Flow<Book?> = booksDao.findSavedBookById(bookId).map { it?.toDomainModel() }
+    override fun findSavedBookById(bookId: String): Flow<Book?> = booksDao.findSavedBookById(bookId).map { it?.toDomainModel() }
 
-    suspend fun saveBook(book: Book) = booksDao.saveBook(book.toEntity())
+    override suspend fun saveBook(book: Book) = booksDao.saveBook(book.toEntity())
 
-    suspend fun deleteBook(bookId: String) = booksDao.deleteBook(bookId)
+    override suspend fun deleteBook(bookId: String) = booksDao.deleteBook(bookId)
 }
 
 private fun BookEntity.toDomainModel(): Book = Book(

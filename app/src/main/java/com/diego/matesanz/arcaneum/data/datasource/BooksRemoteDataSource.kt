@@ -6,25 +6,31 @@ import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.data.datasource.remote.BooksClient
 import com.diego.matesanz.arcaneum.data.datasource.remote.RemoteBooks.RemoteBook
 import com.diego.matesanz.arcaneum.data.common.utils.toHttps
+import com.diego.matesanz.arcaneum.data.datasource.remote.BooksService
 
-class BooksRemoteDataSource {
+interface BooksRemoteDataSource {
+    suspend fun findBooksBySearchText(search: String): List<Book>
+    suspend fun findBookById(id: String): Book
+    suspend fun findBookByIsbn(isbn: String): Book
+}
 
-    suspend fun findBooksBySearchText(search: String): List<Book> =
-        BooksClient
-            .instance
+class BooksServerDataSource(
+    private val booksService: BooksService,
+): BooksRemoteDataSource {
+
+    override suspend fun findBooksBySearchText(search: String): List<Book> =
+        booksService
             .findBooksBySearchText(search)
             .items
             .map { it.toDomainModel() }
 
-    suspend fun findBookById(id: String): Book =
-        BooksClient
-            .instance
+    override suspend fun findBookById(id: String): Book =
+        booksService
             .findBookById(id)
             .toDomainModel()
 
-    suspend fun findBookByIsbn(isbn: String): Book =
-        BooksClient
-            .instance
+    override suspend fun findBookByIsbn(isbn: String): Book =
+        booksService
             .findBooksBySearchText("isbn:$isbn")
             .items
             .first()

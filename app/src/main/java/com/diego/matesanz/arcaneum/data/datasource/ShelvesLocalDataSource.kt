@@ -6,17 +6,21 @@ import com.diego.matesanz.arcaneum.data.datasource.database.entities.ShelfEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ShelvesLocalDataSource(
+interface ShelvesLocalDataSource {
+    fun getShelves(): Flow<List<Shelf>>
+    suspend fun saveShelf(shelf: Shelf)
+    suspend fun deleteShelf(shelfId: Int)
+}
+
+class ShelvesRoomDataSource(
     private val shelvesDao: ShelvesDao,
-) {
+): ShelvesLocalDataSource {
 
-    fun getShelves(): Flow<List<Shelf>> = shelvesDao.getShelves().map { shelves -> shelves.map { it.toDomainModel() } }
+    override fun getShelves(): Flow<List<Shelf>> = shelvesDao.getShelves().map { shelves -> shelves.map { it.toDomainModel() } }
 
-    fun findShelfById(shelfId: Int): Flow<Shelf?> = shelvesDao.findShelfById(shelfId).map { it?.toDomainModel() }
+    override suspend fun saveShelf(shelf: Shelf) = shelvesDao.saveShelf(shelf.toEntity())
 
-    suspend fun saveShelf(shelf: Shelf) = shelvesDao.saveShelf(shelf.toEntity())
-
-    suspend fun deleteShelf(shelfId: Int) = shelvesDao.deleteShelf(shelfId)
+    override suspend fun deleteShelf(shelfId: Int) = shelvesDao.deleteShelf(shelfId)
 }
 
 private fun ShelfEntity.toDomainModel(): Shelf = Shelf(

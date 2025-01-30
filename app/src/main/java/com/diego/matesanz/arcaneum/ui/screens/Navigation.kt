@@ -35,9 +35,10 @@ import androidx.navigation.toRoute
 import com.diego.matesanz.arcaneum.App
 import com.diego.matesanz.arcaneum.data.BooksRepository
 import com.diego.matesanz.arcaneum.data.ShelvesRepository
-import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
-import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
-import com.diego.matesanz.arcaneum.data.datasource.ShelvesLocalDataSource
+import com.diego.matesanz.arcaneum.data.datasource.BooksRoomDataSource
+import com.diego.matesanz.arcaneum.data.datasource.BooksServerDataSource
+import com.diego.matesanz.arcaneum.data.datasource.ShelvesRoomDataSource
+import com.diego.matesanz.arcaneum.data.datasource.remote.BooksClient
 import com.diego.matesanz.arcaneum.ui.screens.bookDetail.view.BookDetailScreen
 import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailViewModel
 import com.diego.matesanz.arcaneum.ui.screens.camera.view.CameraScreen
@@ -63,10 +64,10 @@ import kotlinx.serialization.Serializable
 fun Navigation() {
     val app = LocalContext.current.applicationContext as App
     val navController = rememberNavController()
-    val shelvesRepository = ShelvesRepository(ShelvesLocalDataSource(app.db.shelvesDao()))
+    val shelvesRepository = ShelvesRepository(ShelvesRoomDataSource(app.db.shelvesDao()))
     val booksRepository = BooksRepository(
-        remoteDataSource = BooksRemoteDataSource(),
-        localDataSource = BooksLocalDataSource(app.db.booksDao()),
+        remoteDataSource = BooksServerDataSource(BooksClient.instance),
+        localDataSource = BooksRoomDataSource(app.db.booksDao()),
         shelvesRepository = shelvesRepository,
     )
 
