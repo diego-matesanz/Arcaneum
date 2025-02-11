@@ -8,8 +8,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.diego.matesanz.arcaneum.App
-import com.diego.matesanz.arcaneum.data.BooksRepository
-import com.diego.matesanz.arcaneum.data.ShelvesRepository
+import com.diego.matesanz.arcaneum.data.repositories.BooksRepository
+import com.diego.matesanz.arcaneum.data.repositories.ShelvesRepository
 import com.diego.matesanz.arcaneum.framework.remote.BooksClient
 import com.diego.matesanz.arcaneum.framework.database.datasource.BooksRoomDataSource
 import com.diego.matesanz.arcaneum.framework.database.datasource.ShelvesRoomDataSource

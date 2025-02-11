@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Database -->
+    <string name="read_shelf">Read</string>
+    <string name="reading_shelf">Currently Reading</string>
+    <string name="want_read_shelf">Want to Read</string>
+</resources>

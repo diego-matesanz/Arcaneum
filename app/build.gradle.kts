@@ -1,12 +1,10 @@
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 android {
@@ -21,16 +19,6 @@ android {
         versionName = "0.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").readText().byteInputStream())
-
-        val googleBooksApiKey = properties.getProperty("GOOGLE_BOOKS_API_KEY", "")
-        buildConfigField("String", "GOOGLE_BOOKS_API_KEY", "\"$googleBooksApiKey\"")
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
     }
 
     buildTypes {
@@ -56,12 +44,18 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
 dependencies {
 
+    // Modules
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":usecases"))
+    implementation(project(":framework"))
+
+    // Kotlin core
     implementation(libs.androidx.core.ktx)
 
     // Lifecycle
@@ -89,22 +83,14 @@ dependencies {
     implementation(libs.zxing.android.embedded)
     implementation(libs.zxing.core)
 
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
-
-    // Serialization
-    implementation(libs.kotlinx.serialization.json)
-
-    // Gson
-    implementation(libs.gson)
-
     // Palette
     implementation (libs.androidx.palette)
 
     // Room
     implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 

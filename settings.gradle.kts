@@ -20,5 +20,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Arcaneum"
+
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":usecases")
+include(":framework")

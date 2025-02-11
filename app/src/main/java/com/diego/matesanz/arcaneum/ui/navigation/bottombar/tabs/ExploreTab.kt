@@ -6,8 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.diego.matesanz.arcaneum.data.BooksRepository
-import com.diego.matesanz.arcaneum.data.ShelvesRepository
+import com.diego.matesanz.arcaneum.data.repositories.BooksRepository
+import com.diego.matesanz.arcaneum.data.repositories.ShelvesRepository
 import com.diego.matesanz.arcaneum.ui.navigation.BookDetail
 import com.diego.matesanz.arcaneum.ui.navigation.Camera
 import com.diego.matesanz.arcaneum.ui.navigation.Explore
