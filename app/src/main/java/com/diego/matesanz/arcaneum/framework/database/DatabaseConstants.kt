@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data.datasource.database
+package com.diego.matesanz.arcaneum.framework.database
 
 object DatabaseConstants {
 

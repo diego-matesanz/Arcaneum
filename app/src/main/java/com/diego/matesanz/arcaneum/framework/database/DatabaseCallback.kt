@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data.datasource.database
+package com.diego.matesanz.arcaneum.framework.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,13 +6,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.CURRENTLY_READING_SHELF_ID
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.IS_REMOVABLE_COLUMN
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.READ_SHELF_ID
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_ID_COLUMN
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_NAME_COLUMN
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.SHELF_TABLE
-import com.diego.matesanz.arcaneum.data.datasource.database.DatabaseConstants.WANT_TO_READ_SHELF_ID
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.CURRENTLY_READING_SHELF_ID
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.IS_REMOVABLE_COLUMN
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.READ_SHELF_ID
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.SHELF_ID_COLUMN
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.SHELF_NAME_COLUMN
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.SHELF_TABLE
+import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.WANT_TO_READ_SHELF_ID
 
 class DatabaseCallback(
     private val context: Context,

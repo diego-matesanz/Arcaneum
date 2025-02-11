@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data.datasource.remote
+package com.diego.matesanz.arcaneum.framework.remote
 
 import com.diego.matesanz.arcaneum.BuildConfig
 import kotlinx.serialization.json.Json

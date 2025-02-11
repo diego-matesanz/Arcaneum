@@ -1,14 +1,14 @@
-package com.diego.matesanz.arcaneum.data.datasource.database
+package com.diego.matesanz.arcaneum.framework.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.diego.matesanz.arcaneum.data.datasource.database.dao.BooksDao
-import com.diego.matesanz.arcaneum.data.datasource.database.dao.ShelvesDao
-import com.diego.matesanz.arcaneum.data.datasource.database.entities.BookEntity
-import com.diego.matesanz.arcaneum.data.datasource.database.entities.ShelfEntity
+import com.diego.matesanz.arcaneum.framework.database.dao.BooksDao
+import com.diego.matesanz.arcaneum.framework.database.dao.ShelvesDao
+import com.diego.matesanz.arcaneum.framework.database.entities.BookEntity
+import com.diego.matesanz.arcaneum.framework.database.entities.ShelfEntity
 
 @Database(
     entities = [BookEntity::class, ShelfEntity::class],

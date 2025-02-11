@@ -1,6 +1,7 @@
-package com.diego.matesanz.arcaneum.data.datasource.remote
+package com.diego.matesanz.arcaneum.framework.remote
 
-import com.diego.matesanz.arcaneum.data.datasource.remote.RemoteBooks.RemoteBook
+import com.diego.matesanz.arcaneum.framework.remote.models.RemoteBooks
+import com.diego.matesanz.arcaneum.framework.remote.models.RemoteBooks.RemoteBook
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

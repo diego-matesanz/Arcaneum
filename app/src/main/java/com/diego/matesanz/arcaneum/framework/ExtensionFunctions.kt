@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data.common.utils
+package com.diego.matesanz.arcaneum.framework
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

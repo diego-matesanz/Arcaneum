@@ -1,4 +1,4 @@
-package com.diego.matesanz.arcaneum.data.datasource.database.entities
+package com.diego.matesanz.arcaneum.framework.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
