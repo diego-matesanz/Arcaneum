@@ -1,7 +1,6 @@
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("arcaneum.android.application")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlinxSerialization)
@@ -9,16 +8,11 @@ plugins {
 
 android {
     namespace = "com.diego.matesanz.arcaneum"
-    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.diego.matesanz.arcaneum"
-        minSdk = 28
-        targetSdk = 35
         versionCode = 4
         versionName = "0.0.3"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -31,13 +25,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
@@ -54,12 +41,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":usecases"))
     implementation(project(":framework"))
-
-    // Kotlin core
-    implementation(libs.androidx.core.ktx)
-
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(project(":framework"))
 
     // Jetpack Compose
     implementation(libs.androidx.activity.compose)
@@ -92,10 +74,6 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(libs.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
