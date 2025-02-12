@@ -15,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_COUNT
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COUNT
 import com.diego.matesanz.arcaneum.ui.common.components.LoadingSkeleton
 
 @Composable

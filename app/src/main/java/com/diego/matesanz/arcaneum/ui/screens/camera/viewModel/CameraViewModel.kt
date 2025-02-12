@@ -2,9 +2,8 @@ package com.diego.matesanz.arcaneum.ui.screens.camera.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.BooksRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.diego.matesanz.arcaneum.domain.Book
+import com.diego.matesanz.arcaneum.usecases.FindBookByIsbnUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,14 +16,15 @@ sealed interface CameraAction {
     data class BookScanned(val isbn: String) : CameraAction
 }
 
-class CameraViewModel(repository: BooksRepository) : ViewModel() {
+class CameraViewModel(
+    findBookByIsbnUseCase: FindBookByIsbnUseCase,
+) : ViewModel() {
 
     private val isbn = MutableStateFlow("")
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<UiState> = isbn
         .filter { isbn -> isbn.isNotBlank() }
-        .transform { isbn -> emit(repository.findBookByIsbn(isbn)) }
+        .transform { isbn -> emit(findBookByIsbnUseCase(isbn)) }
         .map { book -> UiState(book = book) }
         .stateIn(
             scope = viewModelScope,

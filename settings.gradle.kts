@@ -1,4 +1,7 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -20,5 +23,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Arcaneum"
+
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":usecases")
+include(":framework")
