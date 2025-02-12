@@ -34,8 +34,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.constants.Constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.data.Book
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
 import com.diego.matesanz.arcaneum.ui.screens.Screen

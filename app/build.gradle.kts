@@ -1,36 +1,17 @@
-import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("arcaneum.android.application")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinxSerialization)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.diego.matesanz.arcaneum"
-    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.diego.matesanz.arcaneum"
-        minSdk = 28
-        targetSdk = 35
         versionCode = 4
         versionName = "0.0.3"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").readText().byteInputStream())
-
-        val googleBooksApiKey = properties.getProperty("GOOGLE_BOOKS_API_KEY", "")
-        buildConfigField("String", "GOOGLE_BOOKS_API_KEY", "\"$googleBooksApiKey\"")
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
     }
 
     buildTypes {
@@ -44,28 +25,22 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Modules
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":usecases"))
+    implementation(project(":framework"))
+    implementation(project(":framework"))
 
     // Jetpack Compose
     implementation(libs.androidx.activity.compose)
@@ -89,27 +64,15 @@ dependencies {
     implementation(libs.zxing.android.embedded)
     implementation(libs.zxing.core)
 
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
-
-    // Serialization
-    implementation(libs.kotlinx.serialization.json)
-
-    // Gson
-    implementation(libs.gson)
-
     // Palette
     implementation (libs.androidx.palette)
 
     // Room
     implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
 
-    testImplementation(libs.junit)
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 

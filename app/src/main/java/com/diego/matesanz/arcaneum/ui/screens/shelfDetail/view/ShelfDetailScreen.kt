@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.diego.matesanz.arcaneum.data.Book
-import com.diego.matesanz.arcaneum.data.Shelf
+import com.diego.matesanz.arcaneum.domain.Book
+import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
 import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.books.booksList.BookItem
