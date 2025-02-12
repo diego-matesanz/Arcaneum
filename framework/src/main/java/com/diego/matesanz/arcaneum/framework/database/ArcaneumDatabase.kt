@@ -12,7 +12,7 @@ import com.diego.matesanz.arcaneum.framework.database.entities.ShelfEntity
 
 @Database(
     entities = [BookEntity::class, ShelfEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -56,6 +56,11 @@ abstract class ArcaneumDatabase : RoomDatabase() {
                 )
                 database.execSQL("DROP TABLE BookEntity")
                 database.execSQL("ALTER TABLE BookEntity_temp RENAME TO BookEntity")
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE INDEX index_BookEntity_shelfId ON BookEntity (shelfId)")
             }
         }
     }

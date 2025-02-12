@@ -2,9 +2,11 @@ package com.diego.matesanz.arcaneum.framework.database.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
+    indices = [Index(value = ["shelfId"])],
     foreignKeys = [
         ForeignKey(
             entity = ShelfEntity::class,
