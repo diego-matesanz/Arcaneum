@@ -1,24 +1,31 @@
 package com.diego.matesanz.arcaneum
 
 import android.app.Application
-import androidx.room.Room
-import com.diego.matesanz.arcaneum.framework.database.ArcaneumDatabase
-import com.diego.matesanz.arcaneum.framework.database.ArcaneumDatabase.Companion.MIGRATION_1_2
-import com.diego.matesanz.arcaneum.framework.database.ArcaneumDatabase.Companion.MIGRATION_2_3
-import com.diego.matesanz.arcaneum.framework.database.ArcaneumDatabase.Companion.MIGRATION_3_4
-import com.diego.matesanz.arcaneum.framework.database.DatabaseCallback
-import com.diego.matesanz.arcaneum.framework.database.DatabaseConstants.DATABASE_NAME
+import com.diego.matesanz.arcaneum.data.DataDI
+import com.diego.matesanz.arcaneum.framework.FrameworkDI
+import com.diego.matesanz.arcaneum.framework.frameworkKoinModule
+import com.diego.matesanz.arcaneum.usecases.UseCasesDI
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
+import org.koin.ksp.generated.module
 
 class App : Application() {
 
-    lateinit var db: ArcaneumDatabase
-        private set
-
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(this, ArcaneumDatabase::class.java, DATABASE_NAME)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
-            .addCallback(DatabaseCallback(this))
-            .build()
+
+        startKoin {
+            androidLogger(Level.DEBUG)
+            androidContext(this@App)
+            modules(
+                AppDI().module,
+                DataDI().module,
+                UseCasesDI().module,
+                FrameworkDI().module,
+                frameworkKoinModule,
+            )
+        }
     }
 }

@@ -12,11 +12,13 @@ import com.diego.matesanz.arcaneum.usecases.ToggleBookShelfUseCase
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
 sealed interface BookDetailAction {
     data class Bookmarked(val shelfId: Int, val book: Book) : BookDetailAction
 }
 
+@KoinViewModel
 class BookDetailViewModel(
     bookId: String,
     findBookByIdUseCase: FindBookByIdUseCase,

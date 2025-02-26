@@ -16,7 +16,7 @@ import com.diego.matesanz.arcaneum.framework.database.entities.ShelfEntity
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
-abstract class ArcaneumDatabase : RoomDatabase() {
+internal abstract class ArcaneumDatabase : RoomDatabase() {
     abstract fun booksDao(): BooksDao
     abstract fun shelvesDao(): ShelvesDao
 

@@ -22,5 +22,13 @@ gradlePlugin {
             id = "arcaneum.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
+        register("diLibrary") {
+            id = "arcaneum.di.library"
+            implementationClass = "DiLibraryConventionPlugin"
+        }
+        register("diComposeLibrary") {
+            id = "arcaneum.di.compose.library"
+            implementationClass = "DiComposeLibraryConventionPlugin"
+        }
     }
 }

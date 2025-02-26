@@ -3,7 +3,9 @@ package com.diego.matesanz.arcaneum.data.repositories
 import com.diego.matesanz.arcaneum.data.datasource.ShelvesLocalDataSource
 import com.diego.matesanz.arcaneum.domain.Shelf
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Factory
 
+@Factory
 class ShelvesRepository(
     private val localDataSource: ShelvesLocalDataSource,
 ) {

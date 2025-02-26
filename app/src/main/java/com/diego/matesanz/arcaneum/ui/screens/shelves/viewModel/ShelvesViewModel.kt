@@ -11,12 +11,14 @@ import com.diego.matesanz.arcaneum.usecases.GetBooksByShelfUseCase
 import com.diego.matesanz.arcaneum.usecases.RemoveShelfUseCase
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
 sealed interface ShelvesAction {
     data class AddShelf(val name: String) : ShelvesAction
     data class RemoveShelf(val shelf: Shelf) : ShelvesAction
 }
 
+@KoinViewModel
 class ShelvesViewModel(
     getBooksByShelfUseCase: GetBooksByShelfUseCase,
     private val createShelfUseCase: CreateShelfUseCase,

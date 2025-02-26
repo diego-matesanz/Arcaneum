@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.transform
+import org.koin.core.annotation.Factory
 
+@Factory
 class BooksRepository(
     shelvesRepository: ShelvesRepository,
     private val remoteDataSource: BooksRemoteDataSource,

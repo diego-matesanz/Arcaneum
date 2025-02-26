@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
+import org.koin.android.annotation.KoinViewModel
 
 sealed interface CameraAction {
     data class BookScanned(val isbn: String) : CameraAction
 }
 
+@KoinViewModel
 class CameraViewModel(
     findBookByIsbnUseCase: FindBookByIsbnUseCase,
 ) : ViewModel() {

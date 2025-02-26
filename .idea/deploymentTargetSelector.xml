@@ -7,10 +7,10 @@
       </SelectionState>
       <SelectionState runConfigName="Arcaneum.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-10-24T11:49:16.783931200Z">
+        <DropdownSelection timestamp="2025-02-26T11:52:49.427490500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=7858c4e8" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=1f51601f" />
             </handle>
           </Target>
         </DropdownSelection>

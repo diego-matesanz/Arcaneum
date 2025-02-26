@@ -16,12 +16,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
 sealed interface HomeAction {
     data class Search(val search: String) : HomeAction
     data class Bookmarked(val shelfId: Int, val book: Book) : HomeAction
 }
 
+@KoinViewModel
 class HomeViewModel(
     findBooksBySearchTextUseCase: FindBooksBySearchTextUseCase,
     getShelvesUseCase: GetShelvesUseCase,

@@ -5,8 +5,10 @@ import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
 import com.diego.matesanz.arcaneum.framework.remote.models.RemoteBooks.RemoteBook
 import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.framework.remote.BooksService
+import org.koin.core.annotation.Factory
 
-class BooksServerDataSource(
+@Factory
+internal class BooksServerDataSource(
     private val booksService: BooksService,
 ): BooksRemoteDataSource {
 

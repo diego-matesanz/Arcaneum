@@ -1,6 +1,7 @@
 
 plugins {
     id("arcaneum.jvm.library")
+    id("arcaneum.di.library")
 }
 dependencies {
     // Modules
