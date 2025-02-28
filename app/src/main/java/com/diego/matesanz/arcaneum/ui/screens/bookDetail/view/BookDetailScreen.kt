@@ -37,6 +37,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.SCROLL_HEIGHT_FACTOR
@@ -53,8 +54,8 @@ import com.diego.matesanz.arcaneum.ui.screens.bookDetail.viewModel.BookDetailVie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
-    viewModel: BookDetailViewModel,
     onBack: () -> Unit,
+    viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

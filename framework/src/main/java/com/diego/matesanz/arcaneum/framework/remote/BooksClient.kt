@@ -1,6 +1,5 @@
 package com.diego.matesanz.arcaneum.framework.remote
 
-import com.diego.matesanz.arcaneum.framework.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -9,7 +8,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
 
-object BooksClient {
+internal class BooksClient(
+    val apiKey: String,
+) {
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(::apiKeyAsQuery)
@@ -25,15 +26,15 @@ object BooksClient {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
         .create<BooksService>()
-}
 
-private fun apiKeyAsQuery(chain: Interceptor.Chain) = chain.proceed(
-    chain.request().newBuilder()
-        .url(
-            chain.request().url
-                .newBuilder()
-                .addQueryParameter("key", BuildConfig.GOOGLE_BOOKS_API_KEY)
-                .build()
-        )
-        .build()
-)
+    private fun apiKeyAsQuery(chain: Interceptor.Chain) = chain.proceed(
+        chain.request().newBuilder()
+            .url(
+                chain.request().url
+                    .newBuilder()
+                    .addQueryParameter("key", apiKey)
+                    .build()
+            )
+            .build()
+    )
+}

@@ -1,6 +1,7 @@
 
 plugins {
     id("arcaneum.android.application")
+    id("arcaneum.di.compose.library")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinxSerialization)
 }

@@ -6,7 +6,7 @@ object DatabaseConstants {
     const val DATABASE_NAME = "arcaneum-db"
 
     // Shelf table
-    const val SHELF_TABLE = "Shelf"
+    const val SHELF_TABLE = "ShelfEntity"
     const val SHELF_NAME_COLUMN = "name"
     const val SHELF_ID_COLUMN = "shelfId"
     const val IS_REMOVABLE_COLUMN = "isRemovable"

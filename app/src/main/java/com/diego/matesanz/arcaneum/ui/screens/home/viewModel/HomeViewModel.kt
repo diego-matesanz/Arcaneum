@@ -2,13 +2,14 @@ package com.diego.matesanz.arcaneum.ui.screens.home.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.data.Result
-import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import com.diego.matesanz.arcaneum.domain.Book
+import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.usecases.FindBooksBySearchTextUseCase
 import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase
 import com.diego.matesanz.arcaneum.usecases.ToggleBookShelfUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,13 +17,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface HomeAction {
     data class Search(val search: String) : HomeAction
     data class Bookmarked(val shelfId: Int, val book: Book) : HomeAction
 }
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     findBooksBySearchTextUseCase: FindBooksBySearchTextUseCase,
     getShelvesUseCase: GetShelvesUseCase,
     private val toggleBookShelfUseCase: ToggleBookShelfUseCase,

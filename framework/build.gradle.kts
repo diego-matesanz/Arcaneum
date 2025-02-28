@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("arcaneum.android.library")
+    id("arcaneum.di.library")
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
 }

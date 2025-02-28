@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.NavigationBackTopBar
@@ -35,7 +36,7 @@ import com.diego.matesanz.arcaneum.ui.screens.shelfDetail.viewModel.ShelfDetailV
 fun ShelfDetailScreen(
     onBookClick: (Book) -> Unit,
     onBack: () -> Unit,
-    viewModel: ShelfDetailViewModel,
+    viewModel: ShelfDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

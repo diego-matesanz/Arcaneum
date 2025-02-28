@@ -2,22 +2,25 @@ package com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.data.Result
-import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.data.stateAsResultIn
+import com.diego.matesanz.arcaneum.domain.Book
+import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.usecases.CreateShelfUseCase
 import com.diego.matesanz.arcaneum.usecases.GetBooksByShelfUseCase
 import com.diego.matesanz.arcaneum.usecases.RemoveShelfUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface ShelvesAction {
     data class AddShelf(val name: String) : ShelvesAction
     data class RemoveShelf(val shelf: Shelf) : ShelvesAction
 }
 
-class ShelvesViewModel(
+@HiltViewModel
+class ShelvesViewModel @Inject constructor(
     getBooksByShelfUseCase: GetBooksByShelfUseCase,
     private val createShelfUseCase: CreateShelfUseCase,
     private val removeShelfUseCase: RemoveShelfUseCase,

@@ -3,8 +3,10 @@ package com.diego.matesanz.arcaneum.data.repositories
 import com.diego.matesanz.arcaneum.data.datasource.ShelvesLocalDataSource
 import com.diego.matesanz.arcaneum.domain.Shelf
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ShelvesRepository(
+
+class ShelvesRepository @Inject constructor(
     private val localDataSource: ShelvesLocalDataSource,
 ) {
 

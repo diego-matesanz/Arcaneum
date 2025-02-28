@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.hilt) apply false
 }
 
 val detektFormatting = libs.detekt.formatting

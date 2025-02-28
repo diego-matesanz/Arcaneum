@@ -1,14 +1,15 @@
 package com.diego.matesanz.arcaneum.framework.remote.datasources
 
-import com.diego.matesanz.arcaneum.framework.toHttps
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
-import com.diego.matesanz.arcaneum.framework.remote.models.RemoteBooks.RemoteBook
 import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.framework.remote.BooksService
+import com.diego.matesanz.arcaneum.framework.remote.models.RemoteBooks.RemoteBook
+import com.diego.matesanz.arcaneum.framework.toHttps
+import javax.inject.Inject
 
-class BooksServerDataSource(
+internal class BooksServerDataSource @Inject constructor(
     private val booksService: BooksService,
-): BooksRemoteDataSource {
+) : BooksRemoteDataSource {
 
     override suspend fun findBooksBySearchText(search: String): List<Book> =
         booksService
