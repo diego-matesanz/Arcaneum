@@ -6,10 +6,9 @@ import com.diego.matesanz.arcaneum.framework.database.dao.BooksDao
 import com.diego.matesanz.arcaneum.framework.database.entities.BookEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
+import javax.inject.Inject
 
-@Factory
-internal class BooksRoomDataSource(
+internal class BooksRoomDataSource @Inject constructor(
     private val booksDao: BooksDao,
 ) : BooksLocalDataSource {
     override fun getSavedBooks(): Flow<List<Book>> =

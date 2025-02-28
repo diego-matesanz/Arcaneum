@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.domain.Shelf
@@ -53,7 +54,7 @@ import com.diego.matesanz.arcaneum.ui.screens.home.viewModel.HomeViewModel
 fun HomeScreen(
     onBookClick: (Book) -> Unit,
     onCamClick: () -> Unit,
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

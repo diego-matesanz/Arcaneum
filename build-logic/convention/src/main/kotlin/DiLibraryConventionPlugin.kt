@@ -10,10 +10,8 @@ class DiLibraryConventionPlugin: Plugin<Project> {
             pluginManager.apply("com.google.devtools.ksp")
 
             dependencies {
-                add("implementation", platform(libs.findLibrary("koin.bom").get()))
-                add("implementation", libs.findLibrary("koin.core").get())
-                add("implementation", libs.findLibrary("koin.annotations").get())
-                add("ksp", libs.findLibrary("koin.compiler").get())
+                add("implementation", libs.findLibrary("hilt.core").get())
+                add("ksp", libs.findLibrary("hilt.compiler").get())
             }
         }
     }

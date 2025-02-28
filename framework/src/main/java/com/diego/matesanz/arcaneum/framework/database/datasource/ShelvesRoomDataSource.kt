@@ -6,10 +6,9 @@ import com.diego.matesanz.arcaneum.framework.database.dao.ShelvesDao
 import com.diego.matesanz.arcaneum.framework.database.entities.ShelfEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
+import javax.inject.Inject
 
-@Factory
-internal class ShelvesRoomDataSource(
+internal class ShelvesRoomDataSource @Inject constructor(
     private val shelvesDao: ShelvesDao,
 ) : ShelvesLocalDataSource {
 

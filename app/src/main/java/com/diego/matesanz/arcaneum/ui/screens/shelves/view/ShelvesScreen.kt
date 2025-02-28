@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVERS_COUNT
@@ -65,7 +66,7 @@ import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
 @Composable
 fun ShelvesScreen(
     onShelfClick: (Shelf) -> Unit,
-    viewModel: ShelvesViewModel,
+    viewModel: ShelvesViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

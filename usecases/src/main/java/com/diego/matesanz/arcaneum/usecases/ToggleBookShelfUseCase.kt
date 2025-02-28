@@ -2,10 +2,11 @@ package com.diego.matesanz.arcaneum.usecases
 
 import com.diego.matesanz.arcaneum.data.repositories.BooksRepository
 import com.diego.matesanz.arcaneum.domain.Book
-import org.koin.core.annotation.Factory
+import javax.inject.Inject
 
-@Factory
-class ToggleBookShelfUseCase(private val booksRepository: BooksRepository) {
+class ToggleBookShelfUseCase @Inject constructor(
+    private val booksRepository: BooksRepository,
+) {
     suspend operator fun invoke(shelfId: Int, book: Book) {
         if (book.shelfId == shelfId) {
             booksRepository.deleteBook(book.bookId)

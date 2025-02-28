@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.R
 import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
 import com.diego.matesanz.arcaneum.domain.Book
@@ -50,7 +51,7 @@ import com.journeyapps.barcodescanner.CompoundBarcodeView
 fun CameraScreen(
     onBack: () -> Unit,
     onBookClick: (Book) -> Unit,
-    viewModel: CameraViewModel,
+    viewModel: CameraViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val cameraState = rememberCameraState()
