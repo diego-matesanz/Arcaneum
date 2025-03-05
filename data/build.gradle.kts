@@ -9,4 +9,7 @@ dependencies {
 
     // Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Test
+    testImplementation(project(":test:unit"))
 }

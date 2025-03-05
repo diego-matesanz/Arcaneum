@@ -2,6 +2,9 @@ package com.diego.matesanz.arcaneum.data.repositories
 
 import com.diego.matesanz.arcaneum.data.datasource.BooksLocalDataSource
 import com.diego.matesanz.arcaneum.data.datasource.BooksRemoteDataSource
+import com.diego.matesanz.arcaneum.test.unit.sampleBook
+import com.diego.matesanz.arcaneum.test.unit.sampleBooks
+import com.diego.matesanz.arcaneum.test.unit.sampleShelves
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
