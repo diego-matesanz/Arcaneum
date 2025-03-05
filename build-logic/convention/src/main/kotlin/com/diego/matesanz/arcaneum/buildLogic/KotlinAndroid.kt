@@ -42,6 +42,7 @@ internal fun Project.configureKotlinAndroid(
             add("implementation", libs.findLibrary("androidx.lifecycle.runtime.ktx").get())
 
             add("testImplementation", libs.findLibrary("junit").get())
+            add("testImplementation", libs.findLibrary("mockito.kotlin").get())
 
             add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
             add("androidTestImplementation", libs.findLibrary("androidx.espresso.core").get())
@@ -59,5 +60,10 @@ internal fun Project.configureKotlinJvm() {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
+    }
+
+    dependencies {
+        add("testImplementation", libs.findLibrary("junit").get())
+        add("testImplementation", libs.findLibrary("mockito.kotlin").get())
     }
 }
