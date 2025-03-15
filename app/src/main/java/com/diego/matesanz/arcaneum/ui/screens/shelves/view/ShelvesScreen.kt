@@ -48,9 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.diego.matesanz.arcaneum.R
-import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
-import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVERS_COUNT
-import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVER_TRANSLATION
 import com.diego.matesanz.arcaneum.domain.Book
 import com.diego.matesanz.arcaneum.domain.Shelf
 import com.diego.matesanz.arcaneum.ui.common.components.AddShelfDialog
@@ -58,6 +55,9 @@ import com.diego.matesanz.arcaneum.ui.common.components.CustomAsyncImage
 import com.diego.matesanz.arcaneum.ui.common.components.RemoveShelfDialog
 import com.diego.matesanz.arcaneum.ui.common.components.ResultScaffold
 import com.diego.matesanz.arcaneum.ui.common.components.TopBar
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_ASPECT_RATIO
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVERS_COUNT
+import com.diego.matesanz.arcaneum.ui.common.utils.Constants.BOOK_COVER_TRANSLATION
 import com.diego.matesanz.arcaneum.ui.screens.Screen
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesAction
 import com.diego.matesanz.arcaneum.ui.screens.shelves.viewModel.ShelvesViewModel
@@ -83,23 +83,12 @@ fun ShelvesScreen(
             topBar = {
                 TopBar(
                     title = stringResource(id = R.string.shelves_screen_title),
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing,
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { showAddShelfDialog = true },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Create shelf icon",
-                    )
-                }
-            }
+            floatingActionButton = { AddShelfButton(onClick = { showAddShelfDialog = true }) }
         ) { padding, data ->
             ShelvesContent(
                 booksByShelf = data,
@@ -255,5 +244,21 @@ private fun BooksCovers(
                 contentDescription = stringResource(id = R.string.empty_search),
             )
         }
+    }
+}
+
+@Composable
+private fun AddShelfButton(
+    onClick: () -> Unit,
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = "Create shelf icon",
+        )
     }
 }

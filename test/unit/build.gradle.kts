@@ -6,4 +6,7 @@ plugins {
 dependencies {
     // Modules
     implementation(project(":domain"))
+
+    implementation(libs.junit)
+    implementation(libs.kotlinx.coroutines.test)
 }

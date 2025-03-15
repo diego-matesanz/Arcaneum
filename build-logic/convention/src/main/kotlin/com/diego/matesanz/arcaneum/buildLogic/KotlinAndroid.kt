@@ -41,12 +41,14 @@ internal fun Project.configureKotlinAndroid(
             add("implementation", libs.findLibrary("androidx.core.ktx").get())
             add("implementation", libs.findLibrary("androidx.lifecycle.runtime.ktx").get())
 
-            add("testImplementation", libs.findLibrary("junit").get())
-            add("testImplementation", libs.findLibrary("mockito.kotlin").get())
+            add("testImplementation", libs.findLibrary("kotlinx.coroutines.test").get())
+            add("testImplementation", libs.findLibrary("turbine").get())
 
             add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
             add("androidTestImplementation", libs.findLibrary("androidx.espresso.core").get())
         }
+
+        addUnitTestDependencies()
     }
 }
 
@@ -62,6 +64,10 @@ internal fun Project.configureKotlinJvm() {
         }
     }
 
+    addUnitTestDependencies()
+}
+
+private fun Project.addUnitTestDependencies() {
     dependencies {
         add("testImplementation", libs.findLibrary("junit").get())
         add("testImplementation", libs.findLibrary("mockito.kotlin").get())
