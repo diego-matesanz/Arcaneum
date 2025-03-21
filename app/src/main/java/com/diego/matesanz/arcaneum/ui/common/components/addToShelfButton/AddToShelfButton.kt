@@ -114,12 +114,12 @@ private fun ShelvesList(
                     )
                     .padding(16.dp)
             ) {
-                val SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION = 0
+                val shelfCheckExitFadeDuration = 0
                 AnimatedVisibility(
                     visible = state.selectedShelf == shelf,
                     enter = expandHorizontally(tween(SHELF_CHECK_ENTER_ANIMATION_DURATION)) + fadeIn(),
                     exit = shrinkHorizontally(tween(SHELF_CHECK_EXIT_ANIMATION_DURATION)) +
-                            fadeOut(tween(SHELF_CHECK_EXIT_FADE_ANIMATION_DURATION)),
+                            fadeOut(tween(shelfCheckExitFadeDuration)),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,

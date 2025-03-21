@@ -19,6 +19,8 @@ fun <T> Flow<T>.stateAsResultIn(scope: CoroutineScope): StateFlow<Result<T>> =
         .catch { emit(Result.Error(it)) }
         .stateIn(
             scope = scope,
-            started = SharingStarted.Companion.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(STATE_FLOW_TIMEOUT),
             initialValue = Result.Loading,
         )
+
+private const val STATE_FLOW_TIMEOUT = 5000L

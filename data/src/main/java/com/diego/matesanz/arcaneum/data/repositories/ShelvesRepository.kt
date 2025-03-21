@@ -10,7 +10,8 @@ class ShelvesRepository @Inject constructor(
     private val localDataSource: ShelvesLocalDataSource,
 ) {
 
-    val shelves: Flow<List<Shelf>> = localDataSource.getShelves()
+    val shelves: Flow<List<Shelf>>
+        get() = localDataSource.getShelves()
 
     suspend fun saveShelf(shelf: Shelf) =
         localDataSource.saveShelf(shelf)
