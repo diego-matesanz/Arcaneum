@@ -1,7 +1,7 @@
 package com.diego.matesanz.arcaneum.usecases
 
 import com.diego.matesanz.arcaneum.data.repositories.ShelvesRepository
-import com.diego.matesanz.arcaneum.test.unit.sampleShelves
+import com.diego.matesanz.arcaneum.test.unit.domain.shelf.sampleShelves
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Test

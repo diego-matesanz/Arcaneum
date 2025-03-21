@@ -1,8 +1,8 @@
 package com.diego.matesanz.arcaneum.usecases
 
 import com.diego.matesanz.arcaneum.data.repositories.BooksRepository
-import com.diego.matesanz.arcaneum.test.unit.sampleBook
-import com.diego.matesanz.arcaneum.test.unit.sampleShelf
+import com.diego.matesanz.arcaneum.test.unit.domain.book.sampleBook
+import com.diego.matesanz.arcaneum.test.unit.domain.shelf.sampleShelf
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.kotlin.mock

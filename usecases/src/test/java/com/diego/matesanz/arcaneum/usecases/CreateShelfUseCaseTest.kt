@@ -1,7 +1,7 @@
 package com.diego.matesanz.arcaneum.usecases
 
 import com.diego.matesanz.arcaneum.data.repositories.ShelvesRepository
-import com.diego.matesanz.arcaneum.test.unit.sampleShelf
+import com.diego.matesanz.arcaneum.test.unit.domain.shelf.sampleShelf
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.kotlin.mock

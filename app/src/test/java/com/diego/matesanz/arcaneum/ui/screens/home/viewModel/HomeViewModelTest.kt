@@ -2,8 +2,8 @@ package com.diego.matesanz.arcaneum.ui.screens.home.viewModel
 
 import app.cash.turbine.test
 import com.diego.matesanz.arcaneum.data.Result
-import com.diego.matesanz.arcaneum.test.unit.sampleBooks
-import com.diego.matesanz.arcaneum.test.unit.sampleShelves
+import com.diego.matesanz.arcaneum.test.unit.domain.book.sampleBooks
+import com.diego.matesanz.arcaneum.test.unit.domain.shelf.sampleShelves
 import com.diego.matesanz.arcaneum.test.unit.testRules.CoroutinesTestRule
 import com.diego.matesanz.arcaneum.usecases.FindBooksBySearchTextUseCase
 import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase
