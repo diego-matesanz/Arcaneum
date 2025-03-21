@@ -41,7 +41,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":usecases"))
     implementation(project(":framework"))
-    implementation(project(":framework"))
+    implementation(project(":test:unit"))
 
     // Jetpack Compose
     implementation(libs.androidx.activity.compose)

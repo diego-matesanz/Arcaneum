@@ -16,5 +16,5 @@ object ShelfDetailViewModelDI {
     @ViewModelScoped
     @Named("shelfId")
     fun provideShelfId(savedStateHandle: SavedStateHandle) =
-        savedStateHandle.get<Int>("shelfId") ?: throw IllegalStateException("Missing shelfId")
+        savedStateHandle.get<Int>("shelfId") ?: error("Shelf id not found")
 }

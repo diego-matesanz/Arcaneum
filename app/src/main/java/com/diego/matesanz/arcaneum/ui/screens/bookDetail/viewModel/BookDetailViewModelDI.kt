@@ -16,5 +16,5 @@ object BookDetailViewModelDI {
     @ViewModelScoped
     @Named("bookId")
     fun provideBookId(savedStateHandle: SavedStateHandle) =
-        savedStateHandle.get<String>("bookId") ?: throw IllegalStateException("Missing bookId")
+        savedStateHandle.get<String>("bookId") ?: error("Book id not found")
 }

@@ -11,22 +11,24 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class BooksRepository @Inject constructor(
-    shelvesRepository: ShelvesRepository,
+    private val shelvesRepository: ShelvesRepository,
     private val remoteDataSource: BooksRemoteDataSource,
     private val localDataSource: BooksLocalDataSource,
 ) {
 
-    private val savedBooks: Flow<List<Book>> = localDataSource.getSavedBooks()
+    private val savedBooks: Flow<List<Book>>
+        get() = localDataSource.getSavedBooks()
 
-    val booksByShelf: Flow<Map<Shelf, List<Book>>> =
-        combine(
-            shelvesRepository.shelves,
-            savedBooks
-        ) { shelves, savedBooks ->
-            shelves.associate { shelf ->
-                shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
+    val booksByShelf: Flow<Map<Shelf, List<Book>>>
+        get() =
+            combine<List<Shelf>, List<Book>, Map<Shelf, List<Book>>>(
+                shelvesRepository.shelves,
+                savedBooks
+            ) { shelves, savedBooks ->
+                shelves.associate { shelf ->
+                    shelf to savedBooks.filter { book -> book.shelfId == shelf.shelfId }
+                }
             }
-        }
 
     fun findBooksBySearchText(search: String): Flow<List<Book>> =
         savedBooks.transform { savedBooks ->
