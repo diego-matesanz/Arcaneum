@@ -24,17 +24,18 @@ sealed interface HomeAction {
     data class Bookmarked(val shelfId: Int, val book: Book) : HomeAction
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    findBooksBySearchTextUseCase: FindBooksBySearchTextUseCase,
-    getShelvesUseCase: GetShelvesUseCase,
+    private val findBooksBySearchTextUseCase: FindBooksBySearchTextUseCase,
+    private val getShelvesUseCase: GetShelvesUseCase,
     private val toggleBookShelfUseCase: ToggleBookShelfUseCase,
 ) : ViewModel() {
 
     private var search = MutableStateFlow("")
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>> = search
+    val state: StateFlow<Result<Pair<List<Book>, List<Shelf>>>>
+        get() = search
         .filter { it.isNotBlank() }
         .flatMapLatest { search -> findBooksBySearchTextUseCase(search) }
         .combine(getShelvesUseCase()) { books, shelves -> Pair(books, shelves) }

@@ -3,6 +3,7 @@ package com.diego.matesanz.arcaneum.ui.screens.home.viewModel
 import app.cash.turbine.test
 import com.diego.matesanz.arcaneum.data.Result
 import com.diego.matesanz.arcaneum.test.unit.sampleBooks
+import com.diego.matesanz.arcaneum.test.unit.sampleShelves
 import com.diego.matesanz.arcaneum.test.unit.testRules.CoroutinesTestRule
 import com.diego.matesanz.arcaneum.usecases.FindBooksBySearchTextUseCase
 import com.diego.matesanz.arcaneum.usecases.GetShelvesUseCase
@@ -64,18 +65,39 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `Books are requested if a search has been performed`() = runTest {
+    fun `Books and shelves are requested if a search has been performed`() = runTest {
         // Given
         val books = sampleBooks("1", "2", "3", "4")
-        whenever(findBooksBySearchTextUseCase.invoke(any<String>())).thenReturn(flowOf(books))
+        val shelves = sampleShelves(1, 2, 3, 4)
+        whenever(findBooksBySearchTextUseCase.invoke("Search")).thenReturn(flowOf(books))
+        whenever(getShelvesUseCase.invoke()).thenReturn(flowOf(shelves))
 
         // When
-        viewModel.onAction(HomeAction.Search(any<String>()))
+        viewModel.onAction(HomeAction.Search("Search"))
 
         // Then
         viewModel.state.test {
             assertEquals(Result.Loading, awaitItem())
-            assertEquals(Result.Success(books), awaitItem())
+            assertEquals(Result.Success(Pair(books, shelves)), awaitItem())
+        }
+    }
+
+    @Test
+    fun `Error is propagated when books request fails`() = runTest {
+        // Given
+        val error = RuntimeException("Error")
+        val shelves = sampleShelves(1, 2, 3, 4)
+        whenever(findBooksBySearchTextUseCase.invoke("Search")).thenThrow(error)
+        whenever(getShelvesUseCase.invoke()).thenReturn(flowOf(shelves))
+
+        // When
+        viewModel.onAction(HomeAction.Search("Search"))
+
+        // Then
+        viewModel.state.test {
+            assertEquals(Result.Loading, awaitItem())
+            val exceptionMessage = (awaitItem() as Result.Error).throwable.message
+            assertEquals("Error", exceptionMessage)
         }
     }
 }
